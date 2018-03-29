@@ -18,6 +18,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
+#include <unistd.h>
 #include "mud.h"
 
 ROOM_INDEX_DATA *vroom_hash[64];
@@ -3219,31 +3220,47 @@ ch_ret pullcheck( CHAR_DATA * ch, int pulse )
    return rNONE;
 }
 
+
+
+
 void do_fast( CHAR_DATA* ch, const char* argument)
 {
-char arg[MAX_INPUT_LENGTH];
- one_argument( argument, arg );
-
-const char* locs[] = {"10301","10303","10306"};
-int total_locs = sizeof(locs) / sizeof(locs[0]);
-
-    if( arg[0] == '\0'  ) 
-    {
+    // This may seem ugly but it counts the total number of locations (for later use)
+    int l = 0;
+   
+    char locs[MAX_FAST_TRAVEL_LOCATIONS][7];
     
+    while(ch->fast_travel_locs[l] != 0)
+    {
         
+    sprintf(locs[l], "%i",ch->fast_travel_locs[l]);
+    
+    l++;
+    }
+
+    if( argument[0] == '\0'  ) 
+    {        
         send_to_char("Valid locations for fast travel are: \r\n",ch);
 
         
-        for(int i = 0; i < total_locs; i++)
-        {
-        
-            ch_printf(ch,"%i %s \r\n",i+1,find_location(ch, locs[i] )->name);
-            
+        for(int i = 0; i < l; i++)
+        {        
+            ch_printf(ch,"%i) %s \r\n",i+1,find_location(ch, locs[i] )->name );            
         }
     }
     else
     {
-        if(!is_number(arg)) 
+        
+        if( !strcmp(argument, "save"))
+        {
+            send_to_char("You remember this location and save it \r\n",ch);
+            
+            ch->fast_travel_locs[l] = ch->in_room->vnum;
+            do_save(ch,"");
+
+            return;
+        }
+        if(!is_number(argument)) 
         { 
             ch_printf(ch,"%s %s", "Enter a location's number, for example 'fast 1' to travel" ,
              "to the first entry on the list. Type 'fast' for a list of valid locations");
@@ -3251,9 +3268,9 @@ int total_locs = sizeof(locs) / sizeof(locs[0]);
         }
 
         // Shorthand for arg in numeric form
-        int nArg = atoi(arg);
+        int nArg = atoi(argument);
 
-        if(nArg < 1 || nArg > total_locs)
+        if(nArg < 1 || nArg > l)
         {
             ch_printf(ch,"%i %s %s",nArg, "is not a valid location number." ,
              "Type 'fast' for a list of valid locations");
@@ -3261,7 +3278,7 @@ int total_locs = sizeof(locs) / sizeof(locs[0]);
         }
 
         // Remember the -1 as the user is given a 1..n choice not a 0..n choice.
-        ch_printf(ch,"Travelling to %s. \r\n Lets GO!\r", find_location(ch, locs[nArg-1] )->name);
+        ch_printf(ch,"Travelling to %s.... \r\n", find_location(ch, locs[nArg-1] )->name);
 
         teleport(ch,atoi(locs[nArg-1]),0);
 

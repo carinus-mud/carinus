@@ -1,7 +1,7 @@
 #! /bin/csh -f
 
 # Set the port number.
-set port = 4020
+set port = 6001
 if ( "$1" != "" ) set port="$1"
 
 # Change to area directory.

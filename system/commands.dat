@@ -1014,6 +1014,14 @@ Log         0
 End
 
 #COMMAND
+Name        fast~
+Code        do_fast
+Position    100
+Level       0
+Log         0
+End
+
+#COMMAND
 Name        get~
 Code        do_get
 Position    106

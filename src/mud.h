@@ -2109,6 +2109,10 @@ struct timer_data
 #define AFLAG_NOASTRAL        BV10
 #define AFLAG_NOWHERE         BV11
 
+/* How many travel locations a player can remember,
+ I'm not experienced enough in C to realloc - 4444L (John) Mar/18 */
+#define MAX_FAST_TRAVEL_LOCATIONS 100
+
 /*
  * Prototype for a mob.
  * This is the in-memory version of #MOBILES.
@@ -2316,6 +2320,7 @@ struct char_data
    short style;
    short height;
    short weight;
+   int fast_travel_locs[10]; // fast travel, 100 locations should be more than enough
    short armor;
    short wimpy;
    int deaf;
@@ -3811,6 +3816,7 @@ DECLARE_DO_FUN( do_equipment );
 DECLARE_DO_FUN( do_examine );
 DECLARE_DO_FUN( do_exits );
 DECLARE_DO_FUN( do_extinguish	);
+DECLARE_DO_FUN( do_fast );
 DECLARE_DO_FUN( do_favor );
 DECLARE_DO_FUN( do_feed );
 DECLARE_DO_FUN( do_fill );
