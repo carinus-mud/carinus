@@ -1,0 +1,167 @@
+#AREA	{ All } CBT     Test Area~
+
+#HELPS
+-1 WIZHELP~
+Wizhelp
+Syntax: wizhelp
+
+Wizhelp displays a list of the imm commands you have
+available.
+~
+-1 GOTO~
+Goto
+Syntax: goto <vNum>
+        goto <character>
+        goto <object>
+
+Goto allows you to go to something: a room, a mob,
+or an object.
+
+Examples:
+goto 100    -- goto to the beginning room
+goto bob    -- goto the room where a mob (or PC) named bob
+               is located
+goto flower -- goto the room where an object named
+               "flower" is located
+~
+-1 HOLYLIGHT~
+Holylight
+Syntax: holylight
+
+Holylight switches on (or off) your Holy Light which
+allows you to see hidden exits, invis or hidden mobs or
+people, etc.
+~
+-1 HOLYEAR~
+Holyear
+Syntax: holyear
+
+Holyear switches on (or off) your Holy Ear (universal
+translator) so that you will be able to understand
+any language.
+~
+-1 HOLYBOAT~
+Holyboat
+Syntax: holyboat
+
+Holyboat switches on (or off) your holy boat (GPS
+system) which means that you won't be affected by
+currents.
+~
+-1 SETTIME~
+Syntax: settime ## [0-23]
+
+Change the time of day. For testing dynamic descriptions that 
+use time of day or for timed MobPrograms or MobScripts.
+~
+-1 ADVANCE~
+Syntax: advance <character> <level>
+
+ADVANCE sets a character's level to the specified value.
+
+ADVANCE may be used to demote characters.
+~
+-1 RESTORE~
+Syntax: restore <character>
+Syntax: restore all
+
+RESTORE restores full hit points, mana points, movement
+points and stamina points to the target character.
+
+RESTORE all restores full hit points, mana points, movement
+points, and stamina points to all PC's. RESTORE all does not
+affect mobs.
+~
+-1 SLAY~
+Syntax: slay <character>
+
+SLAY kills a character in cold blood.
+
+SLAY bypasses auto actions such as autoloot and autosac.
+
+This will allow you to get, and inspect, equipment from a mob's corpse.
+~
+0 $~
+
+#OBJECTS
+#100
+ball light~
+a bright ball of light~
+A bright ball of light shimmers in the air.~
+~
+1 0 1
+0~ 0~ 1000~ 0~
+1 0 0
+#101
+coin gold~
+a gold coin~
+One miserable gold coin.~
+~
+20 262144 1
+0~ 0~ 0~ 0~
+1 0 0
+#102
+coins gold~
+some gold coins~
+A pile of gold coins.~
+~
+20 262144 1
+0~ 0~ 0~ 0~
+1 0 0
+#103
+corpse~
+corpse of %s~
+The corpse of %s is lying here.~
+~
+23 0 1
+0~ 0~ 0~ 0~
+100 0 0
+#104
+corpse~
+corpse of %s~
+The corpse of %s is lying here.~
+~
+24 131072 0
+0~ 0~ 0~ 0~
+100 0 0
+#105
+arm~
+arm of %s~
+The sliced-off arm of %s is lying here.~
+~
+5 0 1|8192
+0~ 0~ 0~ 9~
+2 0 0
+#106
+leg~
+leg of %s~
+The sliced-off leg of %s is lying here.~
+~
+5 0 1|8192
+0~ 0~ 0~ 9~
+3 0 0
+#0
+
+#ROOMS
+#100
+Beginning Room~
+This Room is here so you have some place to start.
+
+Unless you are sure you know what you are doing, DO NOT REMOVE the test.are
+file or this room!!
+~
+0 16 0
+S
+#101
+Idle Room~
+This Room is here so you have some place to idle.
+
+Unless you are sure you know what you are doing, DO NOT REMOVE the test.are
+file or this room!!
+~
+0 16 0
+S
+#0
+
+#$
+

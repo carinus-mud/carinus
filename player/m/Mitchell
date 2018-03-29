@@ -1,0 +1,86 @@
+#PLAYER
+Version      5
+Name         Mitchell~
+Sex          1
+Class        6
+Race         0
+Age          0 17 0 606
+Languages    -1 1
+Level        64
+Played       668
+Room         1200
+HpManaMove   59 839 137 321 730 730
+Gold         0
+Exp          281302875
+Height          63
+Weight          148
+Str          4
+Wis         3
+Con          5
+Intel          3
+Dex         4
+Cha          5
+Lck          2
+Att          10
+Def          15
+Matt          5
+Mdef          5
+strplus          0
+wisplus          0
+conplus          0
+intplus          0
+dexplus          0
+chaplus          0
+lckplus          0
+attplus          0
+defplus          0
+mattplus          0
+mdefplus          0
+mlevel          1
+deflevel          1
+attlevel          1
+Act          570426952
+Position     112
+Style     2
+Practice     126
+SavingThrows 0 0 0 0 0
+Alignment    0
+Favor        0
+Balance      0
+Glory        0
+MGlory       0
+Ap        0
+Tier        0
+Hitroll      0
+Damroll      0
+Armor        100
+Mentalstate  -6
+Password     9c3a88f26d3623fcf0a4aa881518170c70f5e1d62e0d9f9fa7e9b3f07fa299b7~
+Title         the ghost dancer~
+Cpose         is here.~
+Hometown         Kroridge~
+Customclass        Necromancer~
+WizInvis     64
+Flags        32768
+PKills       0
+PDeaths      0
+MKills       0
+MDeaths      0
+IllegalPK    0
+Timezone     -1
+AttrPerm     16 13 13 13 13 13 13
+AttrMod      0 0 0 0 0 0 0
+Condition    0 46 48 10
+Site         99.203.15.219
+Tongue       100 'common'
+MaxColors    115
+Colors       0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 7 7 14 14 14 15 15 11 11 9 46 40 12 7 7 10 6 11 9 10 1 15 11 15 11 10 13 12 10 11 12 10 3 12 9 15 11 15 14 2 5 15 9 7 2 9 12 10 2 10 15 7 7 15 12 12 12 10 14 14 14 10 10 10 13 2 10 14 10 10 2 6 1 9 2 10 7 10 15 0 0 0 0 
+End
+
+#OBJECT
+Vnum         10333
+WearLoc      17
+Values       5 5 0 0 0 0
+End
+
+#END

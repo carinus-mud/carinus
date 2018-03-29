@@ -1,0 +1,206 @@
+#FUSSAREA
+#AREADATA
+Version      1
+Name         {PROTO} Morain's area in progress~
+Author       Morain~
+WeatherX     0
+WeatherY     0
+Ranges       0 0 0 0
+Flags        prototype~
+#ENDAREADATA
+
+#MOBILE
+Vnum       400
+Keywords   first mob~
+Short      a newly created first mob~
+Long       Some god abandoned a newly created first mob here.
+~
+Race       human~
+Class      warrior~
+Position   standing~
+DefPos     standing~
+Gender     neuter~
+Actflags   npc prototype~
+Stats1     0 1 0 0 0 0
+Stats2     0 0 0
+Stats3     0 0 0
+Stats4     0 0 1 0 0
+Attribs    13 13 13 13 13 13 13
+Saves      0 0 0 0 0
+#ENDMOBILE
+
+#MOBILE
+Vnum       499
+Keywords   last mob~
+Short      a newly created last mob~
+Long       Some god abandoned a newly created last mob here.
+~
+Race       human~
+Class      warrior~
+Position   standing~
+DefPos     standing~
+Gender     neuter~
+Actflags   npc prototype~
+Stats1     0 1 0 0 0 0
+Stats2     0 0 0
+Stats3     0 0 0
+Stats4     0 0 1 0 0
+Attribs    13 13 13 13 13 13 13
+Saves      0 0 0 0 0
+#ENDMOBILE
+
+#OBJECT
+Vnum     400
+Keywords first obj~
+Type     trash~
+Short    a newly created first obj~
+Long     Some god dropped a newly created first obj here.~
+Flags    prototype~
+Values   0 0 0 0 0 0
+Stats    1 0 0 0 0
+#ENDOBJECT
+
+#OBJECT
+Vnum     499
+Keywords last obj~
+Type     trash~
+Short    a newly created last obj~
+Long     Some god dropped a newly created last obj here.~
+Flags    prototype~
+Values   0 0 0 0 0 0
+Stats    1 0 0 0 0
+#ENDOBJECT
+
+#ROOM
+Vnum     400
+Name     A Cavernous Stone Hall~
+Sector   city~
+Flags    indoors prototype~
+Desc     A cavernous hall carved from the depths of the mountains.  The dark colored
+ granite is littered with lines of quartz and other impurities, forming a
+web  of lines that stretch across the walls, and down to the rough-hewn
+floor  beneath your feet.
+~
+#EXIT
+Direction north~
+ToRoom    401
+#ENDEXIT
+
+#MUDPROG
+Progtype  rand_prog~
+Arglist   90~
+Comlist   mea $n The walls echo with the sound of water dripping.
+~
+#ENDPROG
+
+#ENDROOM
+
+#ROOM
+Vnum     401
+Name     Stone Tunnel - Placeholder~
+Sector   city~
+Flags    prototype~
+#EXIT
+Direction north~
+ToRoom    402
+#ENDEXIT
+
+#EXIT
+Direction east~
+ToRoom    403
+#ENDEXIT
+
+#EXIT
+Direction south~
+ToRoom    400
+#ENDEXIT
+
+#ENDROOM
+
+#ROOM
+Vnum     402
+Name     Floating in a void~
+Sector   city~
+Flags    prototype~
+#EXIT
+Direction south~
+ToRoom    401
+#ENDEXIT
+
+#ENDROOM
+
+#ROOM
+Vnum     403
+Name     Stone Tunnel - Placeholder~
+Sector   city~
+Flags    prototype~
+#EXIT
+Direction east~
+ToRoom    404
+#ENDEXIT
+
+#EXIT
+Direction west~
+ToRoom    401
+#ENDEXIT
+
+#ENDROOM
+
+#ROOM
+Vnum     404
+Name     A Long Stone Tunnel~
+Sector   city~
+Flags    prototype~
+#EXIT
+Direction north~
+ToRoom    405
+Flags     isdoor closed~
+#ENDEXIT
+
+#EXIT
+Direction south~
+ToRoom    406
+Flags     isdoor closed~
+#ENDEXIT
+
+#EXIT
+Direction west~
+ToRoom    403
+#ENDEXIT
+
+#ENDROOM
+
+#ROOM
+Vnum     405
+Name     A Small Sleeping Room - Placeholder~
+Sector   city~
+Flags    prototype~
+#EXIT
+Direction south~
+ToRoom    404
+Flags     isdoor closed~
+#ENDEXIT
+
+#ENDROOM
+
+#ROOM
+Vnum     406
+Name     A Small Sleeping Room - Placeholder~
+Sector   city~
+Flags    prototype~
+#EXIT
+Direction north~
+ToRoom    404
+Flags     isdoor closed~
+#ENDEXIT
+
+#ENDROOM
+
+#ROOM
+Vnum     499
+Name     Floating in a void~
+Sector   city~
+Flags    prototype~
+#ENDROOM
+
+#ENDAREA
