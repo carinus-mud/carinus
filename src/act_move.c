@@ -3240,7 +3240,7 @@ void do_fast( CHAR_DATA* ch, const char* argument)
 
     if( argument[0] == '\0'  ) 
     {        
-        send_to_char("Valid locations for fast travel are: \r\n",ch);
+        send_to_char("The valid locations for fast travel are: \r\n",ch);
 
         
         for(int i = 0; i < l; i++)
