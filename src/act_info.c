@@ -824,10 +824,13 @@ void show_char_to_char_0( CHAR_DATA * victim, CHAR_DATA * ch )
       mudstrlcat( buf, "(Morphed) ", MAX_STRING_LENGTH );
 
 if (IS_NPC(victim))
+{
    set_char_color( AT_PINK, ch );
+}
 if (!IS_NPC(victim))
+{
    set_char_color( AT_LBLUE, ch);
-
+}
    if( ( victim->position == victim->defposition && victim->long_descr[0] != '\0' )
        || ( victim->morph && victim->morph->morph && victim->morph->morph->defpos == victim->position ) )
    {
@@ -3166,7 +3169,7 @@ void do_who( CHAR_DATA* ch, const char* argument)
 send_to_pager( "\r\n&WThe following players are visible right now\r\n\r\n", ch);
 
 if ( first_imm )
-      
+{      
     for ( cur_who = first_imm; cur_who; cur_who = next_who )
     {
       send_to_pager( "&O|mmortal  ", ch);
@@ -3176,9 +3179,9 @@ if ( first_imm )
       DISPOSE( cur_who->text );
       DISPOSE( cur_who );
     } 
-
+}
     if ( first_mortal )
-
+{
 	 for ( cur_who = first_mortal; cur_who; cur_who = next_who )
     {
       send_to_pager( "&CPVE       ", ch);
@@ -3188,9 +3191,9 @@ if ( first_imm )
       DISPOSE( cur_who->text );
       DISPOSE( cur_who ); 
     } 
-
+}
    if( first_deadly )
-
+{
    for( cur_who = first_deadly; cur_who; cur_who = next_who )
    {
       send_to_pager( "&RPVP       ", ch);
@@ -3201,7 +3204,8 @@ if ( first_imm )
       DISPOSE( cur_who );
    }
 
-    if ( !ch )
+}
+   if ( !ch )
     {
 
 	fprintf( whoout, "\n\rYou see %d player%s in the game.\n\r", nMatch, nMatch == 1 ? "" : "s" );
