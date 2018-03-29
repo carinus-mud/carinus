@@ -3245,7 +3245,7 @@ void do_fast( CHAR_DATA* ch, const char* argument)
         
         for(int i = 0; i < l; i++)
         {        
-            ch_printf(ch,"%i) %s \r\n",i+1,find_location(ch, locs[i] )->name );            
+            ch_printf(ch,"#%i) %s \r\n",i+1,find_location(ch, locs[i] )->name );            
         }
     }
     else
