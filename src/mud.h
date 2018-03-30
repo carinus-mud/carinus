@@ -2323,7 +2323,7 @@ struct char_data
    short style;
    short height;
    short weight;
-   int fast_travel_locs[10]; // fast travel, 100 locations should be more than enough
+   int fast_travel_locs[MAX_FAST_TRAVEL_LOCATIONS]; 
    short armor;
    short wimpy;
    int deaf;

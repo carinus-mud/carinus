@@ -3227,7 +3227,7 @@ void do_fast( CHAR_DATA* ch, const char* argument)
 {
     // This may seem ugly but it counts the total number of locations (for later use)
     int l = 0;
-    send_to_char("This change should go through nicely",ch);
+    
     char locs[MAX_FAST_TRAVEL_LOCATIONS][7];
     
     while(ch->fast_travel_locs[l] != 0)
@@ -3237,21 +3237,8 @@ void do_fast( CHAR_DATA* ch, const char* argument)
     
     l++;
     }
-
-    if( argument[0] == '\0'  ) 
-    {        
-        send_to_char("Valid locations for fast travel are: \r\n",ch);
-
-        
-        for(int i = 0; i < l; i++)
-        {        
-            ch_printf(ch,"%i) %s \r\n",i+1,find_location(ch, locs[i] )->name );            
-        }
-    }
-    else
-    {
-        
-        if( !strcmp(argument, "save"))
+    
+    if( !strcmp(argument, "save"))
         {
             send_to_char("You remember this location and save it \r\n",ch);
             
@@ -3260,6 +3247,28 @@ void do_fast( CHAR_DATA* ch, const char* argument)
 
             return;
         }
+     if(l == 0)
+        {
+            send_to_char("You don't have any fast travel locations remembered \r\n",ch);
+            send_to_char("Testers, use 'fast save' to create a location in your current room \r\n",ch);
+            return;
+        }
+
+    if( argument[0] == '\0'  ) 
+    {        
+            send_to_char("Valid locations for fast travel are: \r\n",ch);
+
+            
+            for(int i = 0; i < l; i++)
+            {        
+                ch_printf(ch,"%i) %s \r\n",i+1,find_location(ch, locs[i] )->name );            
+            }
+       
+    }
+    else
+    {
+        
+       
         if(!is_number(argument)) 
         { 
             ch_printf(ch,"%s %s", "Enter a location's number, for example 'fast 1' to travel" ,
