@@ -468,10 +468,10 @@ void do_newscore( CHAR_DATA* ch, const char* argument )
 
 //   AFFECT_DATA *paf;
 
-send_to_char( "&r+===========================================================================+\r", ch);
+send_to_char( "&r+===========================================================================+\n\r", ch);
 pager_printf( ch, "&r|&W %-15s Level %-2d %-12s Hometown: %-4s            &r|\r\n",
         ch->name, ch->level, capitalize( get_race(ch)), ch->pcdata->hometown );
-send_to_char( "&r+===========================================================================+\r", ch);
+send_to_char( "&r+===========================================================================+\n\r", ch);
 pager_printf( ch, "&r| &CFaction: &W%-15s     &CTier: &W%d           &CStat Major: &W(not coded)    &r|\r\n",
         ch->pcdata->clan_name, ch->pcdata->tier);
 pager_printf( ch, "&r| &CRank:    &W%-15s    &CAlign: &W%-5d       &CStat Minor: &W(not coded)    &r|\r\n",
@@ -480,7 +480,7 @@ pager_printf( ch, "&r| &CWorships: &W%-15s   &CFavor: &W%-5d       &CArmor: &W%-
         ch->pcdata->deity ? ch->pcdata->deity->name : "(none)", ch->pcdata->favor, GET_AC(ch));
 pager_printf( ch, "&r| &CHitroll: &W%-3d              &CDamroll: &W%-3d                                    &r|\r\n",
 	GET_HITROLL(ch), GET_DAMROLL(ch));
-send_to_char( "&r+=============================+=============================================+\r", ch);
+send_to_char( "&r+=============================+=============================================+\n\r", ch);
 pager_printf( ch, "&r| &CStrength:      &W%2d(%2d)       &r|             &CHealth: &W%-5d/%-5d             &r|\r\n",
         get_curr_str( ch ), ch->perm_str, ch->hit, ch->max_hit);
 pager_printf( ch, "&r| &CDexterity:     &W%2d(%2d)       &r|         ", get_curr_dex(ch), ch->perm_dex);
@@ -496,7 +496,7 @@ float value = 25.0 * ((float) ch->hit / (float) ch->max_hit) ;
                                   else
                                         send_to_char(" ",ch);
                                 }
-                    send_to_char("&W]&r         |\r",ch);
+                    send_to_char("&W]&r         |\n\r",ch);
 pager_printf( ch, "&r| &CConstitution:  &W%2d(%2d)       &r|              &CMana:  &W%-5d/%-5d             &r|\r\n",
 	get_curr_con(ch), ch->perm_con, ch->mana, ch->max_mana); 
 pager_printf(ch, "&r| &CIntelligence:  &W%2d(%2d)       &r|         ", get_curr_int(ch), ch->perm_int);
@@ -511,7 +511,7 @@ value = 25.0 * ((float) ch->mana / (float) ch->max_mana) ;
                                   else
                                         send_to_char(" ",ch);
                                 }
-                    send_to_char("&W]&r         |\r",ch);
+                    send_to_char("&W]&r         |\n\r",ch);
 
 pager_printf( ch, "&r| &CWisdom:        &W%2d(%2d)       &r|            &CMovement:  &W%-5d/%-5d           &r|\r\n",
         get_curr_wis( ch ), ch->perm_wis, ch->move, ch->max_move);
@@ -525,7 +525,7 @@ value = 25.0 * ((float) ch->move / (float) ch->max_move) ;
                                   else
                                         send_to_char(" ",ch);
                                 }
-                    send_to_char("&W]&r         &r|\r",ch);
+                    send_to_char("&W]&r         &r|\n\r",ch);
 
 pager_printf( ch, "&r| &CLuck:          &W%2d(%2d)       &r|            &CExp TNL: &W%-10s              &r|\r\n",
         get_curr_lck( ch ), ch->perm_lck,  num_punct( exp_level( ch, ch->level + 1 ) - ch->exp ));
@@ -540,18 +540,18 @@ value = 25.0 * (((float) ch->exp )/((float) exp_level( ch, ch->level + 1 ) + ch-
                                   else
                                         send_to_char(" ",ch);
                                 }
-                    send_to_char("&W]&r         |\r",ch);
+                    send_to_char("&W]&r         |\n\r",ch);
 pager_printf( ch, "&r| &CPractices:     &W%-5d        &r|                                             |  \r\n", ch->practice);
-send_to_char( "&r+=============================+=============================================+\r", ch);
-send_to_char( "&r| &CMajor Feats:                                                              &r|\r", ch);
-send_to_char( "&r|                                                                           |\r", ch);
-send_to_char( "&r|                                                                           |\r", ch);
-send_to_char( "&r|                                                                           |\r", ch);
-send_to_char( "&r| &CMinor Feats:                                                              &r|\r", ch);
-send_to_char( "&r|                                                                           |\r", ch);
-send_to_char( "&r|                                                                           |\r", ch);
-send_to_char( "&r|                                                                           |\r", ch);
-send_to_char( "&r+===========================================================================+\r", ch);
+send_to_char( "&r+=============================+=============================================+\n\r", ch);
+send_to_char( "&r| &CMajor Feats:                                                              &r|\n\r", ch);
+send_to_char( "&r|                                                                           |\n\r", ch);
+send_to_char( "&r|                                                                           |\n\r", ch);
+send_to_char( "&r|                                                                           |\n\r", ch);
+send_to_char( "&r| &CMinor Feats:                                                              &r|\n\r", ch);
+send_to_char( "&r|                                                                           |\n\r", ch);
+send_to_char( "&r|                                                                           |\n\r", ch);
+send_to_char( "&r|                                                                           |\n\r", ch);
+send_to_char( "&r+===========================================================================+\n\r", ch);
 
    switch ( ch->position )
    {
@@ -622,12 +622,12 @@ send_to_char( "&r+==============================================================
    pager_printf( ch, "&r| &CPosition:&W %-15s          &CStance:&W   %-15s              &r|\r\n", buf, buf2 );
 
    pager_printf( ch, "&r| &CYour Cpose is set to: &W%-40s            &r|\r\n", ch->pcdata->cpose );
-send_to_char( "&r+===========================================================================+\r", ch);
+send_to_char( "&r+===========================================================================+\n\r", ch);
 
 
       pager_printf( ch, "&r| &CPKILL DATA:  Pkills &W(%3.3d)     &CIllegal Pkills &W(%3.3d)     &CPdeaths &W(%3.3d)      &r|\r\n",
                     ch->pcdata->pkills, ch->pcdata->illegal_pk, ch->pcdata->pdeaths );
-send_to_char( "&r+===========================================================================+\r", ch);
+send_to_char( "&r+===========================================================================+\n\r", ch);
 
 
 
@@ -640,7 +640,7 @@ send_to_char( "&r+==============================================================
                     ? ch->pcdata->bamfin : "An immortal appears." );
       pager_printf( ch, "&r| &YBamfout: %-60s     &r|\r\n", ( ch->pcdata->bamfout[0] != '\0' )
                     ? ch->pcdata->bamfout : "The immortal disappears." );
-send_to_char( "&r+===========================================================================+\r", ch);
+send_to_char( "&r+===========================================================================+\n\r", ch);
 
   }
       if( ch->pcdata->area )
@@ -683,13 +683,13 @@ float value = 25.0 * ((float) ch->hit / (float) ch->max_hit) ;
                                   else
                                         send_to_char(" ",ch);
                                 }
-                    send_to_char("&W]&W  \r",ch);         
+                    send_to_char("&W]&W  \n\r",ch);         
 
          
 
 
 
-pager_printf( ch, "&CEQUIP&W                                     Mana: %d/%d \r",
+pager_printf( ch, "&CEQUIP&W                                     Mana: %d/%d \r\n",
                     ch->mana, ch->max_mana);
 
 
@@ -707,10 +707,10 @@ value = 25.0 * ((float) ch->mana / (float) ch->max_mana) ;
                                   else
                                         send_to_char(" ",ch);
                                 }
-                    send_to_char("&W]&W  \r",ch);         
+                    send_to_char("&W]&W  \n\r",ch);         
 
 
-pager_printf( ch, "&CONLINE&W				        Stamina: %d/%d \r",
+pager_printf( ch, "&CONLINE&W				        Stamina: %d/%d \n\r",
 			ch->move, ch->max_move );
 
 send_to_char( "&CGROUP&W				   ", ch);
@@ -724,9 +724,9 @@ value = 25.0 * ((float) ch->move / (float) ch->max_move) ;
                                   else
                                         send_to_char(" ",ch);
                                 }
-                    send_to_char("&W]&W  \r",ch);         
+                    send_to_char("&W]&W  \n\r",ch);         
 
-pager_printf( ch, "&CTIME&W                                     XP TNL %s\r",
+pager_printf( ch, "&CTIME&W                                     XP TNL %s\n\r",
 			num_punct( exp_level( ch, ch->level + 1 ) - ch->exp ));
 
 send_to_char ( "&CAREA&W                               ", ch);
@@ -740,7 +740,7 @@ value = 25.0 * (((float) ch->exp )/((float) exp_level( ch, ch->level + 1 ) + ch-
                                   else
                                         send_to_char(" ",ch);
                                 }
-                    send_to_char("&W]&W  \r",ch);
+                    send_to_char("&W]&W  \n\r",ch);
 pager_printf( ch, "           &YGold: %d  &wAP: %d  &CPractice Points: %d\r\n",
                     ch->gold, ch->pcdata->ap, ch->practice );
 
