@@ -1248,15 +1248,15 @@ void do_look( CHAR_DATA * ch, const char *argument )
       if( !IS_NPC(ch) && IS_IMMORTAL(ch) && IS_SET( ch->pcdata->flags, PCFLAG_SECTORD ) )
 	{
 	
-	   ch_printf( ch, "[Sector Type: %s]\r\n", sec_flags[ch->in_room->sector_type] );
+	   ch_printf( ch, "&P[Sector Type: &W%s]\r\n", sec_flags[ch->in_room->sector_type] );
 	}
 
 	/* Area name and filename display installed by Samson 12-13-97 */
 	if( !IS_NPC(ch) && IS_IMMORTAL(ch) && IS_SET( ch->pcdata->flags, PCFLAG_ANAME ) )
 	{
-	  ch_printf( ch, "[Area name: %s]  ", ch->in_room->area->name );
+	  ch_printf( ch, "&P[Area name: &W%s]  ", ch->in_room->area->name );
         if ( ch->level >= LEVEL_CREATOR )
-          ch_printf( ch, "[Area filename: %s]\r\n", ch->in_room->area->filename );
+          ch_printf( ch, "&P[Area filename: &W%s]\r\n", ch->in_room->area->filename );
         else
 	    send_to_char( "\r\n", ch );
       }	
