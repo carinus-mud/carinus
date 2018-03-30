@@ -468,7 +468,7 @@ void do_newscore( CHAR_DATA* ch, const char* argument )
 
 //   AFFECT_DATA *paf;
 
-send_to_char( "&r+===========================================================================+\n\r", ch);
+send_to_char( "\r\n&r+===========================================================================+\n\r", ch);
 pager_printf( ch, "&r|&W %-15s Level %-2d %-12s Hometown: %-4s            &r|\r\n",
         ch->name, ch->level, capitalize( get_race(ch)), ch->pcdata->hometown );
 send_to_char( "&r+===========================================================================+\n\r", ch);
