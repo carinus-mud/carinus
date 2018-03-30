@@ -527,7 +527,7 @@ value = 25.0 * ((float) ch->move / (float) ch->max_move) ;
                                 }
                     send_to_char("&W]&r         &r|\n\r",ch);
 
-pager_printf( ch, "&r| &CLuck:          &W%2d(%2d)       &r|            &CExp TNL: &W%-10s              &r|\r\n",
+pager_printf( ch, "&r| &CLuck:          &W%2d(%2d)       &r|            &CExp TNL: &W%-15s         &r|\r\n",
         get_curr_lck( ch ), ch->perm_lck,  num_punct( exp_level( ch, ch->level + 1 ) - ch->exp ));
 pager_printf( ch, "&r| &CAP:            &W%-5d        &r|         ", ch->pcdata->ap);
 send_to_char("&W[",ch);
