@@ -2037,6 +2037,9 @@ typedef enum
 #define PCFLAG_NOBIO          BV22 /* Cannot set a bio */
 #define PCFLAG_NOCPOSE     BV23 /* Cannot set a cpose */
 #define PCFLAG_BUILDWALK     BV24
+#define PCFLAG_AUTOFLAGS     BV25
+#define PCFLAG_ANAME	     BV26
+#define PCFLAG_SECTORD 	     BV27
 
 typedef enum
 {

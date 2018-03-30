@@ -1102,7 +1102,6 @@ void new_descriptor( int new_desc )
     * Send the greeting.
     */
    {
-
       extern char *help_greeting;
       if( help_greeting[0] == '.' )
          send_to_desc_color( help_greeting + 1, dnew );

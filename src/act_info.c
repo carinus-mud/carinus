@@ -1234,6 +1234,33 @@ void do_look( CHAR_DATA * ch, const char *argument )
          send_to_char( ch->in_room->name, ch );
          send_to_char( "\r\n", ch );
       }
+	/* Room flag display installed by Samson 12-10-97 */
+	if( !IS_NPC(ch) && IS_IMMORTAL(ch) && IS_SET( ch->pcdata->flags, PCFLAG_AUTOFLAGS ) )
+	{
+
+	   ch_printf( ch, "&P[Area Flags: &W%s]\r\n", flag_string( ch->in_room->area->flags, area_flags ) );
+
+	   ch_printf( ch, "&P[Room flags: &W%s\r\n", ext_flag_string( &ch->in_room->room_flags, r_flags ) );
+
+	}
+
+      /* Room Sector display written and installed by Samson 12-10-97 */
+      if( !IS_NPC(ch) && IS_IMMORTAL(ch) && IS_SET( ch->pcdata->flags, PCFLAG_SECTORD ) )
+	{
+	
+	   ch_printf( ch, "[Sector Type: %s]\r\n", sec_flags[ch->in_room->sector_type] );
+	}
+
+	/* Area name and filename display installed by Samson 12-13-97 */
+	if( !IS_NPC(ch) && IS_IMMORTAL(ch) && IS_SET( ch->pcdata->flags, PCFLAG_ANAME ) )
+	{
+	  ch_printf( ch, "[Area name: %s]  ", ch->in_room->area->name );
+        if ( ch->level >= LEVEL_CREATOR )
+          ch_printf( ch, "[Area filename: %s]\r\n", ch->in_room->area->filename );
+        else
+	    send_to_char( "\r\n", ch );
+      }	
+
       set_char_color( AT_RMDESC, ch );
 
       if( arg1[0] == '\0' || ( !IS_NPC( ch ) && !xIS_SET( ch->act, PLR_BRIEF ) ) )
@@ -4210,7 +4237,24 @@ void do_config( CHAR_DATA* ch, const char* argument)
                  : "[-] rip",
                  xIS_SET( ch->act, PLR_COMPASS ) ? "[+] COMPASS"
                  : "[-] compass", xIS_SET( ch->act, PLR_AUTOMAP ) ? "[+] AUTOMAP" : "[-] automap" );
-      set_char_color( AT_DGREEN, ch );
+      
+	/* Config option for Room Flag display added by Samson 12-10-97 */
+	/* Config option for Sector Type display added by Samson 12-10-97 */
+	/* Config option Area name and filename added by Samson 12-13-97 */
+      if( IS_IMMORTAL( ch ) )
+      {
+	  set_char_color( AT_DGREEN, ch );
+        send_to_char( "\r\nMore Immortal toggles:  ", ch );
+        set_char_color( AT_GREY, ch );
+        ch_printf( ch, "Roomflags [%s] Sectortypes [%s] Filename [%s]\r\n",
+        IS_SET(ch->pcdata->flags, PCFLAG_AUTOFLAGS) ? "+"
+							          : " ",
+	  IS_SET(ch->pcdata->flags, PCFLAG_SECTORD)   ? "+"
+							          : " ",
+	  IS_SET(ch->pcdata->flags, PCFLAG_ANAME)     ? "+"
+								    : " " );
+      }
+	set_char_color( AT_DGREEN, ch );
       send_to_char( "\r\n\r\nAuto:      ", ch );
       set_char_color( AT_GREY, ch );
       ch_printf( ch, "%-12s   %-12s   %-12s   %-12s",
@@ -4350,6 +4394,12 @@ void do_config( CHAR_DATA* ch, const char* argument)
             bit = PCFLAG_GAG;
          else if( !str_prefix( arg + 1, "pager" ) )
             bit = PCFLAG_PAGERON;
+	    else if ( IS_IMMORTAL ( ch )
+               && ( !str_prefix( arg+1, "roomflags" ) ) ) bit = PCFLAG_AUTOFLAGS;
+	    else if ( IS_IMMORTAL ( ch )
+		   && ( !str_prefix( arg+1, "sectortypes" ) ) ) bit = PCFLAG_SECTORD;
+	    else if ( IS_IMMORTAL ( ch )
+		   && ( !str_prefix( arg+1, "filename" ) ) ) bit = PCFLAG_ANAME;
          else if( !str_prefix( arg + 1, "groupwho" ) )
             bit = PCFLAG_GROUPWHO;
          else if( !str_prefix( arg + 1, "@hgflag_" ) )

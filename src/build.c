@@ -161,7 +161,7 @@ const char *const pc_flags[] = {
 /* changed "r8" to "" so players on watch can't see it  -- Gorog */
    "nosummon", "pager", "notitled", "groupwho", "diagnose", "highgag", "",
    "nstart", "dnd", "idle", "hints", "beckon", "nobeckon", "nodesc", "nobio",
-   "nocpose", "buildwalk", "r25", "r26", "r27", "r28", "r29", "r30", "r31"
+   "nocpose", "buildwalk", "flags", "aname", "sector", "r28", "r29", "r30", "r31"
 };
 
 const char *const plr_flags[] = {
