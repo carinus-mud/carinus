@@ -1839,7 +1839,7 @@ ch_ret damage( CHAR_DATA * ch, CHAR_DATA * victim, int dam, int dt )
    char log_buf[MAX_STRING_LENGTH];
    char filename[256];
    short dameq;
-   short maxdam;
+   int  maxdam;
    bool npcvict;
    bool loot;
    int xp_gain;
@@ -1972,9 +1972,11 @@ ch_ret damage( CHAR_DATA * ch, CHAR_DATA * victim, int dam, int dt )
     * Stop up any residual loopholes.
     */
    if( dt == gsn_backstab )
-      maxdam = ch->level * 80;
+      maxdam = ch->level * 120;
    else
-      maxdam = ch->level * 40;
+      maxdam = ch->level * 80;;
+
+
 	//soul fed weapons bonus
 //Thanks to Nick Gammon for cleaning this up for me
  OBJ_DATA *obj = get_eq_char( ch, WEAR_WIELD );

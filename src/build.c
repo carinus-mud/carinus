@@ -1722,9 +1722,9 @@ void do_mset( CHAR_DATA* ch, const char* argument)
    {
       if( !can_mmodify( ch, victim ) )
          return;
-      if( value < 1 || value > 32700 )
+      if( value < 1 || value > 100000 )
       {
-         send_to_char( "Hp range is 1 to 32,700 hit points.\r\n", ch );
+         send_to_char( "Hp range is 1 to 100,000 hit points.\r\n", ch );
          return;
       }
       victim->max_hit = value;
@@ -1735,9 +1735,9 @@ void do_mset( CHAR_DATA* ch, const char* argument)
    {
       if( !can_mmodify( ch, victim ) )
          return;
-      if( value < 0 || value > 30000 )
+      if( value < 0 || value > 100000 )
       {
-         send_to_char( "Mana range is 0 to 30,000 mana points.\r\n", ch );
+         send_to_char( "Mana range is 0 to 100,000 mana points.\r\n", ch );
          return;
       }
       victim->max_mana = value;
@@ -1748,9 +1748,9 @@ void do_mset( CHAR_DATA* ch, const char* argument)
    {
       if( !can_mmodify( ch, victim ) )
          return;
-      if( value < 0 || value > 30000 )
+      if( value < 0 || value > 100000 )
       {
-         send_to_char( "Move range is 0 to 30,000 move points.\r\n", ch );
+         send_to_char( "Move range is 0 to 100,000 move points.\r\n", ch );
          return;
       }
       victim->max_move = value;
@@ -1760,9 +1760,9 @@ void do_mset( CHAR_DATA* ch, const char* argument)
    {
       if( !can_mmodify( ch, victim ) )
          return;
-      if( value < 0 || value > 30000 )
+      if( value < 0 || value > 100000 )
       {
-         send_to_char( "Move range is 0 to 30,000 move points.\r\n", ch );
+         send_to_char( "Move range is 0 to 100,000 move points.\r\n", ch );
          return;
       }
       victim->max_move = value;
