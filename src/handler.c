@@ -1357,8 +1357,8 @@ void affect_modify( CHAR_DATA * ch, AFFECT_DATA * paf, bool fAdd )
       case APPLY_DETRAP:
          modify_skill( ch, gsn_detrap, mod, fAdd );
          break;
-      case APPLY_DODGE:
-         modify_skill( ch, gsn_dodge, mod, fAdd );
+//      case APPLY_DODGE:
+//         modify_skill( ch, gsn_dodge, mod, fAdd );
          break;
       case APPLY_PEEK:
          modify_skill( ch, gsn_peek, mod, fAdd );
@@ -3613,8 +3613,8 @@ const char *affect_loc_name( int location )
          return "palm";
       case APPLY_DETRAP:
          return "detrap";
-      case APPLY_DODGE:
-         return "dodge";
+//      case APPLY_DODGE:
+//         return "dodge";
       case APPLY_PEEK:
          return "peek";
       case APPLY_SCAN:

@@ -439,6 +439,7 @@ void fwrite_char( CHAR_DATA * ch, FILE * fp )
    fprintf( fp, "MGlory       %d\n", ch->pcdata->quest_accum );
    fprintf( fp, "Ap        %d\n", ch->pcdata->ap );   
    fprintf( fp, "Tier        %d\n", ch->pcdata->tier );   
+   fprintf( fp, "Deftness     %d\n", ch->pcdata->deftness );   
    fprintf( fp, "Hitroll      %d\n", ch->hitroll );
    fprintf( fp, "Damroll      %d\n", ch->damroll );
    fprintf( fp, "Armor        %d\n", ch->armor );
@@ -1339,6 +1340,7 @@ void fread_char( CHAR_DATA * ch, FILE * fp, bool preload, bool copyover )
 
             KEY( "Damroll", ch->damroll, fread_number( fp ) );
             KEY( "Deaf", ch->deaf, fread_number( fp ) );
+            KEY( "Deftness", ch->pcdata->deftness, fread_number( fp ) );
             if( !strcmp( word, "Deity" ) )
             {
                ch->pcdata->deity_name = fread_string( fp );

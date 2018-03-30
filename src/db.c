@@ -107,7 +107,7 @@ short gsn_missile_weapons;
 short gsn_detrap;
 short gsn_backstab;
 short gsn_circle;
-short gsn_dodge;
+//short gsn_dodge;
 short gsn_hide;
 short gsn_peek;
 short gsn_pick_lock;
@@ -581,7 +581,7 @@ void boot_db( bool fCopyOver )
       ASSIGN_GSN( gsn_backstab, "backstab" );
       ASSIGN_GSN( gsn_circle, "circle" );
       ASSIGN_GSN( gsn_tumble, "tumble" );
-      ASSIGN_GSN( gsn_dodge, "dodge" );
+//      ASSIGN_GSN( gsn_dodge, "dodge" );
       ASSIGN_GSN( gsn_hide, "hide" );
       ASSIGN_GSN( gsn_peek, "peek" );
       ASSIGN_GSN( gsn_pick_lock, "pick lock" );

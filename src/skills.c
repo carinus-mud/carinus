@@ -4550,7 +4550,7 @@ bool check_dodge( CHAR_DATA * ch, CHAR_DATA * victim )
    if( IS_NPC( victim ) )
       chances = UMIN( 60, 2 * victim->level );
    else
-      chances = ( int )( LEARNED( victim, gsn_dodge ) / sysdata.dodge_mod );
+      chances = ((25 * victim->pcdata->deftness) / sysdata.dodge_mod );
 
    if( chances != 0 && victim->morph != NULL )
       chances += victim->morph->dodge;
@@ -4560,7 +4560,7 @@ bool check_dodge( CHAR_DATA * ch, CHAR_DATA * victim )
     */
    if( !chance( victim, chances + victim->level - ch->level ) )
    {
-      learn_from_failure( victim, gsn_dodge );
+//      learn_from_failure( victim, gsn_dodge );
       return FALSE;
    }
 
@@ -4570,7 +4570,7 @@ bool check_dodge( CHAR_DATA * ch, CHAR_DATA * victim )
    if( !IS_NPC( ch ) && !IS_SET( ch->pcdata->flags, PCFLAG_GAG ) )
       act( AT_SKILL, "$N dodges your attack.", ch, NULL, victim, TO_CHAR );
 
-   learn_from_success( victim, gsn_dodge );
+//   learn_from_success( victim, gsn_dodge );
    return TRUE;
 }
 

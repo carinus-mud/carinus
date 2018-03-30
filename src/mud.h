@@ -2399,9 +2399,11 @@ struct pc_data
    const char *prev_site;     /* site a player last quit from */
    int ap;
    short tier;
-
    int balance;
-
+// Feat Variables
+   short deftness;
+   
+// End of Feat Variables
    long int outcast_time;  /* The time at which the char was outcast */
    long int restore_time;  /* The last time the char did a restore all */
    int flags;  /* Whether the player is deadly and whatever else we add.      */
@@ -2957,7 +2959,7 @@ extern short gsn_detrap;
 extern short gsn_backstab;
 extern short gsn_circle;
 extern short gsn_cook;
-extern short gsn_dodge;
+//extern short gsn_dodge;
 extern short gsn_hide;
 extern short gsn_peek;
 extern short gsn_pick_lock;

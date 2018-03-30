@@ -1241,6 +1241,7 @@ void do_mset( CHAR_DATA* ch, const char* argument)
       send_to_char( "  speaking speaks (see LANGUAGES)\r\n", ch );
       send_to_char( "  name short long description title spec clan\r\n", ch );
       send_to_char( "  council quest qp qpa favor deity\r\n", ch );
+      send_to_char( "  deftness\r\n", ch );
       send_to_char( "\r\n", ch );
       send_to_char( "For editing index/prototype mobiles:\r\n", ch );
       send_to_char( "  hitnumdie hitsizedie hitplus (hit points)\r\n", ch );
@@ -1677,6 +1678,23 @@ void do_mset( CHAR_DATA* ch, const char* argument)
       if( !can_mmodify( ch, victim ) )
          return;
       victim->pcdata->tier = value;
+      return;
+   }
+   if( !str_cmp( arg2, "deftness" ) )
+   {
+
+	if( IS_NPC(victim) )
+	{
+	send_to_char( "Not on NPCs.\r\n", ch);
+	return;
+	}
+      if( !can_mmodify( ch, victim ) )
+         return;
+	if (value >= 4)
+	{
+	value = 4;
+	}
+      victim->pcdata->deftness = value;
       return;
    }
 
