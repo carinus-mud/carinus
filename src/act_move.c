@@ -3227,7 +3227,7 @@ void do_fast( CHAR_DATA* ch, const char* argument)
 {
     // This may seem ugly but it counts the total number of locations (for later use)
     int l = 0;
-   send_to_char("git updated",ch);
+    send_to_char("This change should go through nicely",ch);
     char locs[MAX_FAST_TRAVEL_LOCATIONS][7];
     
     while(ch->fast_travel_locs[l] != 0)
@@ -3245,7 +3245,7 @@ void do_fast( CHAR_DATA* ch, const char* argument)
         
         for(int i = 0; i < l; i++)
         {        
-            ch_printf(ch,"#%i) %s \r\n",i+1,find_location(ch, locs[i] )->name );            
+            ch_printf(ch,"%i) %s \r\n",i+1,find_location(ch, locs[i] )->name );            
         }
     }
     else
