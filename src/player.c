@@ -977,13 +977,13 @@ void do_favor( CHAR_DATA * ch, const char *argument )
 
    if( IS_NPC( ch ) )
    {
-      send_to_char( "Huh?\r\n", ch );
+      send_to_char( "NPC has no Deity\r\n", ch );
       return;
    }
 
    set_char_color( AT_GREEN, ch );
    if( !ch->pcdata->deity )
-      mudstrlcpy( buf, "N/A", MAX_STRING_LENGTH );
+      mudstrlcpy( buf, "You have no Deity", MAX_STRING_LENGTH );
    else if( ch->pcdata->favor > 2250 )
       mudstrlcpy( buf, "loved", MAX_STRING_LENGTH );
    else if( ch->pcdata->favor > 2000 )
@@ -1019,6 +1019,9 @@ void do_favor( CHAR_DATA * ch, const char *argument )
    else
       mudstrlcpy( buf, "damned", MAX_STRING_LENGTH );
 
-   ch_printf( ch, "%s considers you to be %s.\n\r", ch->pcdata->deity->name, buf );
+   if( ch->pcdata->deity )
+   ch_printf( ch, " %s considers you to be %s.\n\r" , ch->pcdata->deity->name,  buf );
+   else
+   ch_printf( ch, "%s\r\n", buf);
    return;
 }
