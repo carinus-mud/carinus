@@ -3322,6 +3322,22 @@ bool room_is_dark( ROOM_INDEX_DATA * pRoomIndex )
    return FALSE;
 }
 
+bool room_is_fog( ROOM_INDEX_DATA * pRoomIndex )
+{
+   if( !pRoomIndex )
+   {
+      bug( "%s:: NULL pRoomIndex", __func__ );
+      return TRUE;
+   }
+
+   if( xIS_SET( pRoomIndex->room_flags, ROOM_FOG ) )
+      return TRUE;
+
+
+   return FALSE;
+}
+
+
 /*
  * If room is "do not disturb" return the pointer to the imm with dnd flag
  * NULL if room is not "do not disturb".

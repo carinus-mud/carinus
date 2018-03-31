@@ -1475,7 +1475,7 @@ void do_look( CHAR_DATA * ch, const char *argument )
        */
       if( pexit->to_room
           && ( IS_AFFECTED( ch, AFF_SCRYING )
-               || ch->Class == CLASS_THIEF || IS_SET( pexit->exit_info, EX_xLOOK ) || get_trust( ch ) >= LEVEL_IMMORTAL ) )
+                || IS_SET( pexit->exit_info, EX_xLOOK ) || get_trust( ch ) >= LEVEL_IMMORTAL ) )
       {
          if( !IS_SET( pexit->exit_info, EX_xLOOK ) && get_trust( ch ) < LEVEL_IMMORTAL )
          {
@@ -1503,6 +1503,17 @@ void do_look( CHAR_DATA * ch, const char *argument )
                }
             }
          }
+
+   if( !IS_NPC( ch )
+       && !xIS_SET( ch->act, PLR_HOLYLIGHT )
+       && !IS_AFFECTED( ch, AFF_TRUESIGHT )  && room_is_fog( ch->in_room ) )
+   {
+      set_char_color( AT_DGREY, ch );
+      send_to_char( "It is too foggy to see ... \r\n", ch );
+      return;
+   }
+
+
          if( room_is_private( pexit->to_room ) && get_trust( ch ) < sysdata.level_override_private )
          {
             set_char_color( AT_WHITE, ch );

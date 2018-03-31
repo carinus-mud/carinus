@@ -69,7 +69,7 @@ const char *const r_flags[] = {
    "donation", "nodropall", "silence", "logspeech", "nodrop", "clanstoreroom",
    "nosummon", "noastral", "teleport", "teleshowdesc", "nofloor",
    "nosupplicate", "arena", "nomissile", "noyell", "noquit", "prototype", "dnd",
-   "_track_", "nowhere", "notrack"
+   "_track_", "nowhere", "notrack", "fog"
 };
 
 const char *const o_flags[] = {

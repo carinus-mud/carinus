@@ -1869,7 +1869,7 @@ typedef enum
    ROOM_NO_RECALL, ROOM_DONATION, ROOM_NODROPALL, ROOM_SILENCE, ROOM_LOGSPEECH, ROOM_NODROP,
    ROOM_CLANSTOREROOM, ROOM_NO_SUMMON, ROOM_NO_ASTRAL, ROOM_TELEPORT, ROOM_TELESHOWDESC,
    ROOM_NOFLOOR, ROOM_NOSUPPLICATE, ROOM_ARENA, ROOM_NOMISSILE, ROOM_NOYELL, ROOM_NOQUIT,
-   ROOM_PROTOTYPE, ROOM_DND, ROOM_TRACK, ROOM_NOWHERE, ROOM_NOTRACK, ROOM_MAX
+   ROOM_PROTOTYPE, ROOM_DND, ROOM_TRACK, ROOM_NOWHERE, ROOM_NOTRACK, ROOM_FOG, ROOM_MAX
 } room_flags;
 
 /*
@@ -4863,6 +4863,7 @@ int get_obj_number args( ( OBJ_DATA * obj ) );
 int get_obj_weight args( ( OBJ_DATA * obj ) );
 int get_real_obj_weight args( ( OBJ_DATA * obj ) );
 bool room_is_dark( ROOM_INDEX_DATA * pRoomIndex );
+bool room_is_fog( ROOM_INDEX_DATA * pRoomIndex );
 bool room_is_private args( ( ROOM_INDEX_DATA * pRoomIndex ) );
 CD *room_is_dnd args( ( CHAR_DATA * ch, ROOM_INDEX_DATA * pRoomIndex ) );
 bool can_see args( ( CHAR_DATA * ch, CHAR_DATA * victim ) );
