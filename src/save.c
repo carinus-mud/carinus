@@ -397,6 +397,7 @@ void fwrite_char( CHAR_DATA * ch, FILE * fp )
    fprintf( fp, "Exp          %d\n", ch->exp );
    fprintf( fp, "Height          %d\n", ch->height );
    fprintf( fp, "Weight          %d\n", ch->weight );
+/*
       fprintf(fp,"FastTravelLocs          ");
    for(int i = 0; i < MAX_FAST_TRAVEL_LOCATIONS;i++)
    {
@@ -407,7 +408,7 @@ void fwrite_char( CHAR_DATA * ch, FILE * fp )
 
    }
    fprintf(fp,"\n");
-
+*/
 
 
    if( !xIS_EMPTY( ch->act ) )
@@ -1376,6 +1377,7 @@ void fread_char( CHAR_DATA * ch, FILE * fp, bool preload, bool copyover )
                fMatch = TRUE;
                break;
             }
+/*
             if( !strcmp(word, "FastTravelLocs"))
             {
                   int x;
@@ -1388,8 +1390,9 @@ void fread_char( CHAR_DATA * ch, FILE * fp, bool preload, bool copyover )
 
 
                
-            
+          
             }
+*/
             KEY( "Flags", ch->pcdata->flags, fread_number( fp ) );
             KEY( "FPrompt", ch->pcdata->fprompt, fread_string( fp ) );
             break;
