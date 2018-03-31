@@ -2405,6 +2405,7 @@ struct pc_data
    int balance;
 // Feat Variables
    short deftness;
+   short might;
    
 // End of Feat Variables
    long int outcast_time;  /* The time at which the char was outcast */
@@ -2982,7 +2983,6 @@ extern short gsn_grapple;
 extern short gsn_meditate;
 extern short gsn_trance;
 extern short gsn_disarm;
-extern short gsn_enhanced_damage;
 extern short gsn_kick;
 extern short gsn_parry;
 extern short gsn_rescue;

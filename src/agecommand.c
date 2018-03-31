@@ -527,7 +527,7 @@ value = 25.0 * ((float) ch->move / (float) ch->max_move) ;
                                 }
                     send_to_char("&W]&r         &r|\n\r",ch);
 
-pager_printf( ch, "&r| &CLuck:          &W%2d(%2d)       &r|            &CExp TNL: &W%-15s         &r|\r\n",
+pager_printf( ch, "&r| &CLuck:          &W%2d(%2d)       &r|            &CExp TNL: &W%-10s              &r|\r\n",
         get_curr_lck( ch ), ch->perm_lck,  num_punct( exp_level( ch, ch->level + 1 ) - ch->exp ));
 pager_printf( ch, "&r| &CAP:            &W%-5d        &r|         ", ch->pcdata->ap);
 send_to_char("&W[",ch);
@@ -543,8 +543,8 @@ value = 25.0 * (((float) ch->exp )/((float) exp_level( ch, ch->level + 1 ) + ch-
                     send_to_char("&W]&r         |\n\r",ch);
 pager_printf( ch, "&r| &CPractices:     &W%-5d        &r|                                             |  \r\n", ch->practice);
 send_to_char( "&r+=============================+=============================================+\n\r", ch);
-pager_printf( ch, "&r| &CMajor Feats:       &YDeftness: &W%d                                            &r|\n\r"
-		,ch->pcdata->deftness);
+pager_printf( ch, "&r| &CMajor Feats:       &YDeftness: &W%d   &YMight: &W%d                                 &r|\n\r"
+		,ch->pcdata->deftness, ch->pcdata->might);
 // pager_printf( ch, "&r| : &W%d                                                               &r|\r\n", ch->pcdata->deftness);
 
 

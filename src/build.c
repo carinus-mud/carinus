@@ -1241,7 +1241,7 @@ void do_mset( CHAR_DATA* ch, const char* argument)
       send_to_char( "  speaking speaks (see LANGUAGES)\r\n", ch );
       send_to_char( "  name short long description title spec clan\r\n", ch );
       send_to_char( "  council quest qp qpa favor deity\r\n", ch );
-      send_to_char( "  deftness\r\n", ch );
+      send_to_char( "  deftness, might\r\n", ch );
       send_to_char( "\r\n", ch );
       send_to_char( "For editing index/prototype mobiles:\r\n", ch );
       send_to_char( "  hitnumdie hitsizedie hitplus (hit points)\r\n", ch );
@@ -1695,6 +1695,25 @@ void do_mset( CHAR_DATA* ch, const char* argument)
 	value = 4;
 	}
       victim->pcdata->deftness = value;
+	send_to_char( "Deftness Set.\r\n", ch);
+      return;
+   }
+   if( !str_cmp( arg2, "might" ) )
+   {
+
+	if( IS_NPC(victim) )
+	{
+	send_to_char( "Not on NPCs.\r\n", ch);
+	return;
+	}
+      if( !can_mmodify( ch, victim ) )
+         return;
+	if (value >= 4)
+	{
+	value = 4;
+	}
+      victim->pcdata->might = value;
+	send_to_char( "Might Set.\r\n", ch);
       return;
    }
 
@@ -1722,9 +1741,9 @@ void do_mset( CHAR_DATA* ch, const char* argument)
    {
       if( !can_mmodify( ch, victim ) )
          return;
-      if( value < 1 || value > 32700 )
+      if( value < 1 || value > 100000 )
       {
-         send_to_char( "Hp range is 1 to 32,700 hit points.\r\n", ch );
+         send_to_char( "Hp range is 1 to 100,000 hit points.\r\n", ch );
          return;
       }
       victim->max_hit = value;
@@ -1735,9 +1754,9 @@ void do_mset( CHAR_DATA* ch, const char* argument)
    {
       if( !can_mmodify( ch, victim ) )
          return;
-      if( value < 0 || value > 32700 )
+      if( value < 0 || value > 100000 )
       {
-         send_to_char( "Mana range is 0 to 32,700 mana points.\r\n", ch );
+         send_to_char( "Mana range is 0 to 100,000 mana points.\r\n", ch );
          return;
       }
       victim->max_mana = value;
@@ -1750,7 +1769,7 @@ void do_mset( CHAR_DATA* ch, const char* argument)
          return;
       if( value < 0 || value > 100000 )
       {
-         send_to_char( "Move range is 0 to 32,700 move points.\r\n", ch );
+         send_to_char( "Move range is 0 to 100,000 move points.\r\n", ch );
          return;
       }
       victim->max_move = value;
