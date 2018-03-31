@@ -543,8 +543,8 @@ value = 25.0 * (((float) ch->exp )/((float) exp_level( ch, ch->level + 1 ) + ch-
                     send_to_char("&W]&r         |\n\r",ch);
 pager_printf( ch, "&r| &CPractices:     &W%-5d        &r|                                             |  \r\n", ch->practice);
 send_to_char( "&r+=============================+=============================================+\n\r", ch);
-pager_printf( ch, "&r| &CMajor Feats:       &YDeftness: &W%d                                            &r|\n\r"
-		,ch->pcdata->deftness);
+pager_printf( ch, "&r| &CMajor Feats:       &YDeftness: &W%d   &YMight: &W%d                                 &r|\n\r"
+		,ch->pcdata->deftness, ch->pcdata->might);
 // pager_printf( ch, "&r| : &W%d                                                               &r|\r\n", ch->pcdata->deftness);
 
 

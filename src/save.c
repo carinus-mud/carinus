@@ -440,6 +440,7 @@ void fwrite_char( CHAR_DATA * ch, FILE * fp )
    fprintf( fp, "Ap        %d\n", ch->pcdata->ap );   
    fprintf( fp, "Tier        %d\n", ch->pcdata->tier );   
    fprintf( fp, "Deftness     %d\n", ch->pcdata->deftness );   
+   fprintf( fp, "Might     %d\n", ch->pcdata->might );   
    fprintf( fp, "Hitroll      %d\n", ch->hitroll );
    fprintf( fp, "Damroll      %d\n", ch->damroll );
    fprintf( fp, "Armor        %d\n", ch->armor );
@@ -1592,6 +1593,7 @@ void fread_char( CHAR_DATA * ch, FILE * fp, bool preload, bool copyover )
             KEY( "MDeaths", ch->pcdata->mdeaths, fread_number( fp ) );
             KEY( "Mentalstate", ch->mental_state, fread_number( fp ) );
             KEY( "MGlory", ch->pcdata->quest_accum, fread_number( fp ) );
+            KEY( "Might", ch->pcdata->might, fread_number( fp ) );
             KEY( "Minsnoop", ch->pcdata->min_snoop, fread_number( fp ) );
             KEY( "MKills", ch->pcdata->mkills, fread_number( fp ) );
             KEY( "Mobinvis", ch->mobinvis, fread_number( fp ) );

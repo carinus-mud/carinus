@@ -118,7 +118,6 @@ short gsn_poison_weapon;
 
 /* thief & warrior */
 short gsn_disarm;
-short gsn_enhanced_damage;
 short gsn_kick;
 short gsn_parry;
 short gsn_rescue;
@@ -590,7 +589,6 @@ void boot_db( bool fCopyOver )
       ASSIGN_GSN( gsn_gouge, "gouge" );
       ASSIGN_GSN( gsn_poison_weapon, "poison weapon" );
       ASSIGN_GSN( gsn_disarm, "disarm" );
-      ASSIGN_GSN( gsn_enhanced_damage, "enhanced damage" );
       ASSIGN_GSN( gsn_kick, "kick" );
       ASSIGN_GSN( gsn_parry, "parry" );
       ASSIGN_GSN( gsn_rescue, "rescue" );

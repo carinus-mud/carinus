@@ -2300,6 +2300,7 @@ void nanny_get_new_class( DESCRIPTOR_DATA * d, const char *argument )
    ch->pcdata->cpose = str_dup( " is here." );
    ch->Class = 6;
    ch->pcdata->deftness = 0;
+   ch->pcdata->might = 0;
    ch->pcdata->customclass = str_dup( "Adventurer" );
 
    write_to_buffer( d, "\r\nYou may choose from the following races, or type help [race] to learn more:\r\n[", 0 );
