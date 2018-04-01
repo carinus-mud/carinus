@@ -107,7 +107,7 @@ short gsn_missile_weapons;
 short gsn_detrap;
 short gsn_backstab;
 short gsn_circle;
-//short gsn_dodge;
+short gsn_dodge;
 short gsn_hide;
 short gsn_peek;
 short gsn_pick_lock;
@@ -118,6 +118,7 @@ short gsn_poison_weapon;
 
 /* thief & warrior */
 short gsn_disarm;
+short gsn_enhanced_damage;
 short gsn_kick;
 short gsn_parry;
 short gsn_rescue;
@@ -580,7 +581,7 @@ void boot_db( bool fCopyOver )
       ASSIGN_GSN( gsn_backstab, "backstab" );
       ASSIGN_GSN( gsn_circle, "circle" );
       ASSIGN_GSN( gsn_tumble, "tumble" );
-//      ASSIGN_GSN( gsn_dodge, "dodge" );
+      ASSIGN_GSN( gsn_dodge, "dodge" );
       ASSIGN_GSN( gsn_hide, "hide" );
       ASSIGN_GSN( gsn_peek, "peek" );
       ASSIGN_GSN( gsn_pick_lock, "pick lock" );
@@ -589,6 +590,7 @@ void boot_db( bool fCopyOver )
       ASSIGN_GSN( gsn_gouge, "gouge" );
       ASSIGN_GSN( gsn_poison_weapon, "poison weapon" );
       ASSIGN_GSN( gsn_disarm, "disarm" );
+      ASSIGN_GSN( gsn_enhanced_damage, "enhanced damage" );
       ASSIGN_GSN( gsn_kick, "kick" );
       ASSIGN_GSN( gsn_parry, "parry" );
       ASSIGN_GSN( gsn_rescue, "rescue" );

@@ -1282,11 +1282,12 @@ ch_ret one_hit( CHAR_DATA * ch, CHAR_DATA * victim, int dt )
    else if( ch->position == POS_EVASIVE )
       dam = ( int )( .8 * dam );
 
-if (!IS_NPC(ch))
-{
-      dam += ( dam * ( 1 + ch->pcdata->might  ));
-}
-
+   if( !IS_NPC( ch ) && ch->pcdata->learned[gsn_enhanced_damage] > 0 )
+   {
+      dam += ( int )( dam * LEARNED( ch, gsn_enhanced_damage ) / 120 );
+      learn_from_success( ch, gsn_enhanced_damage );
+   }
+	
    if( !IS_AWAKE( victim ) )
       dam *= 2;
 
@@ -1622,10 +1623,11 @@ ch_ret projectile_hit( CHAR_DATA * ch, CHAR_DATA * victim, OBJ_DATA * wield, OBJ
 
 
 
-if (!IS_NPC(ch))
-{
-      dam += ( dam *  (1+ ch->pcdata->might)  );
-}
+   if( !IS_NPC( ch ) && ch->pcdata->learned[gsn_enhanced_damage] > 0 )
+   {
+      dam += ( int )( dam * LEARNED( ch, gsn_enhanced_damage ) / 120 );
+      learn_from_success( ch, gsn_enhanced_damage );
+   }
 
 
    if( !IS_AWAKE( victim ) )
