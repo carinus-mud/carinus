@@ -11362,6 +11362,12 @@ void do_message( CHAR_DATA *ch, const char *argument )
 
 void do_buildwalk( CHAR_DATA *ch, const char *argument )
 {
+  if( !(ch->pcdata->area)  )
+   {
+      send_to_char( "You cannot buildwalk unless you have an vnum range assigned\r\n", ch );
+      return;
+   }
+
 
     if ( !IS_IMMORTAL( ch ) || IS_NPC(ch) )
     {
