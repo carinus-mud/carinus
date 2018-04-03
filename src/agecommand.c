@@ -251,12 +251,12 @@ void do_skills( CHAR_DATA* ch, const char* )
          if( !skill || !skill->name || skill->name[0] == '\0' )
             continue;
 
+		if (IS_IMMORTAL(ch) || !CAN_CAST(ch))
          if( strcmp( skill->name, "reserved" ) == 0 && ( IS_IMMORTAL( ch ) || !CAN_CAST( ch ) ) )
          {
             if( col % 3 != 0 )
                send_to_pager( "\r\n", ch );
-            set_pager_color( AT_MAGIC, ch );
-            send_to_pager_color( " &R[&WSpells&R]&W----------------------------------------------------------------------&z\r\n",
+            send_to_pager_color( "\r\n &R[&WSpells&R]&z\r\n",
                                  ch );
             col = 0;
 
@@ -264,12 +264,11 @@ void do_skills( CHAR_DATA* ch, const char* )
          if( skill->type != lasttype )
          {
             if( !cnt )
-               send_to_pager( "                                   &w(none)\r\n", ch );
+               send_to_pager( "\r\n", ch );
             else if( col % 3 != 0 )
                send_to_pager( "\r\n", ch );
-            set_pager_color( AT_MAGIC, ch );
             pager_printf_color( ch,
-                                " &R[&W%ss&R]&W----------------------------------------------------------------------&z\r\n",
+                                " &R[&W%ss&R]&z\r\n",
                                 skill_tname[skill->type] );
             col = cnt = 0;
          }
@@ -294,11 +293,12 @@ void do_skills( CHAR_DATA* ch, const char* )
          if( ch->pcdata->learned[sn] <= 0 && SPELL_FLAG( skill, SF_SECRETSKILL ) )
             continue;
 // skip spells we haven't learned
-if ( ch->pcdata->learned[normalSn] <= 99 )
+if ( ch->pcdata->learned[normalSn] <= 0 )
   continue;
          ++cnt;
-         set_pager_color( AT_MAGIC, ch );
          pager_printf( ch, "%22.20s", skill->name );
+	if (ch->pcdata->learned[normalSn] > 0)  
+       pager_printf( ch, " %3d%% ", ch->pcdata->learned[normalSn] );
 
 //         if( ch->pcdata->learned[normalSn] > 99 )
 //        send_to_char( " &W[&GX&W]&z", ch);
@@ -543,18 +543,19 @@ value = 25.0 * (((float) ch->exp )/((float) exp_level( ch, ch->level + 1 ) + ch-
                     send_to_char("&W]&r         |\n\r",ch);
 pager_printf( ch, "&r| &CPractices:     &W%-5d        &r|                                             |  \r\n", ch->practice);
 send_to_char( "&r+=============================+=============================================+\n\r", ch);
-pager_printf( ch, "&r| &CMajor Feats:       &YDeftness: &W%d   &YMight: &W%d                                 &r|\n\r"
-		,ch->pcdata->deftness, ch->pcdata->might);
-// pager_printf( ch, "&r| : &W%d                                                               &r|\r\n", ch->pcdata->deftness);
+send_to_char( "&r|&CFeats:&r                                                                     |\n\r", ch);
+send_to_char( "&r|                                                                           |\n\r", ch);
+pager_printf( ch, "&r|          &YDeftness: &W%d             &YMight: &W%d         &YOmniscience: &W%d          &r|\n\r"
+		,ch->pcdata->deftness, ch->pcdata->might, ch->pcdata->omniscience);
+pager_printf( ch, "&r|         &YIngenuity: &W%d             &YKarma: &W%d              &YCombat: &W%d          &r|\n\r"
+		,ch->pcdata->ingenuity, ch->pcdata->karma, ch->pcdata->combat);
+pager_printf( ch, "&r|       &zBlack Magic: &W%d         &RRed Magic: &W%d         &GGreen Magic: &W%d          &r|\n\r"
+		,ch->pcdata->blackmagic, ch->pcdata->redmagic, ch->pcdata->greenmagic);
+pager_printf( ch, "&r|        &CBlue Magic: &W%d       &WWhite Magic: &W%d        &PArcana Magic: &W%d          &r|\n\r"
+		,ch->pcdata->bluemagic, ch->pcdata->whitemagic, ch->pcdata->arcanamagic);
 
 
 
-send_to_char( "&r|                                                                           |\n\r", ch);
-send_to_char( "&r|                                                                           |\n\r", ch);
-send_to_char( "&r|                                                                           |\n\r", ch);
-send_to_char( "&r| &CMinor Feats:                                                              &r|\n\r", ch);
-send_to_char( "&r|                                                                           |\n\r", ch);
-send_to_char( "&r|                                                                           |\n\r", ch);
 send_to_char( "&r|                                                                           |\n\r", ch);
 send_to_char( "&r+===========================================================================+\n\r", ch);
 

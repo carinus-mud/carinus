@@ -2406,6 +2406,16 @@ struct pc_data
 // Feat Variables
    short deftness;
    short might;
+   short omniscience;
+   short ingenuity;
+   short karma;
+   short combat;
+   short redmagic;
+   short greenmagic;
+   short bluemagic;
+   short blackmagic;
+   short whitemagic;
+   short arcanamagic;
    
 // End of Feat Variables
    long int outcast_time;  /* The time at which the char was outcast */

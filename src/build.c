@@ -1241,7 +1241,9 @@ void do_mset( CHAR_DATA* ch, const char* argument)
       send_to_char( "  speaking speaks (see LANGUAGES)\r\n", ch );
       send_to_char( "  name short long description title spec clan\r\n", ch );
       send_to_char( "  council quest qp qpa favor deity\r\n", ch );
-      send_to_char( "  deftness, might\r\n", ch );
+      send_to_char( "  deftness, might, karma, combat, ingenuity, omniscience\r\n", ch );
+      send_to_char( "  redmagic, greenmagic, bluemagic, whitemagic, blackmagic\r\n", ch );
+      send_to_char( "  arcanamagic\r\n", ch );
       send_to_char( "\r\n", ch );
       send_to_char( "For editing index/prototype mobiles:\r\n", ch );
       send_to_char( "  hitnumdie hitsizedie hitplus (hit points)\r\n", ch );
@@ -1714,6 +1716,187 @@ void do_mset( CHAR_DATA* ch, const char* argument)
 	}
       victim->pcdata->might = value;
 	send_to_char( "Might Set.\r\n", ch);
+      return;
+   }
+
+   if( !str_cmp( arg2, "combat" ) )
+   {
+
+	if( IS_NPC(victim) )
+	{
+	send_to_char( "Not on NPCs.\r\n", ch);
+	return;
+	}
+      if( !can_mmodify( ch, victim ) )
+         return;
+	if (value >= 4)
+	{
+	value = 4;
+	}
+      victim->pcdata->combat = value;
+	send_to_char( "Combat Set.\r\n", ch);
+      return;
+   }
+   if( !str_cmp( arg2, "karma" ) )
+   {
+
+	if( IS_NPC(victim) )
+	{
+	send_to_char( "Not on NPCs.\r\n", ch);
+	return;
+	}
+      if( !can_mmodify( ch, victim ) )
+         return;
+	if (value >= 4)
+	{
+	value = 4;
+	}
+      victim->pcdata->karma = value;
+	send_to_char( "karma Set.\r\n", ch);
+      return;
+   }
+   if( !str_cmp( arg2, "ingenuity" ) )
+   {
+
+	if( IS_NPC(victim) )
+	{
+	send_to_char( "Not on NPCs.\r\n", ch);
+	return;
+	}
+      if( !can_mmodify( ch, victim ) )
+         return;
+	if (value >= 4)
+	{
+	value = 4;
+	}
+      victim->pcdata->ingenuity = value;
+	send_to_char( "Ingenuity Set.\r\n", ch);
+      return;
+   }
+   if( !str_cmp( arg2, "omniscience" ) )
+   {
+
+	if( IS_NPC(victim) )
+	{
+	send_to_char( "Not on NPCs.\r\n", ch);
+	return;
+	}
+      if( !can_mmodify( ch, victim ) )
+         return;
+	if (value >= 4)
+	{
+	value = 4;
+	}
+      victim->pcdata->omniscience = value;
+	send_to_char( "Omniscience Set.\r\n", ch);
+      return;
+   }
+   if( !str_cmp( arg2, "redmagic" ) )
+   {
+
+	if( IS_NPC(victim) )
+	{
+	send_to_char( "Not on NPCs.\r\n", ch);
+	return;
+	}
+      if( !can_mmodify( ch, victim ) )
+         return;
+	if (value >= 4)
+	{
+	value = 4;
+	}
+      victim->pcdata->redmagic = value;
+	send_to_char( "Red Magic Set.\r\n", ch);
+      return;
+   }
+   if( !str_cmp( arg2, "whitemagic" ) )
+   {
+
+	if( IS_NPC(victim) )
+	{
+	send_to_char( "Not on NPCs.\r\n", ch);
+	return;
+	}
+      if( !can_mmodify( ch, victim ) )
+         return;
+	if (value >= 4)
+	{
+	value = 4;
+	}
+      victim->pcdata->whitemagic = value;
+	send_to_char( "White Magic Set.\r\n", ch);
+      return;
+   }
+   if( !str_cmp( arg2, "bluemagic" ) )
+   {
+
+	if( IS_NPC(victim) )
+	{
+	send_to_char( "Not on NPCs.\r\n", ch);
+	return;
+	}
+      if( !can_mmodify( ch, victim ) )
+         return;
+	if (value >= 4)
+	{
+	value = 4;
+	}
+      victim->pcdata->bluemagic = value;
+	send_to_char( "Blue Magic Set.\r\n", ch);
+      return;
+   }
+   if( !str_cmp( arg2, "greenmagic" ) )
+   {
+
+	if( IS_NPC(victim) )
+	{
+	send_to_char( "Not on NPCs.\r\n", ch);
+	return;
+	}
+      if( !can_mmodify( ch, victim ) )
+         return;
+	if (value >= 4)
+	{
+	value = 4;
+	}
+      victim->pcdata->greenmagic = value;
+	send_to_char( "Green Magic Set.\r\n", ch);
+      return;
+   }
+   if( !str_cmp( arg2, "blackmagic" ) )
+   {
+
+	if( IS_NPC(victim) )
+	{
+	send_to_char( "Not on NPCs.\r\n", ch);
+	return;
+	}
+      if( !can_mmodify( ch, victim ) )
+         return;
+	if (value >= 4)
+	{
+	value = 4;
+	}
+      victim->pcdata->blackmagic = value;
+	send_to_char( "Black Magic Set.\r\n", ch);
+      return;
+   }
+   if( !str_cmp( arg2, "arcanamagic" ) )
+   {
+
+	if( IS_NPC(victim) )
+	{
+	send_to_char( "Not on NPCs.\r\n", ch);
+	return;
+	}
+      if( !can_mmodify( ch, victim ) )
+         return;
+	if (value >= 4)
+	{
+	value = 4;
+	}
+      victim->pcdata->arcanamagic = value;
+	send_to_char( "Arcana Magic Set.\r\n", ch);
       return;
    }
 

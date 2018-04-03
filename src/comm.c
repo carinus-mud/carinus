@@ -2301,6 +2301,16 @@ void nanny_get_new_class( DESCRIPTOR_DATA * d, const char *argument )
    ch->Class = 6;
    ch->pcdata->deftness = 0;
    ch->pcdata->might = 0;
+   ch->pcdata->combat = 0;
+   ch->pcdata->omniscience = 0;
+   ch->pcdata->ingenuity = 0;
+   ch->pcdata->karma = 0;
+   ch->pcdata->whitemagic = 0;
+   ch->pcdata->redmagic = 0;
+   ch->pcdata->bluemagic = 0;
+   ch->pcdata->greenmagic = 0;
+   ch->pcdata->blackmagic = 0;
+   ch->pcdata->arcanamagic = 0;
    ch->pcdata->customclass = str_dup( "Adventurer" );
 
    write_to_buffer( d, "\r\nYou may choose from the following races, or type help [race] to learn more:\r\n[", 0 );
