@@ -1,0 +1,734 @@
+act_obj.c:         for( paf = obj->pIndexData->first_affect; paf; paf = paf->next )
+act_obj.c:         for( paf = obj->first_affect; paf; paf = paf->next )
+act_wiz.c:   for( paf = location->first_affect; paf; paf = paf->next )
+act_wiz.c:      ch_printf_color( ch, "&cAffect: &w%s &cby &w%d.\r\n", affect_loc_name( paf->location ), paf->modifier );
+act_wiz.c:      for( paf = location->first_permaffect; paf; paf = paf->next )
+act_wiz.c:   for( paf = obj->first_affect; paf; paf = paf->next )
+act_wiz.c:      ch_printf_color( ch, "&cAffects &w%s &cby &w%d. (extra)\r\n", affect_loc_name( paf->location ), paf->modifier );
+act_wiz.c:   for( paf = obj->pIndexData->first_affect; paf; paf = paf->next )
+act_wiz.c:      ch_printf_color( ch, "&cAffects &w%s &cby &w%d.\r\n", affect_loc_name( paf->location ), paf->modifier );
+act_wiz.c:   for( paf = victim->first_affect; paf; paf = paf->next )
+act_wiz.c:      if( ( skill = get_skilltype( paf->type ) ) != NULL )
+act_wiz.c:                             affect_loc_name( paf->location ),
+act_wiz.c:                             paf->modifier, paf->duration, affect_bit_name( &paf->bitvector ) );
+build.c:      paf->type = -1;
+build.c:      paf->duration = -1;
+build.c:      paf->location = loc;
+build.c:      paf->modifier = value;
+build.c:      xCLEAR_BITS( paf->bitvector );
+build.c:      paf->next = NULL;
+build.c:         for( paf = pObjIndex->first_affect; paf; paf = paf->next )
+build.c:               if( paf->location != APPLY_WEARSPELL && paf->location != APPLY_REMOVESPELL && paf->location != APPLY_STRIPSN
+build.c:                   && paf->location != APPLY_WEAPONSPELL )
+build.c:         for( paf = obj->first_affect; paf; paf = paf->next )
+build.c:   paf->type = -1;
+build.c:   paf->duration = -1;
+build.c:   paf->location = loc;
+build.c:   paf->modifier = value;
+build.c:   xCLEAR_BITS( paf->bitvector );
+build.c:   if( paf->location != APPLY_WEARSPELL && paf->location != APPLY_REMOVESPELL && paf->location != APPLY_STRIPSN )
+build.c:         paf_next = paf->next;
+build.c:            if( paf->location != APPLY_WEARSPELL && paf->location != APPLY_REMOVESPELL && paf->location != APPLY_STRIPSN )
+build.c:         paf_next = paf->next;
+build.c:            if( paf->location != APPLY_WEARSPELL && paf->location != APPLY_REMOVESPELL && paf->location != APPLY_STRIPSN )
+build.c:   if( paf->type < 0 || paf->type >= num_skills )
+build.c:               paf->type,
+build.c:               paf->duration,
+build.c:               ( ( paf->location == APPLY_WEAPONSPELL
+build.c:                   || paf->location == APPLY_WEARSPELL
+build.c:                   || paf->location == APPLY_REMOVESPELL
+build.c:                   || paf->location == APPLY_STRIPSN
+build.c:                   || paf->location == APPLY_RECURRINGSPELL )
+build.c:                 && IS_VALID_SN( paf->modifier ) )
+build.c:               ? skill_table[paf->modifier]->slot : paf->modifier, paf->location, print_bitvector( &paf->bitvector ) );
+build.c:               skill_table[paf->type]->name,
+build.c:               paf->duration,
+build.c:               ( ( paf->location == APPLY_WEAPONSPELL
+build.c:                   || paf->location == APPLY_WEARSPELL
+build.c:                   || paf->location == APPLY_REMOVESPELL
+build.c:                   || paf->location == APPLY_STRIPSN
+build.c:                   || paf->location == APPLY_RECURRINGSPELL )
+build.c:                 && IS_VALID_SN( paf->modifier ) )
+build.c:               ? skill_table[paf->modifier]->slot : paf->modifier, paf->location, print_bitvector( &paf->bitvector ) );
+build.c:   for( paf = room->first_permaffect; paf; paf = paf->next )
+build.c:   for( paf = pObjIndex->first_affect; paf; paf = paf->next )
+build.c:      for( paf = pObjIndex->first_affect; paf; paf = paf->next )
+build.c:         fprintf( fpout, "A\n%d %d\n", paf->location,
+build.c:                  ( ( paf->location == APPLY_WEAPONSPELL
+build.c:                      || paf->location == APPLY_WEARSPELL
+build.c:                      || paf->location == APPLY_REMOVESPELL
+build.c:                      || paf->location == APPLY_STRIPSN
+build.c:                      || paf->location == APPLY_RECURRINGSPELL )
+build.c:                    && IS_VALID_SN( paf->modifier ) ) ? skill_table[paf->modifier]->slot : paf->modifier );
+db.c:            paf->type = -1;
+db.c:            paf->duration = -1;
+db.c:            paf->location = fread_number( fp );
+db.c:            if( paf->location == APPLY_WEAPONSPELL
+db.c:                || paf->location == APPLY_WEARSPELL
+db.c:                || paf->location == APPLY_REMOVESPELL
+db.c:                || paf->location == APPLY_STRIPSN || paf->location == APPLY_RECURRINGSPELL )
+db.c:               paf->modifier = slot_lookup( fread_number( fp ) );
+db.c:               paf->modifier = fread_number( fp );
+db.c:            xCLEAR_BITS( paf->bitvector );
+db.c:      for( cpaf = cObjIndex->first_affect; cpaf; cpaf = cpaf->next )
+db.c:         paf->type = cpaf->type;
+db.c:         paf->duration = cpaf->duration;
+db.c:         paf->location = cpaf->location;
+db.c:         paf->modifier = cpaf->modifier;
+db.c:         paf->bitvector = cpaf->bitvector;
+db.c:      paf->type = fread_number( fp );
+db.c:         paf->type = sn;
+db.c:   paf->duration = fread_number( fp );
+db.c:   paf->location = fread_number( fp );
+db.c:   paf->bitvector = fread_bitvector( fp );
+db.c:   if( paf->location == APPLY_WEAPONSPELL
+db.c:       || paf->location == APPLY_WEARSPELL
+db.c:       || paf->location == APPLY_STRIPSN || paf->location == APPLY_REMOVESPELL || paf->location == APPLY_RECURRINGSPELL )
+db.c:      paf->modifier = slot_lookup( pafmod );
+db.c:      paf->modifier = pafmod;
+deity.c:      paf->type = -1;
+deity.c:      paf->duration = -1;
+deity.c:            paf->location = APPLY_STR;
+deity.c:            paf->location = APPLY_INT;
+deity.c:            paf->location = APPLY_WIS;
+deity.c:            paf->location = APPLY_CON;
+deity.c:            paf->location = APPLY_DEX;
+deity.c:            paf->location = APPLY_CHA;
+deity.c:            paf->location = APPLY_LCK;
+deity.c:      paf->modifier = 1;
+deity.c:      xCLEAR_BITS( paf->bitvector );
+fight.c:         paf_next = paf->next;
+fight.c:         if( paf->duration > 0 )
+fight.c:            paf->duration--;
+fight.c:         else if( paf->duration < 0 )
+fight.c:            if( !paf_next || paf_next->type != paf->type || paf_next->duration > 0 )
+fight.c:               skill = get_skilltype( paf->type );
+fight.c:               if( paf->type > 0 && skill && skill->msg_off )
+fight.c:            if( paf->type == gsn_possess )
+fight.c:   for( paf = obj->pIndexData->first_affect; paf; paf = paf->next )
+fight.c:      if( paf->location == APPLY_HITROLL )
+fight.c:         tohit += paf->modifier;
+fight.c:   for( paf = obj->first_affect; paf; paf = paf->next )
+fight.c:      if( paf->location == APPLY_HITROLL )
+fight.c:         tohit += paf->modifier;
+fight.c.backup:         paf_next = paf->next;
+fight.c.backup:         if( paf->duration > 0 )
+fight.c.backup:            paf->duration--;
+fight.c.backup:         else if( paf->duration < 0 )
+fight.c.backup:            if( !paf_next || paf_next->type != paf->type || paf_next->duration > 0 )
+fight.c.backup:               skill = get_skilltype( paf->type );
+fight.c.backup:               if( paf->type > 0 && skill && skill->msg_off )
+fight.c.backup:            if( paf->type == gsn_possess )
+fight.c.backup:   for( paf = obj->pIndexData->first_affect; paf; paf = paf->next )
+fight.c.backup:      if( paf->location == APPLY_HITROLL )
+fight.c.backup:         tohit += paf->modifier;
+fight.c.backup:   for( paf = obj->first_affect; paf; paf = paf->next )
+fight.c.backup:      if( paf->location == APPLY_HITROLL )
+fight.c.backup:         tohit += paf->modifier;
+handler.c:      switch ( paf->location )
+handler.c:            pRoomIndex->light += paf->modifier;
+handler.c:      switch ( paf->location )
+handler.c:            pRoomIndex->light -= paf->modifier;
+handler.c:   int location = paf->location % REVERSE_APPLY;
+handler.c:   mod = paf->modifier;
+handler.c:      xSET_BITS( ch->affected_by, paf->bitvector );
+handler.c:      xREMOVE_BITS( ch->affected_by, paf->bitvector );
+handler.c:         bug( "%s: unknown location %d. (%s)", __func__, paf->location, ch->name );
+handler.c:          || ( ( paf->location % REVERSE_APPLY ) == APPLY_WEARSPELL && !fAdd )
+handler.c:          || ( ( paf->location % REVERSE_APPLY ) == APPLY_REMOVESPELL && fAdd )
+handler.c:      bug( "%s (NULL, %d)", __func__, paf ? paf->type : 0 );
+handler.c:   paf_new->type = paf->type;
+handler.c:   paf_new->duration = paf->duration;
+handler.c:   paf_new->location = paf->location;
+handler.c:   paf_new->modifier = paf->modifier;
+handler.c:   paf_new->bitvector = paf->bitvector;
+handler.c:      bug( "%s (%s, %d): no affect.", __func__, ch->name, paf ? paf->type : 0 );
+handler.c:      paf_next = paf->next;
+handler.c:      if( paf->type == sn )
+handler.c:   for( paf = ch->first_affect; paf; paf = paf->next )
+handler.c:      if( paf->type == sn )
+handler.c:      if( paf_old->type == paf->type )
+handler.c:         paf->duration = UMIN( 1000000, paf->duration + paf_old->duration );
+handler.c:         if( paf->modifier )
+handler.c:            paf->modifier = UMIN( 5000, paf->modifier + paf_old->modifier );
+handler.c:            paf->modifier = paf_old->modifier;
+handler.c:   int location = paf->location % REVERSE_APPLY;
+handler.c:   xSET_BITS( ch->affected_by, paf->bitvector );
+handler.c:         SET_BIT( ch->affected_by.bits[0], paf->modifier );
+handler.c:         SET_BIT( ch->resistant, paf->modifier );
+handler.c:         SET_BIT( ch->susceptible, paf->modifier );
+handler.c:         SET_BIT( ch->immune, paf->modifier );
+handler.c:   for( paf = ch->first_affect; paf; paf = paf->next )
+handler.c:      for( paf = ch->in_room->first_affect; paf; paf = paf->next )
+handler.c:      for( paf = ch->in_room->first_permaffect; paf; paf = paf->next )
+handler.c:         for( paf = obj->first_affect; paf; paf = paf->next )
+handler.c:         for( paf = obj->pIndexData->first_affect; paf; paf = paf->next )
+handler.c:      for( paf = ch->in_room->first_affect; paf; paf = paf->next )
+handler.c:   for( paf = ch->first_affect; paf; paf = paf->next )
+handler.c:   for( paf = ch->in_room->first_affect; paf; paf = paf->next )
+handler.c:      if( paf->location != APPLY_WEARSPELL && paf->location != APPLY_REMOVESPELL && paf->location != APPLY_STRIPSN )
+handler.c:   for( paf = ch->in_room->first_permaffect; paf; paf = paf->next )
+handler.c:      if( paf->location != APPLY_WEARSPELL && paf->location != APPLY_REMOVESPELL && paf->location != APPLY_STRIPSN )
+handler.c:   for( paf = pRoomIndex->first_affect; paf; paf = paf->next )
+handler.c:      if( paf->location != APPLY_WEARSPELL && paf->location != APPLY_REMOVESPELL && paf->location != APPLY_STRIPSN )
+handler.c:   for( paf = pRoomIndex->first_permaffect; paf; paf = paf->next )
+handler.c:      if( paf->location != APPLY_WEARSPELL && paf->location != APPLY_REMOVESPELL && paf->location != APPLY_STRIPSN )
+handler.c:   for( paf = ch->first_affect; paf; paf = paf->next )
+handler.c:   for( paf = obj->pIndexData->first_affect; paf; paf = paf->next )
+handler.c:   for( paf = obj->first_affect; paf; paf = paf->next )
+handler.c:   for( paf = obj->pIndexData->first_affect; paf; paf = paf->next )
+handler.c:      for( paf = obj->first_affect; paf; paf = paf->next )
+handler.c:   for( paf = obj->first_affect; paf; paf = paf->next )
+handler.c:   for( paf = obj->pIndexData->first_affect; paf; paf = paf->next )
+handler.c:   for( paf = obj->first_affect; paf; paf = paf->next )
+handler.c:   for( paf = obj->pIndexData->first_affect; paf; paf = paf->next )
+handler.c:         paf_next = paf->next;
+handler.c:      if( paf->location != APPLY_WEARSPELL && paf->location != APPLY_WEAPONSPELL )
+handler.c:      if( paf->location != APPLY_WEARSPELL && paf->location != APPLY_WEAPONSPELL )
+handler.c:      paf_next = paf->next;
+handler.c:   if( paf->location != APPLY_NONE && paf->modifier != 0 )
+handler.c:      switch ( paf->location )
+handler.c:            snprintf( buf, MAX_STRING_LENGTH, "Affects %s by %d.\r\n", affect_loc_name( paf->location ), paf->modifier );
+handler.c:            snprintf( buf, MAX_STRING_LENGTH, "Affects %s by", affect_loc_name( paf->location ) );
+handler.c:               if( IS_SET( paf->modifier, 1 << x ) )
+handler.c:                      IS_VALID_SN( paf->modifier ) ? skill_table[paf->modifier]->name : "unknown" );
+handler.c:            snprintf( buf, MAX_STRING_LENGTH, "Affects %s by", affect_loc_name( paf->location ) );
+handler.c:               if( IS_SET( paf->modifier, 1 << x ) )
+handler.c:      paf_next = paf->next;
+handler.c:      for( paf = ch->switched->first_affect; paf; paf = paf->next )
+handler.c:         if( paf->duration == -1 )
+handler.c:         if( paf->type != -1 && skill_table[paf->type]->spell_fun == spell_possess )
+handler.c.backup:      switch ( paf->location )
+handler.c.backup:            pRoomIndex->light += paf->modifier;
+handler.c.backup:      switch ( paf->location )
+handler.c.backup:            pRoomIndex->light -= paf->modifier;
+handler.c.backup:   int location = paf->location % REVERSE_APPLY;
+handler.c.backup:   mod = paf->modifier;
+handler.c.backup:      xSET_BITS( ch->affected_by, paf->bitvector );
+handler.c.backup:      xREMOVE_BITS( ch->affected_by, paf->bitvector );
+handler.c.backup:         bug( "%s: unknown location %d. (%s)", __func__, paf->location, ch->name );
+handler.c.backup:          || ( ( paf->location % REVERSE_APPLY ) == APPLY_WEARSPELL && !fAdd )
+handler.c.backup:          || ( ( paf->location % REVERSE_APPLY ) == APPLY_REMOVESPELL && fAdd )
+handler.c.backup:      bug( "%s (NULL, %d)", __func__, paf ? paf->type : 0 );
+handler.c.backup:   paf_new->type = paf->type;
+handler.c.backup:   paf_new->duration = paf->duration;
+handler.c.backup:   paf_new->location = paf->location;
+handler.c.backup:   paf_new->modifier = paf->modifier;
+handler.c.backup:   paf_new->bitvector = paf->bitvector;
+handler.c.backup:      bug( "%s (%s, %d): no affect.", __func__, ch->name, paf ? paf->type : 0 );
+handler.c.backup:      paf_next = paf->next;
+handler.c.backup:      if( paf->type == sn )
+handler.c.backup:   for( paf = ch->first_affect; paf; paf = paf->next )
+handler.c.backup:      if( paf->type == sn )
+handler.c.backup:      if( paf_old->type == paf->type )
+handler.c.backup:         paf->duration = UMIN( 1000000, paf->duration + paf_old->duration );
+handler.c.backup:         if( paf->modifier )
+handler.c.backup:            paf->modifier = UMIN( 5000, paf->modifier + paf_old->modifier );
+handler.c.backup:            paf->modifier = paf_old->modifier;
+handler.c.backup:   int location = paf->location % REVERSE_APPLY;
+handler.c.backup:   xSET_BITS( ch->affected_by, paf->bitvector );
+handler.c.backup:         SET_BIT( ch->affected_by.bits[0], paf->modifier );
+handler.c.backup:         SET_BIT( ch->resistant, paf->modifier );
+handler.c.backup:         SET_BIT( ch->susceptible, paf->modifier );
+handler.c.backup:         SET_BIT( ch->immune, paf->modifier );
+handler.c.backup:   for( paf = ch->first_affect; paf; paf = paf->next )
+handler.c.backup:      for( paf = ch->in_room->first_affect; paf; paf = paf->next )
+handler.c.backup:      for( paf = ch->in_room->first_permaffect; paf; paf = paf->next )
+handler.c.backup:         for( paf = obj->first_affect; paf; paf = paf->next )
+handler.c.backup:         for( paf = obj->pIndexData->first_affect; paf; paf = paf->next )
+handler.c.backup:      for( paf = ch->in_room->first_affect; paf; paf = paf->next )
+handler.c.backup:   for( paf = ch->first_affect; paf; paf = paf->next )
+handler.c.backup:   for( paf = ch->in_room->first_affect; paf; paf = paf->next )
+handler.c.backup:      if( paf->location != APPLY_WEARSPELL && paf->location != APPLY_REMOVESPELL && paf->location != APPLY_STRIPSN )
+handler.c.backup:   for( paf = ch->in_room->first_permaffect; paf; paf = paf->next )
+handler.c.backup:      if( paf->location != APPLY_WEARSPELL && paf->location != APPLY_REMOVESPELL && paf->location != APPLY_STRIPSN )
+handler.c.backup:   for( paf = pRoomIndex->first_affect; paf; paf = paf->next )
+handler.c.backup:      if( paf->location != APPLY_WEARSPELL && paf->location != APPLY_REMOVESPELL && paf->location != APPLY_STRIPSN )
+handler.c.backup:   for( paf = pRoomIndex->first_permaffect; paf; paf = paf->next )
+handler.c.backup:      if( paf->location != APPLY_WEARSPELL && paf->location != APPLY_REMOVESPELL && paf->location != APPLY_STRIPSN )
+handler.c.backup:   for( paf = ch->first_affect; paf; paf = paf->next )
+handler.c.backup:   for( paf = obj->pIndexData->first_affect; paf; paf = paf->next )
+handler.c.backup:   for( paf = obj->first_affect; paf; paf = paf->next )
+handler.c.backup:   for( paf = obj->pIndexData->first_affect; paf; paf = paf->next )
+handler.c.backup:      for( paf = obj->first_affect; paf; paf = paf->next )
+handler.c.backup:   for( paf = obj->first_affect; paf; paf = paf->next )
+handler.c.backup:   for( paf = obj->pIndexData->first_affect; paf; paf = paf->next )
+handler.c.backup:   for( paf = obj->first_affect; paf; paf = paf->next )
+handler.c.backup:   for( paf = obj->pIndexData->first_affect; paf; paf = paf->next )
+handler.c.backup:         paf_next = paf->next;
+handler.c.backup:      if( paf->location != APPLY_WEARSPELL && paf->location != APPLY_WEAPONSPELL )
+handler.c.backup:      if( paf->location != APPLY_WEARSPELL && paf->location != APPLY_WEAPONSPELL )
+handler.c.backup:      paf_next = paf->next;
+handler.c.backup:   if( paf->location != APPLY_NONE && paf->modifier != 0 )
+handler.c.backup:      switch ( paf->location )
+handler.c.backup:            snprintf( buf, MAX_STRING_LENGTH, "Affects %s by %d.\r\n", affect_loc_name( paf->location ), paf->modifier );
+handler.c.backup:            snprintf( buf, MAX_STRING_LENGTH, "Affects %s by", affect_loc_name( paf->location ) );
+handler.c.backup:               if( IS_SET( paf->modifier, 1 << x ) )
+handler.c.backup:                      IS_VALID_SN( paf->modifier ) ? skill_table[paf->modifier]->name : "unknown" );
+handler.c.backup:            snprintf( buf, MAX_STRING_LENGTH, "Affects %s by", affect_loc_name( paf->location ) );
+handler.c.backup:               if( IS_SET( paf->modifier, 1 << x ) )
+handler.c.backup:      paf_next = paf->next;
+handler.c.backup:      for( paf = ch->switched->first_affect; paf; paf = paf->next )
+handler.c.backup:         if( paf->duration == -1 )
+handler.c.backup:         if( paf->type != -1 && skill_table[paf->type]->spell_fun == spell_possess )
+hotboot.c:   for( paf = mob->first_affect; paf; paf = paf->next )
+hotboot.c:      if( paf->type >= 0 && ( skill = get_skilltype( paf->type ) ) == NULL )
+hotboot.c:      if( paf->type >= 0 && paf->type < TYPE_PERSONAL )
+hotboot.c:                  skill->name, paf->duration, paf->modifier, paf->location, print_bitvector( &paf->bitvector ) );
+hotboot.c:                  paf->type, paf->duration, paf->modifier, paf->location, print_bitvector( &paf->bitvector ) );
+hotboot.c:                  paf->type = fread_number( fp );
+hotboot.c:                  paf->type = sn;
+hotboot.c:               paf->duration = fread_number( fp );
+hotboot.c:               paf->modifier = fread_number( fp );
+hotboot.c:               paf->location = fread_number( fp );
+hotboot.c:               if( paf->location == APPLY_WEAPONSPELL
+hotboot.c:                   || paf->location == APPLY_WEARSPELL
+hotboot.c:                   || paf->location == APPLY_REMOVESPELL
+hotboot.c:                   || paf->location == APPLY_STRIPSN || paf->location == APPLY_RECURRINGSPELL )
+hotboot.c:                  paf->modifier = slot_lookup( paf->modifier );
+hotboot.c:               paf->bitvector = fread_bitvector( fp );
+magic.c:      if( ( sktmp = get_skilltype( paf->type ) ) == NULL )
+magic.c:         for( paf = victim->first_affect; paf; paf = paf->next )
+magic.c:            if( xIS_SET( paf->bitvector, affected_by ) )
+magic.c:            if( SPELL_FLAG( get_skilltype( paf->type ), SF_NODISPEL ) )
+magic.c:   for( paf = victim->first_affect; paf; paf = paf->next )
+magic.c:      paf = paf->next;
+magic.c:   if( !paf || SPELL_FLAG( get_skilltype( paf->type ), SF_NODISPEL ) )
+magic.c:   paf->type = -1;
+magic.c:   paf->duration = -1;
+magic.c:   paf->location = APPLY_HITROLL;
+magic.c:   paf->modifier = level / 15;
+magic.c:   xCLEAR_BITS( paf->bitvector );
+magic.c:   paf->type = -1;
+magic.c:   paf->duration = -1;
+magic.c:   paf->location = APPLY_DAMROLL;
+magic.c:   paf->modifier = level / 15;
+magic.c:   xCLEAR_BITS( paf->bitvector );
+magic.c:      paf_next = paf->next;
+magic.c:      if( paf->location == APPLY_HITROLL || paf->location == APPLY_DAMROLL )
+magic.c:      for( paf = obj->pIndexData->first_affect; paf; paf = paf->next )
+magic.c:      for( paf = obj->first_affect; paf; paf = paf->next )
+magic.c:         for( paf = victim->first_affect; paf; paf = paf->next )
+magic.c:               if( paf != victim->last_affect && ( sktmp = get_skilltype( paf->type ) ) != NULL )
+magic.c:               if( paf == victim->last_affect && ( sktmp = get_skilltype( paf->type ) ) != NULL )
+magic.c:               if( ( sktmp = get_skilltype( paf->type ) ) != NULL )
+mpxset.c:      paf->type = -1;
+mpxset.c:      paf->duration = -1;
+mpxset.c:      paf->location = loc;
+mpxset.c:      paf->modifier = value;
+mpxset.c:      xCLEAR_BITS( paf->bitvector );
+mpxset.c:      paf->next = NULL;
+mpxset.c:      for( paf = obj->first_affect; paf; paf = paf->next )
+player.c:      for( paf = ch->first_affect; paf; paf = paf->next )
+player.c:         if( ( skill = get_skilltype( paf->type ) ) != NULL )
+player.c:               if( paf->duration < 25 )
+player.c:               if( paf->duration < 6 )
+player.c:               ch_printf( ch, "(%5d)   ", paf->duration );
+save.c:      for( paf = ch->in_room->first_affect; paf; paf = paf->next )
+save.c:         if( paf->location != APPLY_WEARSPELL && paf->location != APPLY_REMOVESPELL )
+save.c:      for( paf = ch->in_room->first_permaffect; paf; paf = paf->next )
+save.c:         if( paf->location != APPLY_WEARSPELL && paf->location != APPLY_REMOVESPELL )
+save.c:      for( paf = ch->in_room->first_affect; paf; paf = paf->next )
+save.c:         if( paf->location != APPLY_WEARSPELL && paf->location != APPLY_REMOVESPELL )
+save.c:      for( paf = ch->in_room->first_permaffect; paf; paf = paf->next )
+save.c:         if( paf->location != APPLY_WEARSPELL && paf->location != APPLY_REMOVESPELL )
+save.c:   for( paf = ch->first_affect; paf; paf = paf->next )
+save.c:      if( paf->type >= 0 && ( skill = get_skilltype( paf->type ) ) == NULL )
+save.c:      if( paf->type >= 0 && paf->type < TYPE_PERSONAL )
+save.c:                  skill->name, paf->duration, paf->modifier, paf->location, print_bitvector( &paf->bitvector ) );
+save.c:                  paf->type, paf->duration, paf->modifier, paf->location, print_bitvector( &paf->bitvector ) );
+save.c:   for( paf = obj->first_affect; paf; paf = paf->next )
+save.c:                  paf->type = fread_number( fp );
+save.c:                  paf->type = sn;
+save.c:               paf->duration = fread_number( fp );
+save.c:               paf->modifier = fread_number( fp );
+save.c:               paf->location = fread_number( fp );
+save.c:               if( paf->location == APPLY_WEAPONSPELL
+save.c:                   || paf->location == APPLY_WEARSPELL
+save.c:                   || paf->location == APPLY_REMOVESPELL
+save.c:                   || paf->location == APPLY_STRIPSN || paf->location == APPLY_RECURRINGSPELL )
+save.c:                  paf->modifier = slot_lookup( paf->modifier );
+save.c:               paf->bitvector = fread_bitvector( fp );
+save.c:                  paf->type = fread_number( fp );
+save.c:                     paf->type = sn;
+save.c:               paf->duration = fread_number( fp );
+save.c:               paf->location = fread_number( fp );
+save.c:               paf->bitvector = fread_bitvector( fp );
+save.c:               if( paf->location == APPLY_WEAPONSPELL
+save.c:                   || paf->location == APPLY_WEARSPELL
+save.c:                   || paf->location == APPLY_STRIPSN
+save.c:                   || paf->location == APPLY_REMOVESPELL || paf->location == APPLY_RECURRINGSPELL )
+save.c:                  paf->modifier = slot_lookup( pafmod );
+save.c:                  paf->modifier = pafmod;
+update.c:               paf_next = paf->next;
+update.c:               if( paf->location == APPLY_RECURRINGSPELL )
+update.c:                  if( IS_VALID_SN( paf->modifier )
+update.c:                      && ( skill = skill_table[paf->modifier] ) != NULL && skill->type == SKILL_SPELL )
+update.c:                     if( ( *skill->spell_fun ) ( paf->modifier, ch->level, ch, ch ) == rCHAR_DIED || char_died( ch ) )
+act_obj.c:         for( paf = obj->pIndexData->first_affect; paf; paf = paf->next )
+act_obj.c:         for( paf = obj->first_affect; paf; paf = paf->next )
+act_wiz.c:   for( paf = location->first_affect; paf; paf = paf->next )
+act_wiz.c:      ch_printf_color( ch, "&cAffect: &w%s &cby &w%d.\r\n", affect_loc_name( paf->location ), paf->modifier );
+act_wiz.c:      for( paf = location->first_permaffect; paf; paf = paf->next )
+act_wiz.c:   for( paf = obj->first_affect; paf; paf = paf->next )
+act_wiz.c:      ch_printf_color( ch, "&cAffects &w%s &cby &w%d. (extra)\r\n", affect_loc_name( paf->location ), paf->modifier );
+act_wiz.c:   for( paf = obj->pIndexData->first_affect; paf; paf = paf->next )
+act_wiz.c:      ch_printf_color( ch, "&cAffects &w%s &cby &w%d.\r\n", affect_loc_name( paf->location ), paf->modifier );
+act_wiz.c:   for( paf = victim->first_affect; paf; paf = paf->next )
+act_wiz.c:      if( ( skill = get_skilltype( paf->type ) ) != NULL )
+act_wiz.c:                             affect_loc_name( paf->location ),
+act_wiz.c:                             paf->modifier, paf->duration, affect_bit_name( &paf->bitvector ) );
+build.c:      paf->type = -1;
+build.c:      paf->duration = -1;
+build.c:      paf->location = loc;
+build.c:      paf->modifier = value;
+build.c:      xCLEAR_BITS( paf->bitvector );
+build.c:      paf->next = NULL;
+build.c:         for( paf = pObjIndex->first_affect; paf; paf = paf->next )
+build.c:               if( paf->location != APPLY_WEARSPELL && paf->location != APPLY_REMOVESPELL && paf->location != APPLY_STRIPSN
+build.c:                   && paf->location != APPLY_WEAPONSPELL )
+build.c:         for( paf = obj->first_affect; paf; paf = paf->next )
+build.c:   paf->type = -1;
+build.c:   paf->duration = -1;
+build.c:   paf->location = loc;
+build.c:   paf->modifier = value;
+build.c:   xCLEAR_BITS( paf->bitvector );
+build.c:   if( paf->location != APPLY_WEARSPELL && paf->location != APPLY_REMOVESPELL && paf->location != APPLY_STRIPSN )
+build.c:         paf_next = paf->next;
+build.c:            if( paf->location != APPLY_WEARSPELL && paf->location != APPLY_REMOVESPELL && paf->location != APPLY_STRIPSN )
+build.c:         paf_next = paf->next;
+build.c:            if( paf->location != APPLY_WEARSPELL && paf->location != APPLY_REMOVESPELL && paf->location != APPLY_STRIPSN )
+build.c:   if( paf->type < 0 || paf->type >= num_skills )
+build.c:               paf->type,
+build.c:               paf->duration,
+build.c:               ( ( paf->location == APPLY_WEAPONSPELL
+build.c:                   || paf->location == APPLY_WEARSPELL
+build.c:                   || paf->location == APPLY_REMOVESPELL
+build.c:                   || paf->location == APPLY_STRIPSN
+build.c:                   || paf->location == APPLY_RECURRINGSPELL )
+build.c:                 && IS_VALID_SN( paf->modifier ) )
+build.c:               ? skill_table[paf->modifier]->slot : paf->modifier, paf->location, print_bitvector( &paf->bitvector ) );
+build.c:               skill_table[paf->type]->name,
+build.c:               paf->duration,
+build.c:               ( ( paf->location == APPLY_WEAPONSPELL
+build.c:                   || paf->location == APPLY_WEARSPELL
+build.c:                   || paf->location == APPLY_REMOVESPELL
+build.c:                   || paf->location == APPLY_STRIPSN
+build.c:                   || paf->location == APPLY_RECURRINGSPELL )
+build.c:                 && IS_VALID_SN( paf->modifier ) )
+build.c:               ? skill_table[paf->modifier]->slot : paf->modifier, paf->location, print_bitvector( &paf->bitvector ) );
+build.c:   for( paf = room->first_permaffect; paf; paf = paf->next )
+build.c:   for( paf = pObjIndex->first_affect; paf; paf = paf->next )
+build.c:      for( paf = pObjIndex->first_affect; paf; paf = paf->next )
+build.c:         fprintf( fpout, "A\n%d %d\n", paf->location,
+build.c:                  ( ( paf->location == APPLY_WEAPONSPELL
+build.c:                      || paf->location == APPLY_WEARSPELL
+build.c:                      || paf->location == APPLY_REMOVESPELL
+build.c:                      || paf->location == APPLY_STRIPSN
+build.c:                      || paf->location == APPLY_RECURRINGSPELL )
+build.c:                    && IS_VALID_SN( paf->modifier ) ) ? skill_table[paf->modifier]->slot : paf->modifier );
+db.c:            paf->type = -1;
+db.c:            paf->duration = -1;
+db.c:            paf->location = fread_number( fp );
+db.c:            if( paf->location == APPLY_WEAPONSPELL
+db.c:                || paf->location == APPLY_WEARSPELL
+db.c:                || paf->location == APPLY_REMOVESPELL
+db.c:                || paf->location == APPLY_STRIPSN || paf->location == APPLY_RECURRINGSPELL )
+db.c:               paf->modifier = slot_lookup( fread_number( fp ) );
+db.c:               paf->modifier = fread_number( fp );
+db.c:            xCLEAR_BITS( paf->bitvector );
+db.c:      for( cpaf = cObjIndex->first_affect; cpaf; cpaf = cpaf->next )
+db.c:         paf->type = cpaf->type;
+db.c:         paf->duration = cpaf->duration;
+db.c:         paf->location = cpaf->location;
+db.c:         paf->modifier = cpaf->modifier;
+db.c:         paf->bitvector = cpaf->bitvector;
+db.c:      paf->type = fread_number( fp );
+db.c:         paf->type = sn;
+db.c:   paf->duration = fread_number( fp );
+db.c:   paf->location = fread_number( fp );
+db.c:   paf->bitvector = fread_bitvector( fp );
+db.c:   if( paf->location == APPLY_WEAPONSPELL
+db.c:       || paf->location == APPLY_WEARSPELL
+db.c:       || paf->location == APPLY_STRIPSN || paf->location == APPLY_REMOVESPELL || paf->location == APPLY_RECURRINGSPELL )
+db.c:      paf->modifier = slot_lookup( pafmod );
+db.c:      paf->modifier = pafmod;
+deity.c:      paf->type = -1;
+deity.c:      paf->duration = -1;
+deity.c:            paf->location = APPLY_STR;
+deity.c:            paf->location = APPLY_INT;
+deity.c:            paf->location = APPLY_WIS;
+deity.c:            paf->location = APPLY_CON;
+deity.c:            paf->location = APPLY_DEX;
+deity.c:            paf->location = APPLY_CHA;
+deity.c:            paf->location = APPLY_LCK;
+deity.c:      paf->modifier = 1;
+deity.c:      xCLEAR_BITS( paf->bitvector );
+fight.c:         paf_next = paf->next;
+fight.c:         if( paf->duration > 0 )
+fight.c:            paf->duration--;
+fight.c:         else if( paf->duration < 0 )
+fight.c:            if( !paf_next || paf_next->type != paf->type || paf_next->duration > 0 )
+fight.c:               skill = get_skilltype( paf->type );
+fight.c:               if( paf->type > 0 && skill && skill->msg_off )
+fight.c:            if( paf->type == gsn_possess )
+fight.c:   for( paf = obj->pIndexData->first_affect; paf; paf = paf->next )
+fight.c:      if( paf->location == APPLY_HITROLL )
+fight.c:         tohit += paf->modifier;
+fight.c:   for( paf = obj->first_affect; paf; paf = paf->next )
+fight.c:      if( paf->location == APPLY_HITROLL )
+fight.c:         tohit += paf->modifier;
+fight.c.backup:         paf_next = paf->next;
+fight.c.backup:         if( paf->duration > 0 )
+fight.c.backup:            paf->duration--;
+fight.c.backup:         else if( paf->duration < 0 )
+fight.c.backup:            if( !paf_next || paf_next->type != paf->type || paf_next->duration > 0 )
+fight.c.backup:               skill = get_skilltype( paf->type );
+fight.c.backup:               if( paf->type > 0 && skill && skill->msg_off )
+fight.c.backup:            if( paf->type == gsn_possess )
+fight.c.backup:   for( paf = obj->pIndexData->first_affect; paf; paf = paf->next )
+fight.c.backup:      if( paf->location == APPLY_HITROLL )
+fight.c.backup:         tohit += paf->modifier;
+fight.c.backup:   for( paf = obj->first_affect; paf; paf = paf->next )
+fight.c.backup:      if( paf->location == APPLY_HITROLL )
+fight.c.backup:         tohit += paf->modifier;
+handler.c:      switch ( paf->location )
+handler.c:            pRoomIndex->light += paf->modifier;
+handler.c:      switch ( paf->location )
+handler.c:            pRoomIndex->light -= paf->modifier;
+handler.c:   int location = paf->location % REVERSE_APPLY;
+handler.c:   mod = paf->modifier;
+handler.c:      xSET_BITS( ch->affected_by, paf->bitvector );
+handler.c:      xREMOVE_BITS( ch->affected_by, paf->bitvector );
+handler.c:         bug( "%s: unknown location %d. (%s)", __func__, paf->location, ch->name );
+handler.c:          || ( ( paf->location % REVERSE_APPLY ) == APPLY_WEARSPELL && !fAdd )
+handler.c:          || ( ( paf->location % REVERSE_APPLY ) == APPLY_REMOVESPELL && fAdd )
+handler.c:      bug( "%s (NULL, %d)", __func__, paf ? paf->type : 0 );
+handler.c:   paf_new->type = paf->type;
+handler.c:   paf_new->duration = paf->duration;
+handler.c:   paf_new->location = paf->location;
+handler.c:   paf_new->modifier = paf->modifier;
+handler.c:   paf_new->bitvector = paf->bitvector;
+handler.c:      bug( "%s (%s, %d): no affect.", __func__, ch->name, paf ? paf->type : 0 );
+handler.c:      paf_next = paf->next;
+handler.c:      if( paf->type == sn )
+handler.c:   for( paf = ch->first_affect; paf; paf = paf->next )
+handler.c:      if( paf->type == sn )
+handler.c:      if( paf_old->type == paf->type )
+handler.c:         paf->duration = UMIN( 1000000, paf->duration + paf_old->duration );
+handler.c:         if( paf->modifier )
+handler.c:            paf->modifier = UMIN( 5000, paf->modifier + paf_old->modifier );
+handler.c:            paf->modifier = paf_old->modifier;
+handler.c:   int location = paf->location % REVERSE_APPLY;
+handler.c:   xSET_BITS( ch->affected_by, paf->bitvector );
+handler.c:         SET_BIT( ch->affected_by.bits[0], paf->modifier );
+handler.c:         SET_BIT( ch->resistant, paf->modifier );
+handler.c:         SET_BIT( ch->susceptible, paf->modifier );
+handler.c:         SET_BIT( ch->immune, paf->modifier );
+handler.c:   for( paf = ch->first_affect; paf; paf = paf->next )
+handler.c:      for( paf = ch->in_room->first_affect; paf; paf = paf->next )
+handler.c:      for( paf = ch->in_room->first_permaffect; paf; paf = paf->next )
+handler.c:         for( paf = obj->first_affect; paf; paf = paf->next )
+handler.c:         for( paf = obj->pIndexData->first_affect; paf; paf = paf->next )
+handler.c:      for( paf = ch->in_room->first_affect; paf; paf = paf->next )
+handler.c:   for( paf = ch->first_affect; paf; paf = paf->next )
+handler.c:   for( paf = ch->in_room->first_affect; paf; paf = paf->next )
+handler.c:      if( paf->location != APPLY_WEARSPELL && paf->location != APPLY_REMOVESPELL && paf->location != APPLY_STRIPSN )
+handler.c:   for( paf = ch->in_room->first_permaffect; paf; paf = paf->next )
+handler.c:      if( paf->location != APPLY_WEARSPELL && paf->location != APPLY_REMOVESPELL && paf->location != APPLY_STRIPSN )
+handler.c:   for( paf = pRoomIndex->first_affect; paf; paf = paf->next )
+handler.c:      if( paf->location != APPLY_WEARSPELL && paf->location != APPLY_REMOVESPELL && paf->location != APPLY_STRIPSN )
+handler.c:   for( paf = pRoomIndex->first_permaffect; paf; paf = paf->next )
+handler.c:      if( paf->location != APPLY_WEARSPELL && paf->location != APPLY_REMOVESPELL && paf->location != APPLY_STRIPSN )
+handler.c:   for( paf = ch->first_affect; paf; paf = paf->next )
+handler.c:   for( paf = obj->pIndexData->first_affect; paf; paf = paf->next )
+handler.c:   for( paf = obj->first_affect; paf; paf = paf->next )
+handler.c:   for( paf = obj->pIndexData->first_affect; paf; paf = paf->next )
+handler.c:      for( paf = obj->first_affect; paf; paf = paf->next )
+handler.c:   for( paf = obj->first_affect; paf; paf = paf->next )
+handler.c:   for( paf = obj->pIndexData->first_affect; paf; paf = paf->next )
+handler.c:   for( paf = obj->first_affect; paf; paf = paf->next )
+handler.c:   for( paf = obj->pIndexData->first_affect; paf; paf = paf->next )
+handler.c:         paf_next = paf->next;
+handler.c:      if( paf->location != APPLY_WEARSPELL && paf->location != APPLY_WEAPONSPELL )
+handler.c:      if( paf->location != APPLY_WEARSPELL && paf->location != APPLY_WEAPONSPELL )
+handler.c:      paf_next = paf->next;
+handler.c:   if( paf->location != APPLY_NONE && paf->modifier != 0 )
+handler.c:      switch ( paf->location )
+handler.c:            snprintf( buf, MAX_STRING_LENGTH, "Affects %s by %d.\r\n", affect_loc_name( paf->location ), paf->modifier );
+handler.c:            snprintf( buf, MAX_STRING_LENGTH, "Affects %s by", affect_loc_name( paf->location ) );
+handler.c:               if( IS_SET( paf->modifier, 1 << x ) )
+handler.c:                      IS_VALID_SN( paf->modifier ) ? skill_table[paf->modifier]->name : "unknown" );
+handler.c:            snprintf( buf, MAX_STRING_LENGTH, "Affects %s by", affect_loc_name( paf->location ) );
+handler.c:               if( IS_SET( paf->modifier, 1 << x ) )
+handler.c:      paf_next = paf->next;
+handler.c:      for( paf = ch->switched->first_affect; paf; paf = paf->next )
+handler.c:         if( paf->duration == -1 )
+handler.c:         if( paf->type != -1 && skill_table[paf->type]->spell_fun == spell_possess )
+handler.c.backup:      switch ( paf->location )
+handler.c.backup:            pRoomIndex->light += paf->modifier;
+handler.c.backup:      switch ( paf->location )
+handler.c.backup:            pRoomIndex->light -= paf->modifier;
+handler.c.backup:   int location = paf->location % REVERSE_APPLY;
+handler.c.backup:   mod = paf->modifier;
+handler.c.backup:      xSET_BITS( ch->affected_by, paf->bitvector );
+handler.c.backup:      xREMOVE_BITS( ch->affected_by, paf->bitvector );
+handler.c.backup:         bug( "%s: unknown location %d. (%s)", __func__, paf->location, ch->name );
+handler.c.backup:          || ( ( paf->location % REVERSE_APPLY ) == APPLY_WEARSPELL && !fAdd )
+handler.c.backup:          || ( ( paf->location % REVERSE_APPLY ) == APPLY_REMOVESPELL && fAdd )
+handler.c.backup:      bug( "%s (NULL, %d)", __func__, paf ? paf->type : 0 );
+handler.c.backup:   paf_new->type = paf->type;
+handler.c.backup:   paf_new->duration = paf->duration;
+handler.c.backup:   paf_new->location = paf->location;
+handler.c.backup:   paf_new->modifier = paf->modifier;
+handler.c.backup:   paf_new->bitvector = paf->bitvector;
+handler.c.backup:      bug( "%s (%s, %d): no affect.", __func__, ch->name, paf ? paf->type : 0 );
+handler.c.backup:      paf_next = paf->next;
+handler.c.backup:      if( paf->type == sn )
+handler.c.backup:   for( paf = ch->first_affect; paf; paf = paf->next )
+handler.c.backup:      if( paf->type == sn )
+handler.c.backup:      if( paf_old->type == paf->type )
+handler.c.backup:         paf->duration = UMIN( 1000000, paf->duration + paf_old->duration );
+handler.c.backup:         if( paf->modifier )
+handler.c.backup:            paf->modifier = UMIN( 5000, paf->modifier + paf_old->modifier );
+handler.c.backup:            paf->modifier = paf_old->modifier;
+handler.c.backup:   int location = paf->location % REVERSE_APPLY;
+handler.c.backup:   xSET_BITS( ch->affected_by, paf->bitvector );
+handler.c.backup:         SET_BIT( ch->affected_by.bits[0], paf->modifier );
+handler.c.backup:         SET_BIT( ch->resistant, paf->modifier );
+handler.c.backup:         SET_BIT( ch->susceptible, paf->modifier );
+handler.c.backup:         SET_BIT( ch->immune, paf->modifier );
+handler.c.backup:   for( paf = ch->first_affect; paf; paf = paf->next )
+handler.c.backup:      for( paf = ch->in_room->first_affect; paf; paf = paf->next )
+handler.c.backup:      for( paf = ch->in_room->first_permaffect; paf; paf = paf->next )
+handler.c.backup:         for( paf = obj->first_affect; paf; paf = paf->next )
+handler.c.backup:         for( paf = obj->pIndexData->first_affect; paf; paf = paf->next )
+handler.c.backup:      for( paf = ch->in_room->first_affect; paf; paf = paf->next )
+handler.c.backup:   for( paf = ch->first_affect; paf; paf = paf->next )
+handler.c.backup:   for( paf = ch->in_room->first_affect; paf; paf = paf->next )
+handler.c.backup:      if( paf->location != APPLY_WEARSPELL && paf->location != APPLY_REMOVESPELL && paf->location != APPLY_STRIPSN )
+handler.c.backup:   for( paf = ch->in_room->first_permaffect; paf; paf = paf->next )
+handler.c.backup:      if( paf->location != APPLY_WEARSPELL && paf->location != APPLY_REMOVESPELL && paf->location != APPLY_STRIPSN )
+handler.c.backup:   for( paf = pRoomIndex->first_affect; paf; paf = paf->next )
+handler.c.backup:      if( paf->location != APPLY_WEARSPELL && paf->location != APPLY_REMOVESPELL && paf->location != APPLY_STRIPSN )
+handler.c.backup:   for( paf = pRoomIndex->first_permaffect; paf; paf = paf->next )
+handler.c.backup:      if( paf->location != APPLY_WEARSPELL && paf->location != APPLY_REMOVESPELL && paf->location != APPLY_STRIPSN )
+handler.c.backup:   for( paf = ch->first_affect; paf; paf = paf->next )
+handler.c.backup:   for( paf = obj->pIndexData->first_affect; paf; paf = paf->next )
+handler.c.backup:   for( paf = obj->first_affect; paf; paf = paf->next )
+handler.c.backup:   for( paf = obj->pIndexData->first_affect; paf; paf = paf->next )
+handler.c.backup:      for( paf = obj->first_affect; paf; paf = paf->next )
+handler.c.backup:   for( paf = obj->first_affect; paf; paf = paf->next )
+handler.c.backup:   for( paf = obj->pIndexData->first_affect; paf; paf = paf->next )
+handler.c.backup:   for( paf = obj->first_affect; paf; paf = paf->next )
+handler.c.backup:   for( paf = obj->pIndexData->first_affect; paf; paf = paf->next )
+handler.c.backup:         paf_next = paf->next;
+handler.c.backup:      if( paf->location != APPLY_WEARSPELL && paf->location != APPLY_WEAPONSPELL )
+handler.c.backup:      if( paf->location != APPLY_WEARSPELL && paf->location != APPLY_WEAPONSPELL )
+handler.c.backup:      paf_next = paf->next;
+handler.c.backup:   if( paf->location != APPLY_NONE && paf->modifier != 0 )
+handler.c.backup:      switch ( paf->location )
+handler.c.backup:            snprintf( buf, MAX_STRING_LENGTH, "Affects %s by %d.\r\n", affect_loc_name( paf->location ), paf->modifier );
+handler.c.backup:            snprintf( buf, MAX_STRING_LENGTH, "Affects %s by", affect_loc_name( paf->location ) );
+handler.c.backup:               if( IS_SET( paf->modifier, 1 << x ) )
+handler.c.backup:                      IS_VALID_SN( paf->modifier ) ? skill_table[paf->modifier]->name : "unknown" );
+handler.c.backup:            snprintf( buf, MAX_STRING_LENGTH, "Affects %s by", affect_loc_name( paf->location ) );
+handler.c.backup:               if( IS_SET( paf->modifier, 1 << x ) )
+handler.c.backup:      paf_next = paf->next;
+handler.c.backup:      for( paf = ch->switched->first_affect; paf; paf = paf->next )
+handler.c.backup:         if( paf->duration == -1 )
+handler.c.backup:         if( paf->type != -1 && skill_table[paf->type]->spell_fun == spell_possess )
+hotboot.c:   for( paf = mob->first_affect; paf; paf = paf->next )
+hotboot.c:      if( paf->type >= 0 && ( skill = get_skilltype( paf->type ) ) == NULL )
+hotboot.c:      if( paf->type >= 0 && paf->type < TYPE_PERSONAL )
+hotboot.c:                  skill->name, paf->duration, paf->modifier, paf->location, print_bitvector( &paf->bitvector ) );
+hotboot.c:                  paf->type, paf->duration, paf->modifier, paf->location, print_bitvector( &paf->bitvector ) );
+hotboot.c:                  paf->type = fread_number( fp );
+hotboot.c:                  paf->type = sn;
+hotboot.c:               paf->duration = fread_number( fp );
+hotboot.c:               paf->modifier = fread_number( fp );
+hotboot.c:               paf->location = fread_number( fp );
+hotboot.c:               if( paf->location == APPLY_WEAPONSPELL
+hotboot.c:                   || paf->location == APPLY_WEARSPELL
+hotboot.c:                   || paf->location == APPLY_REMOVESPELL
+hotboot.c:                   || paf->location == APPLY_STRIPSN || paf->location == APPLY_RECURRINGSPELL )
+hotboot.c:                  paf->modifier = slot_lookup( paf->modifier );
+hotboot.c:               paf->bitvector = fread_bitvector( fp );
+magic.c:      if( ( sktmp = get_skilltype( paf->type ) ) == NULL )
+magic.c:         for( paf = victim->first_affect; paf; paf = paf->next )
+magic.c:            if( xIS_SET( paf->bitvector, affected_by ) )
+magic.c:            if( SPELL_FLAG( get_skilltype( paf->type ), SF_NODISPEL ) )
+magic.c:   for( paf = victim->first_affect; paf; paf = paf->next )
+magic.c:      paf = paf->next;
+magic.c:   if( !paf || SPELL_FLAG( get_skilltype( paf->type ), SF_NODISPEL ) )
+magic.c:   paf->type = -1;
+magic.c:   paf->duration = -1;
+magic.c:   paf->location = APPLY_HITROLL;
+magic.c:   paf->modifier = level / 15;
+magic.c:   xCLEAR_BITS( paf->bitvector );
+magic.c:   paf->type = -1;
+magic.c:   paf->duration = -1;
+magic.c:   paf->location = APPLY_DAMROLL;
+magic.c:   paf->modifier = level / 15;
+magic.c:   xCLEAR_BITS( paf->bitvector );
+magic.c:      paf_next = paf->next;
+magic.c:      if( paf->location == APPLY_HITROLL || paf->location == APPLY_DAMROLL )
+magic.c:      for( paf = obj->pIndexData->first_affect; paf; paf = paf->next )
+magic.c:      for( paf = obj->first_affect; paf; paf = paf->next )
+magic.c:         for( paf = victim->first_affect; paf; paf = paf->next )
+magic.c:               if( paf != victim->last_affect && ( sktmp = get_skilltype( paf->type ) ) != NULL )
+magic.c:               if( paf == victim->last_affect && ( sktmp = get_skilltype( paf->type ) ) != NULL )
+magic.c:               if( ( sktmp = get_skilltype( paf->type ) ) != NULL )
+mpxset.c:      paf->type = -1;
+mpxset.c:      paf->duration = -1;
+mpxset.c:      paf->location = loc;
+mpxset.c:      paf->modifier = value;
+mpxset.c:      xCLEAR_BITS( paf->bitvector );
+mpxset.c:      paf->next = NULL;
+mpxset.c:      for( paf = obj->first_affect; paf; paf = paf->next )
+player.c:      for( paf = ch->first_affect; paf; paf = paf->next )
+player.c:         if( ( skill = get_skilltype( paf->type ) ) != NULL )
+player.c:               if( paf->duration < 25 )
+player.c:               if( paf->duration < 6 )
+player.c:               ch_printf( ch, "(%5d)   ", paf->duration );
+save.c:      for( paf = ch->in_room->first_affect; paf; paf = paf->next )
+save.c:         if( paf->location != APPLY_WEARSPELL && paf->location != APPLY_REMOVESPELL )
+save.c:      for( paf = ch->in_room->first_permaffect; paf; paf = paf->next )
+save.c:         if( paf->location != APPLY_WEARSPELL && paf->location != APPLY_REMOVESPELL )
+save.c:      for( paf = ch->in_room->first_affect; paf; paf = paf->next )
+save.c:         if( paf->location != APPLY_WEARSPELL && paf->location != APPLY_REMOVESPELL )
+save.c:      for( paf = ch->in_room->first_permaffect; paf; paf = paf->next )
+save.c:         if( paf->location != APPLY_WEARSPELL && paf->location != APPLY_REMOVESPELL )
+save.c:   for( paf = ch->first_affect; paf; paf = paf->next )
+save.c:      if( paf->type >= 0 && ( skill = get_skilltype( paf->type ) ) == NULL )
+save.c:      if( paf->type >= 0 && paf->type < TYPE_PERSONAL )
+save.c:                  skill->name, paf->duration, paf->modifier, paf->location, print_bitvector( &paf->bitvector ) );
+save.c:                  paf->type, paf->duration, paf->modifier, paf->location, print_bitvector( &paf->bitvector ) );
+save.c:   for( paf = obj->first_affect; paf; paf = paf->next )
+save.c:                  paf->type = fread_number( fp );
+save.c:                  paf->type = sn;
+save.c:               paf->duration = fread_number( fp );
+save.c:               paf->modifier = fread_number( fp );
+save.c:               paf->location = fread_number( fp );
+save.c:               if( paf->location == APPLY_WEAPONSPELL
+save.c:                   || paf->location == APPLY_WEARSPELL
+save.c:                   || paf->location == APPLY_REMOVESPELL
+save.c:                   || paf->location == APPLY_STRIPSN || paf->location == APPLY_RECURRINGSPELL )
+save.c:                  paf->modifier = slot_lookup( paf->modifier );
+save.c:               paf->bitvector = fread_bitvector( fp );
+save.c:                  paf->type = fread_number( fp );
+save.c:                     paf->type = sn;
+save.c:               paf->duration = fread_number( fp );
+save.c:               paf->location = fread_number( fp );
+save.c:               paf->bitvector = fread_bitvector( fp );
+save.c:               if( paf->location == APPLY_WEAPONSPELL
+save.c:                   || paf->location == APPLY_WEARSPELL
+save.c:                   || paf->location == APPLY_STRIPSN
+save.c:                   || paf->location == APPLY_REMOVESPELL || paf->location == APPLY_RECURRINGSPELL )
+save.c:                  paf->modifier = slot_lookup( pafmod );
+save.c:                  paf->modifier = pafmod;
+update.c:               paf_next = paf->next;
+update.c:               if( paf->location == APPLY_RECURRINGSPELL )
+update.c:                  if( IS_VALID_SN( paf->modifier )
+update.c:                      && ( skill = skill_table[paf->modifier] ) != NULL && skill->type == SKILL_SPELL )
+update.c:                     if( ( *skill->spell_fun ) ( paf->modifier, ch->level, ch, ch ) == rCHAR_DIED || char_died( ch ) )

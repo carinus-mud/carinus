@@ -1,0 +1,131 @@
+Tue Mar 27 03:22:18 2018 :: Booting Database
+ 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+Tue Mar 27 03:22:18 2018 :: [*****] BOOT: ---------------------[ Boot Log ]--------------------
+Tue Mar 27 03:22:18 2018 :: Initializing libdl support...
+Tue Mar 27 03:22:18 2018 :: Loading commands...
+Tue Mar 27 03:22:18 2018 :: Loading spec_funs...
+Tue Mar 27 03:22:18 2018 :: Loading sysdata configuration...
+Tue Mar 27 03:22:18 2018 :: Loading socials
+Tue Mar 27 03:22:18 2018 :: Loading skill table
+Tue Mar 27 03:22:18 2018 :: Sorting skill table...
+Tue Mar 27 03:22:18 2018 :: Creating skill table sorted by type...
+Tue Mar 27 03:22:18 2018 :: Remapping slots to sns
+Tue Mar 27 03:22:18 2018 :: Loading classes
+Tue Mar 27 03:22:18 2018 :: Loading races
+Tue Mar 27 03:22:18 2018 :: Loading news data
+Tue Mar 27 03:22:18 2018 :: Loading liquids
+Tue Mar 27 03:22:18 2018 :: Loading mixtures
+Tue Mar 27 03:22:18 2018 :: Loading herb table
+Tue Mar 27 03:22:18 2018 :: Loading tongues
+Tue Mar 27 03:22:18 2018 :: Loading MSSP Data...
+Tue Mar 27 03:22:18 2018 :: Initializing random number generator
+Tue Mar 27 03:22:18 2018 :: Setting time and weather.
+Tue Mar 27 03:22:18 2018 :: Loading holiday chart...
+Tue Mar 27 03:22:18 2018 :: Loading DNS cache...
+Tue Mar 27 03:22:18 2018 :: Assigning gsn's
+Tue Mar 27 03:22:18 2018 :: Reading in area files...
+(help.are)
+limbo.are     : Rooms:     2 - 99    Objs:     2 - 99    Mobs:     1 - 99
+newacad.are   : Rooms: 10300 - 10499 Objs: 10300 - 10499 Mobs: 10300 - 10499
+newgate.are   : Rooms:   100 - 199   Objs:   100 - 199   Mobs:   100 - 199
+newdark.are   : Rooms: 21000 - 21499 Objs: 21000 - 21435 Mobs: 21000 - 21499
+gods.are      : Rooms:  1200 - 1201  Objs:  1200 - 1200  Mobs:  1200 - 1200
+plains.are    : Rooms:   300 - 345   Objs:   300 - 313   Mobs:   300 - 350
+haon.are      : Rooms:  6000 - 6156  Objs:  6000 - 6155  Mobs:  6000 - 6117
+midennir.are  : Rooms:  3500 - 3590  Objs:  3500 - 3550  Mobs:  3500 - 3550
+sewer.are     : Rooms:  7001 - 7445  Objs:  7190 - 7310  Mobs:  7000 - 7206
+redferne.are  : Rooms:  7900 - 7918  Objs:  7909 - 7911  Mobs:  7900 - 7900
+grove.are     : Rooms:  8901 - 8999  Objs:  8900 - 8919  Mobs:  8900 - 8911
+dwarven.are   : Rooms:  6500 - 6554  Objs:  6502 - 6519  Mobs:  6500 - 6517
+daycare.are   : Rooms:  6601 - 6651  Objs:  6600 - 6647  Mobs:  6600 - 6610
+grave.are     : Rooms:  3600 - 3651  Objs:  3600 - 3613  Mobs:  3600 - 3605
+chapel.are    : Rooms:  3405 - 3475  Objs:  3400 - 3430  Mobs:  3400 - 3416
+astral.are    : Rooms:   800 - 899   Objs:   800 - 899   Mobs:   800 - 899
+Build.are     : Rooms:  9500 - 9589  Objs:     0 - 0     Mobs:     0 - 0
+Tue Mar 27 03:22:18 2018 :: [*****] BUG: fread_fuss_object: no match: d
+Tue Mar 27 03:22:18 2018 :: [*****] FILE: pixie.are LINE: 209
+Tue Mar 27 03:22:18 2018 :: [*****] BUG: fread_fuss_object: no match: d
+Tue Mar 27 03:22:18 2018 :: [*****] FILE: pixie.are LINE: 210
+Tue Mar 27 03:22:18 2018 :: [*****] BUG: fread_fuss_object: no match: d
+Tue Mar 27 03:22:18 2018 :: [*****] FILE: pixie.are LINE: 211
+Tue Mar 27 03:22:18 2018 :: [*****] BUG: fread_fuss_object: no match: d
+Tue Mar 27 03:22:18 2018 :: [*****] FILE: pixie.are LINE: 232
+Tue Mar 27 03:22:18 2018 :: [*****] BUG: fread_fuss_object: no match: d
+Tue Mar 27 03:22:18 2018 :: [*****] FILE: pixie.are LINE: 233
+Tue Mar 27 03:22:18 2018 :: [*****] BUG: fread_fuss_object: no match: d
+Tue Mar 27 03:22:18 2018 :: [*****] FILE: pixie.are LINE: 246
+Tue Mar 27 03:22:18 2018 :: [*****] BUG: fread_fuss_object: no match: d
+Tue Mar 27 03:22:18 2018 :: [*****] FILE: pixie.are LINE: 267
+pixie.are     : Rooms:  2070 - 2099  Objs:  2070 - 2077  Mobs:  2070 - 2073
+export.are    : Rooms:  9810 - 9899  Objs:  9810 - 9899  Mobs:  9800 - 9899
+srefuge.are   : Rooms:  1500 - 1599  Objs:  1500 - 1599  Mobs:  1500 - 1599
+manor.are     : Rooms:  2400 - 2499  Objs:  2400 - 2499  Mobs:  2405 - 2484
+unholy.are    : Rooms:  2101 - 2172  Objs:  2101 - 2150  Mobs:  2101 - 2120
+gallery.are   : Rooms: 24800 - 24899 Objs: 24800 - 24899 Mobs: 24800 - 24899
+housing.are   : Rooms: 50000 - 54999 Objs: 50000 - 54999 Mobs: 50000 - 54999
+Tue Mar 27 03:22:18 2018 :: Fixing exits
+Tue Mar 27 03:22:18 2018 :: Initializing economy
+Tue Mar 27 03:22:18 2018 :: Resetting areas
+Tue Mar 27 03:22:18 2018 :: Loading buildlist
+Tue Mar 27 03:22:18 2018 :: ../gods/Morain
+Tue Mar 27 03:22:18 2018 :: ../gods/Xander
+Tue Mar 27 03:22:18 2018 :: ../gods/Bob
+Tue Mar 27 03:22:18 2018 :: ../gods/Ilnwnll
+Tue Mar 27 03:22:18 2018 :: ../gods/Darren
+Tue Mar 27 03:22:18 2018 :: ../gods/Ubraxis
+Tue Mar 27 03:22:18 2018 :: ../gods/Mitchell
+Tue Mar 27 03:22:18 2018 :: Loading boards
+Tue Mar 27 03:22:18 2018 :: ../boards/immortal.brd
+Tue Mar 27 03:22:18 2018 :: ../boards/highgod.brd
+Tue Mar 27 03:22:18 2018 :: Loading vault list
+Tue Mar 27 03:22:18 2018 :: $
+Tue Mar 27 03:22:18 2018 ::  Done vaults 
+Tue Mar 27 03:22:18 2018 :: Loading clans
+Tue Mar 27 03:22:18 2018 :: Loading clans...
+Tue Mar 27 03:22:18 2018 :: vampire.gui
+Tue Mar 27 03:22:18 2018 :: Cannot open vault - ../clans/vampire.gui.vault
+Tue Mar 27 03:22:18 2018 :: druid.gui
+Tue Mar 27 03:22:18 2018 :: Cannot open vault - ../clans/druid.gui.vault
+Tue Mar 27 03:22:18 2018 :: warrior.gui
+Tue Mar 27 03:22:18 2018 :: Cannot open vault - ../clans/warrior.gui.vault
+Tue Mar 27 03:22:18 2018 :: augurer.gui
+Tue Mar 27 03:22:18 2018 :: Cannot open vault - ../clans/augurer.gui.vault
+Tue Mar 27 03:22:18 2018 :: thief.gui
+Tue Mar 27 03:22:18 2018 :: Cannot open vault - ../clans/thief.gui.vault
+Tue Mar 27 03:22:18 2018 :: cleric.gui
+Tue Mar 27 03:22:18 2018 :: Cannot open vault - ../clans/cleric.gui.vault
+Tue Mar 27 03:22:18 2018 :: mage.gui
+Tue Mar 27 03:22:18 2018 :: Cannot open vault - ../clans/mage.gui.vault
+Tue Mar 27 03:22:18 2018 :: ranger.gui
+Tue Mar 27 03:22:18 2018 :: Cannot open vault - ../clans/ranger.gui.vault
+Tue Mar 27 03:22:18 2018 :: $
+Tue Mar 27 03:22:18 2018 ::  Done clans 
+Tue Mar 27 03:22:18 2018 :: Loading councils
+Tue Mar 27 03:22:18 2018 :: Loading councils...
+Tue Mar 27 03:22:18 2018 :: $
+Tue Mar 27 03:22:18 2018 ::  Done councils 
+Tue Mar 27 03:22:18 2018 :: Loading deities
+Tue Mar 27 03:22:18 2018 :: Loading deities...
+Tue Mar 27 03:22:18 2018 :: $
+Tue Mar 27 03:22:18 2018 ::  Done deities 
+Tue Mar 27 03:22:18 2018 :: Loading watches
+Tue Mar 27 03:22:18 2018 :: Loading bans
+Tue Mar 27 03:22:18 2018 :: Done.
+Tue Mar 27 03:22:18 2018 :: Loading reserved names
+Tue Mar 27 03:22:18 2018 :: Loading corpses
+Tue Mar 27 03:22:18 2018 :: Loading Immortal Hosts
+Tue Mar 27 03:22:18 2018 :: Done.
+Tue Mar 27 03:22:18 2018 :: Loading Projects
+Tue Mar 27 03:22:18 2018 :: Loading Morphs
+Tue Mar 27 03:22:18 2018 :: Done.
+Tue Mar 27 03:22:18 2018 :: Loading Housing System, Home Accessories Data, and Home Auctioning System
+Tue Mar 27 03:22:18 2018 :: Loading login messages
+Tue Mar 27 03:22:18 2018 :: Initializing socket
+Tue Mar 27 03:22:18 2018 :: IMC: Loading IMC2 command table...
+Tue Mar 27 03:22:18 2018 :: IMC: Loading IMC2 network data...
+Tue Mar 27 03:22:18 2018 :: IMC: Loading IMC2 help file...
+Tue Mar 27 03:22:18 2018 :: IMC: Loading IMC2 color table...
+Tue Mar 27 03:22:18 2018 :: IMC: Loading IMC2 who template...
+Tue Mar 27 03:22:18 2018 :: IMC: imcfread_word: EOF encountered on read.
+Tue Mar 27 03:22:18 2018 :: IMC: IMC2 network data loaded. Autoconnect not set. IMC2 will need to be connected manually.
+Tue Mar 27 03:22:18 2018 :: (Name Not Set) ready on port 4020.
