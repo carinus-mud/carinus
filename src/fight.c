@@ -1401,6 +1401,7 @@ ch_ret one_hit( CHAR_DATA * ch, CHAR_DATA * victim, int dt )
          if( found )
             return rNONE;
       }
+      dam = 0;
    }
 
    if( ( retcode = damage( ch, victim, dam, dt ) ) != rNONE )
@@ -1741,6 +1742,7 @@ ch_ret projectile_hit( CHAR_DATA * ch, CHAR_DATA * victim, OBJ_DATA * wield, OBJ
             return rNONE;
          }
       }
+      dam = 0;
    }
    if( ( retcode = damage( ch, victim, dam, dt ) ) != rNONE )
    {
@@ -1928,6 +1930,7 @@ ch_ret damage( CHAR_DATA * ch, CHAR_DATA * victim, int dam, int dt )
             if( found )
                return rNONE;
          }
+         dam = 0;
       }
    }
 
@@ -2177,6 +2180,9 @@ ch_ret damage( CHAR_DATA * ch, CHAR_DATA * victim, int dam, int dt )
       if( IS_AFFECTED( victim, AFF_PROTECT ) && IS_EVIL( ch ) )
          dam -= ( int )( dam / 4 );
 
+      if( dam < 0 )
+         dam = 0;
+
       /*
        * Check for disarm, trip, parry, dodge and tumble.
        */
@@ -2259,7 +2265,7 @@ ch_ret damage( CHAR_DATA * ch, CHAR_DATA * victim, int dam, int dt )
     * Hurt the victim.
     * Inform the victim of his new state.
     */
-   victim->hit -= (dam == -1) ? 0 : dam;
+   victim->hit -= dam;
 
    /*
     * Get experience based on % of damage done       -Thoric
@@ -3801,10 +3807,9 @@ void new_dam_message( CHAR_DATA * ch, CHAR_DATA * victim, int dam, unsigned int 
    /*
     * get the damage index 
     */
-   if ( dam == -1 ) {
+   if ( IS_SET( victim->immune, dt) ) 
       d_index = 0;
-      dam = 0;
-   } else if( dam == 0 )
+   else if( dam == 0 )
       d_index = 1;
    else if( dampc < 0 )
       d_index = 2;
