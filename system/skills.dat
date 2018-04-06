@@ -1477,6 +1477,19 @@ Minlevel     1
 End
 
 #SKILL
+Name         counter attack~
+Type         Skill
+Info         0
+Flags        0
+Minpos       107
+Code         spell_null
+Dammsg       ~
+Wearoff      !Counter!~
+Minlevel     1
+End
+
+
+#SKILL
 Name         dominate~
 Type         Skill
 Info         2048

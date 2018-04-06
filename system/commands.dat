@@ -3609,7 +3609,7 @@ End
 
 #COMMAND
 Name        score~
-Code        do_rpgscore
+Code        do_newscore
 Position    100
 Level       1
 Log         0
