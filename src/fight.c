@@ -1401,7 +1401,6 @@ ch_ret one_hit( CHAR_DATA * ch, CHAR_DATA * victim, int dt )
          if( found )
             return rNONE;
       }
-      dam = 0;
    }
 
    if( ( retcode = damage( ch, victim, dam, dt ) ) != rNONE )
@@ -1742,7 +1741,6 @@ ch_ret projectile_hit( CHAR_DATA * ch, CHAR_DATA * victim, OBJ_DATA * wield, OBJ
             return rNONE;
          }
       }
-      dam = 0;
    }
    if( ( retcode = damage( ch, victim, dam, dt ) ) != rNONE )
    {
@@ -1930,7 +1928,6 @@ ch_ret damage( CHAR_DATA * ch, CHAR_DATA * victim, int dam, int dt )
             if( found )
                return rNONE;
          }
-         dam = 0;
       }
    }
 
@@ -2180,9 +2177,6 @@ ch_ret damage( CHAR_DATA * ch, CHAR_DATA * victim, int dam, int dt )
       if( IS_AFFECTED( victim, AFF_PROTECT ) && IS_EVIL( ch ) )
          dam -= ( int )( dam / 4 );
 
-      if( dam < 0 )
-         dam = 0;
-
       /*
        * Check for disarm, trip, parry, dodge and tumble.
        */
@@ -2265,7 +2259,7 @@ ch_ret damage( CHAR_DATA * ch, CHAR_DATA * victim, int dam, int dt )
     * Hurt the victim.
     * Inform the victim of his new state.
     */
-   victim->hit -= dam;
+   victim->hit -= (dam == -1) ? 0 : dam;
 
    /*
     * Get experience based on % of damage done       -Thoric
@@ -3807,18 +3801,21 @@ void new_dam_message( CHAR_DATA * ch, CHAR_DATA * victim, int dam, unsigned int 
    /*
     * get the damage index 
     */
-   if( dam == 0 )
+   if ( dam == -1 ) {
       d_index = 0;
-   else if( dampc < 0 )
+      dam = 0;
+   } else if( dam == 0 )
       d_index = 1;
+   else if( dampc < 0 )
+      d_index = 2;
    else if( dampc <= 100 )
-      d_index = 1 + dampc / 10;
+      d_index = 2 + dampc / 10;
    else if( dampc <= 200 )
-      d_index = 11 + ( dampc - 100 ) / 20;
+      d_index = 12 + ( dampc - 100 ) / 20;
    else if( dampc <= 900 )
-      d_index = 16 + ( dampc - 200 ) / 100;
+      d_index = 17 + ( dampc - 200 ) / 100;
    else
-      d_index = 23;
+      d_index = 24;
 
    /*
     * Lookup the damage message 

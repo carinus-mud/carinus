@@ -1,4 +1,5 @@
 *.o
+*.swp
 smaug
 resolver.exe
 resolver
@@ -6,3 +7,5 @@ resolver
 *.bak
 backup
 player
+gods
+*.dat
