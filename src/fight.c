@@ -1401,7 +1401,6 @@ ch_ret one_hit( CHAR_DATA * ch, CHAR_DATA * victim, int dt )
          if( found )
             return rNONE;
       }
-      //dam = 0;
    }
 
    if( ( retcode = damage( ch, victim, dam, dt ) ) != rNONE )
@@ -1742,7 +1741,6 @@ ch_ret projectile_hit( CHAR_DATA * ch, CHAR_DATA * victim, OBJ_DATA * wield, OBJ
             return rNONE;
          }
       }
-      //dam = 0;
    }
    if( ( retcode = damage( ch, victim, dam, dt ) ) != rNONE )
    {
@@ -1930,7 +1928,6 @@ ch_ret damage( CHAR_DATA * ch, CHAR_DATA * victim, int dam, int dt )
             if( found )
                return rNONE;
          }
-         //dam = 0;
       }
    }
 
@@ -2179,9 +2176,6 @@ ch_ret damage( CHAR_DATA * ch, CHAR_DATA * victim, int dam, int dt )
 
       if( IS_AFFECTED( victim, AFF_PROTECT ) && IS_EVIL( ch ) )
          dam -= ( int )( dam / 4 );
-
-//      if( dam < 0 )
- //        dam = 0;
 
       /*
        * Check for disarm, trip, parry, dodge and tumble.
