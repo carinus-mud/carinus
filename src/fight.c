@@ -2193,7 +2193,8 @@ ch_ret damage( CHAR_DATA * ch, CHAR_DATA * victim, int dam, int dt )
 
          if( IS_NPC( ch ) && xIS_SET( ch->attacks, ATCK_TRIP ) && ch->level > 5 && number_percent(  ) < ch->level / 2 )
             trip( ch, victim );
-
+         if( check_counter( ch, victim, dam ) )
+            return rNONE;
          if( check_parry( ch, victim ) )
             return rNONE;
          if( check_dodge( ch, victim ) )
@@ -2261,7 +2262,9 @@ ch_ret damage( CHAR_DATA * ch, CHAR_DATA * victim, int dam, int dt )
    if( ch != victim )
       dam_message( ch, victim, dam, dt );
 
-   /*
+   
+
+/*
     * Hurt the victim.
     * Inform the victim of his new state.
     */

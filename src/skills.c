@@ -4533,6 +4533,60 @@ bool check_parry( CHAR_DATA * ch, CHAR_DATA * victim )
 }
 
 
+bool check_counter( CHAR_DATA *ch, CHAR_DATA *victim, int dam )
+{
+
+   int chances;
+
+   if( !IS_AWAKE( victim ) )
+      return FALSE;
+
+   if( IS_NPC( victim ) )
+      chances = UMIN( 60, 2 * victim->level );
+   else
+      chances = ( int )( LEARNED( victim, gsn_counter ) / sysdata.counter_mod );
+
+   if( chances != 0 && victim->morph )
+      chances += victim->morph->parry;
+
+   /*
+    * Consider luck as a factor
+    */
+   if( !chance( victim, chances + victim->level - ch->level ) )
+   {
+      learn_from_failure( victim, gsn_counter );
+      return FALSE;
+   }
+
+      dam = GET_DAMROLL(victim);
+
+
+   if( dam <= 0 )
+   {
+      learn_from_failure( victim, gsn_counter );
+      return false;
+   }
+
+   if( ( ch->hit - dam ) > 0 )
+   {
+      if( !IS_NPC( victim ) )
+         pager_printf(  victim,  "&CYou counter your opponent's attack. &G[&C%d&G]&D\r\n",  dam );
+      if( !IS_NPC( ch ) )
+         pager_printf( ch, "&cYour opponent counters your attack. &R[&C%d&R]&D\r\n",  dam );
+
+   }
+   ch->hit -= dam;
+	if (ch->hit <= -5)
+	{
+	  if(IS_IMMORTAL(ch))
+	     ch->hit = 1;
+	else
+	ch->hit = -5;	
+	}
+   learn_from_success( victim, gsn_counter );
+   return true;
+}
+
 
 /*
  * Check for dodge.

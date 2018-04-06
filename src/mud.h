@@ -2738,6 +2738,7 @@ struct system_data
    short parry_mod;  /* Divide parry chance by */
    short tumble_mod; /* Divide tumble chance by */
    short tumble_pk; /* Divide tumble chance by for pk */
+   short counter_mod; 
    short dam_nonav_vs_mob;   /* Damage mod non-avatar vs. mobile */
    short dam_mob_vs_nonav;   /* Damage mod mobile vs non-avatar */
    short dam_plr_vs_plr;   /* Damage mod player vs. player */
@@ -2974,6 +2975,7 @@ extern short gsn_backstab;
 extern short gsn_circle;
 extern short gsn_cook;
 extern short gsn_dodge;
+extern short gsn_counter;
 extern short gsn_hide;
 extern short gsn_peek;
 extern short gsn_pick_lock;
@@ -4790,6 +4792,7 @@ void learn_from_failure( CHAR_DATA * ch, int sn );
 bool check_parry( CHAR_DATA * ch, CHAR_DATA * victim );
 bool check_dodge( CHAR_DATA * ch, CHAR_DATA * victim );
 bool check_tumble( CHAR_DATA * ch, CHAR_DATA * victim );
+bool check_counter( CHAR_DATA *ch, CHAR_DATA *victim, int dam );
 bool check_grip( CHAR_DATA * ch, CHAR_DATA * victim );
 void disarm( CHAR_DATA * ch, CHAR_DATA * victim );
 void trip( CHAR_DATA * ch, CHAR_DATA * victim );

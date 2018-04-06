@@ -63,7 +63,7 @@ smaug: $(O_FILES)
 	chmod a+x smaug.exe
 	chmod g+w $(O_FILES)
 clean:
-	@rm -f o/*.o smaug.exe dependencies.d resolver.exe resolver.o *~
+	@rm -f ../o/*.o smaug.exe dependencies.d resolver.exe resolver.o *~
 
 else
 smaug: $(O_FILES)
@@ -78,7 +78,7 @@ smaug: $(O_FILES)
 	chmod g+w $(O_FILES)
 
 clean:
-	@rm -f o/*.o smaug dependencies.d resolver resolver.o *~
+	@rm -f ../o/*.o smaug dependencies.d resolver resolver.o *~
 endif
 
 dns: resolver.o

@@ -108,6 +108,7 @@ short gsn_detrap;
 short gsn_backstab;
 short gsn_circle;
 short gsn_dodge;
+short gsn_counter;
 short gsn_hide;
 short gsn_peek;
 short gsn_pick_lock;
@@ -370,6 +371,7 @@ void boot_db( bool fCopyOver )
    sysdata.parry_mod = 2;
    sysdata.tumble_mod = 4;
    sysdata.tumble_pk = 5;
+   sysdata.counter_mod = 1;
    sysdata.dam_plr_vs_plr = 100;
    sysdata.dam_plr_vs_mob = 100;
    sysdata.dam_mob_vs_plr = 100;
@@ -582,6 +584,7 @@ void boot_db( bool fCopyOver )
       ASSIGN_GSN( gsn_circle, "circle" );
       ASSIGN_GSN( gsn_tumble, "tumble" );
       ASSIGN_GSN( gsn_dodge, "dodge" );
+      ASSIGN_GSN( gsn_counter, "counter" );
       ASSIGN_GSN( gsn_hide, "hide" );
       ASSIGN_GSN( gsn_peek, "peek" );
       ASSIGN_GSN( gsn_pick_lock, "pick lock" );
@@ -8480,7 +8483,8 @@ void save_sysdata( SYSTEM_DATA sys )
       fprintf( fp, "Dodgemod       %d\n", sys.dodge_mod );
       fprintf( fp, "Parrymod       %d\n", sys.parry_mod );
       fprintf( fp, "Tumblemod      %d\n", sys.tumble_mod );
-      fprintf( fp, "Tumblepk	     %d\n", sys.tumble_pk );
+      fprintf( fp, "Tumblepk       %d\n", sys.tumble_pk );
+      fprintf( fp, "Counter        %d\n", sys.counter_mod );
       fprintf( fp, "Damplrvsplr    %d\n", sys.dam_plr_vs_plr );
       fprintf( fp, "Damplrvsmob    %d\n", sys.dam_plr_vs_mob );
       fprintf( fp, "Dammobvsplr    %d\n", sys.dam_mob_vs_plr );
@@ -8556,6 +8560,7 @@ void fread_sysdata( SYSTEM_DATA * sys, FILE * fp )
 
          case 'C':
             KEY( "CheckImmHost", sys->check_imm_host, fread_number( fp ) );
+            KEY( "Countermod", sys->counter_mod, fread_number( fp ) );
             break;
 
          case 'D':

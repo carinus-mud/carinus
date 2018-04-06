@@ -6869,6 +6869,8 @@ void do_cset( CHAR_DATA* ch, const char* argument)
       pager_printf_color( ch, "&wBan Race Level: &W%d\r\n", sysdata.ban_race_level );
       pager_printf_color(ch, "&WDefenses:\r\n  &wDodge_mod: &W%d    &wParry_mod: &W%d    &wTumble_mod: &W%d    &wTumble_pk:  &W%d\r\n",
          sysdata.dodge_mod, sysdata.parry_mod, sysdata.tumble_mod, sysdata.tumble_pk );
+      pager_printf_color(ch, "&WCounter_mod: &W%d \r\n",
+         sysdata.counter_mod );
       pager_printf_color( ch, "&WOther:\r\n  &wForce on players:             &W%-2d     ", sysdata.level_forcepc );
       pager_printf_color( ch, "&wPrivate room override:         &W%-2d\r\n", sysdata.level_override_private );
       pager_printf_color( ch, "  &wPenalty to bash plr vs. plr:  &W%-7d", sysdata.bash_plr_vs_plr );
@@ -7103,6 +7105,12 @@ void do_cset( CHAR_DATA* ch, const char* argument)
    if( !str_cmp( arg, "dodge_mod" ) )
    {
       sysdata.dodge_mod = level > 0 ? level : 1;
+      send_to_char( "Ok.\r\n", ch );
+      return;
+   }
+   if( !str_cmp( arg, "counter_mod" ) )
+   {
+      sysdata.counter_mod = level > 0 ? level : 1;
       send_to_char( "Ok.\r\n", ch );
       return;
    }
