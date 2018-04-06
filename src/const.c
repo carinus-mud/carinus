@@ -257,46 +257,46 @@ const char *const attack_table[18] = {
    "stone", "pea"
 };
 
-const char *s_blade_messages[24] = {
-   "miss", "barely scratch", "scratch", "nick", "cut", "hit", "tear",
+const char *s_blade_messages[25] = {
+   "has no effect on", "miss", "barely scratch", "scratch", "nick", "cut", "hit", "tear",
    "rip", "gash", "lacerate", "hack", "maul", "rend", "decimate",
    "_mangle_", "_devastate_", "_cleave_", "_butcher_", "DISEMBOWEL",
    "DISFIGURE", "GUT", "EVISCERATE", "* SLAUGHTER *", "*** ANNIHILATE ***"
 };
 
-const char *p_blade_messages[24] = {
-   "misses", "barely scratches", "scratches", "nicks", "cuts", "hits",
+const char *p_blade_messages[25] = {
+   "has no effect on", "misses", "barely scratches", "scratches", "nicks", "cuts", "hits",
    "tears", "rips", "gashes", "lacerates", "hacks", "mauls", "rends",
    "decimates", "_mangles_", "_devastates_", "_cleaves_", "_butchers_",
    "DISEMBOWELS", "DISFIGURES", "GUTS", "EVISCERATES", "* SLAUGHTERS *",
    "*** ANNIHILATES ***"
 };
 
-const char *s_blunt_messages[24] = {
-   "miss", "barely scuff", "scuff", "pelt", "bruise", "strike", "thrash",
+const char *s_blunt_messages[25] = {
+   "has no effect on", "miss", "barely scuff", "scuff", "pelt", "bruise", "strike", "thrash",
    "batter", "flog", "pummel", "smash", "maul", "bludgeon", "decimate",
    "_shatter_", "_devastate_", "_maim_", "_cripple_", "MUTILATE", "DISFIGURE",
    "MASSACRE", "PULVERIZE", "* OBLITERATE *", "*** ANNIHILATE ***"
 };
 
-const char *p_blunt_messages[24] = {
-   "misses", "barely scuffs", "scuffs", "pelts", "bruises", "strikes",
+const char *p_blunt_messages[25] = {
+   "has no effect on", "misses", "barely scuffs", "scuffs", "pelts", "bruises", "strikes",
    "thrashes", "batters", "flogs", "pummels", "smashes", "mauls",
    "bludgeons", "decimates", "_shatters_", "_devastates_", "_maims_",
    "_cripples_", "MUTILATES", "DISFIGURES", "MASSACRES", "PULVERIZES",
    "* OBLITERATES *", "*** ANNIHILATES ***"
 };
 
-const char *s_generic_messages[24] = {
-   "miss", "brush", "scratch", "graze", "nick", "jolt", "wound",
+const char *s_generic_messages[25] = {
+   "has no effect on", "miss", "brush", "scratch", "graze", "nick", "jolt", "wound",
    "injure", "hit", "jar", "thrash", "maul", "decimate", "_traumatize_",
    "_devastate_", "_maim_", "_demolish_", "MUTILATE", "MASSACRE",
    "PULVERIZE", "DESTROY", "* OBLITERATE *", "*** ANNIHILATE ***",
    "**** SMITE ****"
 };
 
-const char *p_generic_messages[24] = {
-   "misses", "brushes", "scratches", "grazes", "nicks", "jolts", "wounds",
+const char *p_generic_messages[25] = {
+   "has no effect on", "misses", "brushes", "scratches", "grazes", "nicks", "jolts", "wounds",
    "injures", "hits", "jars", "thrashes", "mauls", "decimates", "_traumatizes_",
    "_devastates_", "_maims_", "_demolishes_", "MUTILATES", "MASSACRES",
    "PULVERIZES", "DESTROYS", "* OBLITERATES *", "*** ANNIHILATES ***",
