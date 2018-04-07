@@ -4052,7 +4052,6 @@ DECLARE_DO_FUN( do_rlist );
 DECLARE_DO_FUN( do_rloop );
 DECLARE_DO_FUN( do_rolldie );
 DECLARE_DO_FUN( do_roster );
-DECLARE_DO_FUN( do_rpgscore );
 DECLARE_DO_FUN( do_rstat );
 DECLARE_DO_FUN( do_sacrifice );
 DECLARE_DO_FUN( do_save );
