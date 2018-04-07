@@ -4576,12 +4576,9 @@ bool check_counter( CHAR_DATA *ch, CHAR_DATA *victim, int dam )
 
    }
    ch->hit -= dam;
-	if (ch->hit <= -5)
+	if (ch->hit <= 0 )
 	{
-	  if(IS_IMMORTAL(ch))
 	     ch->hit = 1;
-	else
-	ch->hit = -5;	
 	}
    learn_from_success( victim, gsn_counter );
    return true;
