@@ -3926,7 +3926,7 @@ void new_dam_message( CHAR_DATA * ch, CHAR_DATA * victim, int dam, unsigned int 
       }
 
       snprintf( buf1, 256, "$n's %s %s $N%c %d", attack, vp, punct, dam );
-      snprintf( buf2, 256, "Your %s %s $N%c &W-(%d)-%x %x", attack, vp, punct, dam, dt, victim->immune );
+      snprintf( buf2, 256, "Your %s %s $N%c &W-(%d)-", attack, vp, punct, dam );
       snprintf( buf3, 256, "$n's %s %s you%c &R-(%d)-", attack, vp, punct, dam );
    }
 
