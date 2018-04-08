@@ -25,7 +25,7 @@ OBJ_DATA *used_weapon;  /* Used to figure out which weapon later */
 /*
  * Local functions.
  */
-void new_dam_message( CHAR_DATA * ch, CHAR_DATA * victim, int dam, unsigned int dt, OBJ_DATA * obj, bool immune );
+void new_dam_message( CHAR_DATA * ch, CHAR_DATA * victim, int dam, unsigned int dt, OBJ_DATA * obj );
 void group_gain( CHAR_DATA * ch, CHAR_DATA * victim );
 int xp_compute( CHAR_DATA * gch, CHAR_DATA * victim );
 int align_compute( CHAR_DATA * gch, CHAR_DATA * victim );
@@ -2262,7 +2262,9 @@ ch_ret damage( CHAR_DATA * ch, CHAR_DATA * victim, int dam, int dt )
    }
 
    if( ch != victim )
-      dam_message( ch, victim, dam, dt, immune );
+      if (immune)
+         dam = -1;
+      dam_message( ch, victim, dam, dt );
 
    
 
@@ -3763,7 +3765,7 @@ int xp_compute( CHAR_DATA * gch, CHAR_DATA * victim )
  * Added code to produce different messages based on weapon type - FB
  * Added better bug message so you can track down the bad dt's -Shaddai
  */
-void new_dam_message( CHAR_DATA * ch, CHAR_DATA * victim, int dam, unsigned int dt, OBJ_DATA * obj, bool immune )
+void new_dam_message( CHAR_DATA * ch, CHAR_DATA * victim, int dam, unsigned int dt, OBJ_DATA * obj )
 {
    char buf1[256], buf2[256], buf3[256];
    const char *vs;
@@ -3812,9 +3814,10 @@ void new_dam_message( CHAR_DATA * ch, CHAR_DATA * victim, int dam, unsigned int 
    /*
     * get the damage index 
     */
-   if ( immune ) 
+   if ( dam == -1 ) {
+      dam = 0;
       d_index = 0;
-   else if( dam == 0 )
+   } else if( dam == 0 )
       d_index = 1;
    else if( dampc < 0 )
       d_index = 2;
@@ -3943,7 +3946,7 @@ void new_dam_message( CHAR_DATA * ch, CHAR_DATA * victim, int dam, unsigned int 
 #ifndef dam_message
 void dam_message( CHAR_DATA * ch, CHAR_DATA * victim, int dam, int dt, bool immune )
 {
-   new_dam_message( ch, victim, dam, dt, NULL, immune );
+   new_dam_message( ch, victim, dam, dt, NULL );
 }
 #endif
 
