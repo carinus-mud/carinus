@@ -555,8 +555,12 @@ void fwrite_char( CHAR_DATA * ch, FILE * fp )
    fprintf( fp, "AttrMod      %d %d %d %d %d %d %d\n",
             ch->mod_str, ch->mod_int, ch->mod_wis, ch->mod_dex, ch->mod_con, ch->mod_cha, ch->mod_lck );
 
-   fprintf( fp, "Condition    %d %d %d %d\n",
-            ch->pcdata->condition[0], ch->pcdata->condition[1], ch->pcdata->condition[2], ch->pcdata->condition[3] );
+   fprintf( fp, "Condition    %d %d %d %d %d\n",
+           	ch->pcdata->condition[0], 
+		ch->pcdata->condition[1], 
+		ch->pcdata->condition[2], 
+		ch->pcdata->condition[3],
+		ch->pcdata->condition[4] );
    if( ch->pcdata->recent_site )
       fprintf( fp, "Site         %s\n", ch->pcdata->recent_site );
    else
@@ -867,6 +871,7 @@ bool load_char_obj( DESCRIPTOR_DATA * d, char *name, bool preload, bool copyover
    ch->pcdata->condition[COND_THIRST] = 48;
    ch->pcdata->condition[COND_FULL] = 48;
    ch->pcdata->condition[COND_BLOODTHIRST] = 10;
+    ch->pcdata->condition[COND_BLEEDING] = 0;
    ch->pcdata->nuisance = NULL;
    ch->pcdata->wizinvis = 0;
    ch->pcdata->balance = 0;
@@ -1311,11 +1316,12 @@ void fread_char( CHAR_DATA * ch, FILE * fp, bool preload, bool copyover )
             if( !str_cmp( word, "Condition" ) )
             {
                line = fread_line( fp );
-               sscanf( line, "%d %d %d %d", &x1, &x2, &x3, &x4 );
+               sscanf( line, "%d %d %d %d %d", &x1, &x2, &x3, &x4, &x5 );
                ch->pcdata->condition[0] = x1;
                ch->pcdata->condition[1] = x2;
                ch->pcdata->condition[2] = x3;
                ch->pcdata->condition[3] = x4;
+		ch->pcdata->condition[4] = x5;
                fMatch = TRUE;
                break;
             }

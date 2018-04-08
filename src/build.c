@@ -1243,7 +1243,7 @@ void do_mset( CHAR_DATA* ch, const char* argument)
       send_to_char( "  council quest qp qpa favor deity\r\n", ch );
       send_to_char( "  deftness, might, karma, combat, ingenuity, omniscience\r\n", ch );
       send_to_char( "  redmagic, greenmagic, bluemagic, whitemagic, blackmagic\r\n", ch );
-      send_to_char( "  arcanamagic\r\n", ch );
+      send_to_char( "  arcanamagic, bleeding\r\n", ch );
       send_to_char( "\r\n", ch );
       send_to_char( "For editing index/prototype mobiles:\r\n", ch );
       send_to_char( "  hitnumdie hitsizedie hitplus (hit points)\r\n", ch );
@@ -1319,6 +1319,22 @@ void do_mset( CHAR_DATA* ch, const char* argument)
 
    if( atoi( arg3 ) < -1 && value == -1 )
       value = atoi( arg3 );
+
+    if ( !str_cmp( arg2, "bleeding" ) )
+    {
+        if ( IS_NPC(victim) )
+        {
+            send_to_char( "Not on NPC's.\n\r", ch );
+            return;
+        }
+        if ( value < -1 || value > 100 )
+        {
+           send_to_char( "Bleeding range is -1 to 100.\n\r", ch );
+            return;
+        }
+        victim->pcdata->condition[COND_BLEEDING] = value;
+        return;
+    }
 
    if( !str_cmp( arg2, "str" ) )
    {
