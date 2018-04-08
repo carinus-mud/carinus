@@ -25,7 +25,7 @@ OBJ_DATA *used_weapon;  /* Used to figure out which weapon later */
 /*
  * Local functions.
  */
-void new_dam_message( CHAR_DATA * ch, CHAR_DATA * victim, int dam, unsigned int dt, OBJ_DATA * obj );
+void new_dam_message( CHAR_DATA * ch, CHAR_DATA * victim, int dam, unsigned int dt, OBJ_DATA * obj, bool immune );
 void group_gain( CHAR_DATA * ch, CHAR_DATA * victim );
 int xp_compute( CHAR_DATA * gch, CHAR_DATA * victim );
 int align_compute( CHAR_DATA * gch, CHAR_DATA * victim );
@@ -1852,6 +1852,7 @@ ch_ret damage( CHAR_DATA * ch, CHAR_DATA * victim, int dam, int dt )
    CHAR_DATA *gch /*, *lch */ ;
    short anopc = 0;  /* # of (non-pkill) pc in a (ch) */
    short bnopc = 0;  /* # of (non-pkill) pc in b (victim) */
+   bool immune = FALSE;
 
    retcode = rNONE;
 
@@ -1907,6 +1908,7 @@ ch_ret damage( CHAR_DATA * ch, CHAR_DATA * victim, int dam, int dt )
 
       if( dam == -1 )
       {
+         immune = TRUE;
          if( dt >= 0 && dt < num_skills )
          {
             bool found = FALSE;
@@ -2260,7 +2262,7 @@ ch_ret damage( CHAR_DATA * ch, CHAR_DATA * victim, int dam, int dt )
    }
 
    if( ch != victim )
-      dam_message( ch, victim, dam, dt );
+      dam_message( ch, victim, dam, dt, immune );
 
    
 
@@ -3761,7 +3763,7 @@ int xp_compute( CHAR_DATA * gch, CHAR_DATA * victim )
  * Added code to produce different messages based on weapon type - FB
  * Added better bug message so you can track down the bad dt's -Shaddai
  */
-void new_dam_message( CHAR_DATA * ch, CHAR_DATA * victim, int dam, unsigned int dt, OBJ_DATA * obj )
+void new_dam_message( CHAR_DATA * ch, CHAR_DATA * victim, int dam, unsigned int dt, OBJ_DATA * obj, bool immune )
 {
    char buf1[256], buf2[256], buf3[256];
    const char *vs;
@@ -3810,7 +3812,7 @@ void new_dam_message( CHAR_DATA * ch, CHAR_DATA * victim, int dam, unsigned int 
    /*
     * get the damage index 
     */
-   if ( IS_SET( victim->immune, dt) ) 
+   if ( immune ) 
       d_index = 0;
    else if( dam == 0 )
       d_index = 1;
@@ -3921,7 +3923,7 @@ void new_dam_message( CHAR_DATA * ch, CHAR_DATA * victim, int dam, unsigned int 
       }
 
       snprintf( buf1, 256, "$n's %s %s $N%c %d", attack, vp, punct, dam );
-      snprintf( buf2, 256, "Your %s %s $N%c &W-(%d)-", attack, vp, punct, dam );
+      snprintf( buf2, 256, "Your %s %s $N%c &W-(%d)-%x %x", attack, vp, punct, dam, dt, victim->immune );
       snprintf( buf3, 256, "$n's %s %s you%c &R-(%d)-", attack, vp, punct, dam );
    }
 
@@ -3939,9 +3941,9 @@ void new_dam_message( CHAR_DATA * ch, CHAR_DATA * victim, int dam, unsigned int 
 }
 
 #ifndef dam_message
-void dam_message( CHAR_DATA * ch, CHAR_DATA * victim, int dam, int dt )
+void dam_message( CHAR_DATA * ch, CHAR_DATA * victim, int dam, int dt, bool immune )
 {
-   new_dam_message( ch, victim, dam, dt );
+   new_dam_message( ch, victim, dam, dt, NULL, immune );
 }
 #endif
 

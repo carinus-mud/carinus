@@ -3475,7 +3475,7 @@ do								\
                                 : "someone" )
 
 #define log_string(txt)		( log_string_plus( (txt), LOG_NORMAL, LEVEL_LOG ) )
-#define dam_message(ch, victim, dam, dt)	( new_dam_message((ch), (victim), (dam), (dt), NULL) )
+#define dam_message(ch, victim, dam, dt, immune)	( new_dam_message((ch), (victim), (dam), (dt), NULL, (immune)) )
 
 /*
  *  Defines for the command flags. --Shaddai
