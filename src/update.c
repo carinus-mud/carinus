@@ -1226,7 +1226,7 @@ void char_update( void )
 						|| ch->position == POS_SLEEPING
 						|| ch->position == POS_RESTING) )
 					{
-						gain_condition( ch, COND_BLEEDING,  -2 );
+						ch->pcdata->condition[COND_BLEEDING] -= 2;;
 						if ( ch->pcdata->condition[COND_BLEEDING] == 0 )
 							send_to_char("Your bleeding stops.\n\r",ch);
 						else
@@ -1234,7 +1234,7 @@ void char_update( void )
 					}
 					else
 					{
-						gain_condition( ch, COND_BLEEDING,  -1 );
+						ch->pcdata->condition[COND_BLEEDING] -= 1;;
 						if ( ch->pcdata->condition[COND_BLEEDING] == 0 )
 							send_to_char("Your bleeding stops.\n\r",ch);
 						else
