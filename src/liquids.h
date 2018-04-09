@@ -63,7 +63,7 @@ extern int top_liquid;
  */
 typedef enum
 {
-   COND_DRUNK, COND_FULL, COND_THIRST, COND_BLOODTHIRST, MAX_CONDS
+   COND_DRUNK, COND_FULL, COND_THIRST, COND_BLOODTHIRST, CON_BLEEING, MAX_CONDS
 } conditions;
 
 typedef enum

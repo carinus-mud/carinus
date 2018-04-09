@@ -437,8 +437,19 @@ void violence_update( void )
          log_printf( "violence_update: %s fighting %s in a SAFE room.", ch->name, victim->name );
          stop_fighting( ch, TRUE );
       }
-      else if( IS_AWAKE( ch ) && ch->in_room == victim->in_room )
-         retcode = multi_hit( ch, victim, TYPE_UNDEFINED );
+	else
+	if ( IS_AWAKE(ch) && ch->in_room == victim->in_room )
+	{
+        retcode = multi_hit( ch, victim, TYPE_UNDEFINED );
+		/*Random VERY minor bleeding during a fight*/
+		if (!IS_NPC(ch) && ch->pcdata->condition[COND_BLEEDING] > 0 && number_range(1,4) == 1)
+		{
+			damage(ch, ch, ch->pcdata->condition[COND_BLEEDING], TYPE_UNDEFINED);
+			act( AT_BLOOD, "You're losing blood...", ch, NULL, NULL, TO_CHAR);
+			act( AT_BLOOD, "$N is losing blood...", ch, NULL, NULL, TO_ROOM);
+		}
+	}
+
       else
          stop_fighting( ch, FALSE );
 
@@ -2237,30 +2248,41 @@ ch_ret damage( CHAR_DATA * ch, CHAR_DATA * victim, int dam, int dt )
          dam = ( dam * dampmod ) / 100;
    }
 
-   /*
-    * Code to handle equipment getting damaged, and also support  -Thoric
-    * bonuses/penalties for having or not having equipment where hit
-    */
-   if( dam > 10 && dt != TYPE_UNDEFINED )
-   {
-      /*
-       * get a random body eq part 
-       */
-      dameq = number_range( WEAR_LIGHT, WEAR_ANKLE_R );
-      damobj = get_eq_char( victim, dameq );
-      if( damobj )
-      {
-         if( dam > get_obj_resistance( damobj ) && number_bits( 1 ) == 0 )
-         {
-            set_cur_obj( damobj );
-            damage_obj( damobj );
-         }
-         dam -= 5;   /* add a bonus for having something to block the blow */
-      }
-      else
-         dam += 5;   /* add penalty for bare skin! */
-   }
-
+    /*
+     * Code to handle equipment getting damaged, and also support  -Thoric
+     * bonuses/penalties for having or not having equipment where hit.
+     * Bleeding support added -Seven
+     */
+    if (dam > 10 && dt != TYPE_UNDEFINED)
+    {
+	/* get a random body eq part */
+	dameq  = number_range(WEAR_LIGHT, WEAR_EYES);
+	damobj = get_eq_char(victim, dameq);
+	if ( damobj )
+	{
+	    if ( dam > get_obj_resistance(damobj)
+	    &&   number_bits(1) == 0 )
+	    {
+		set_cur_obj(damobj);
+		damage_obj(damobj);
+	    }
+	    dam -= 5;  /* add a bonus for having something to block the blow */
+		/* 1 in 16 chance to begin or worsen bleeding */
+		if (dam > 18)
+		{
+		if ( !IS_NPC(victim) && number_range( 1,10 ) == 1 )
+			gain_condition( victim, COND_BLEEDING, 1 );
+		}
+	}
+	else
+	    dam += 5;  /* add penalty for bare skin! */
+		/* 1 in 6 chance to begin or worsen bleeding */
+	    if (dam > 18)
+		{
+		if ( !IS_NPC(victim) && number_range( 1,5 ) == 1 )
+			gain_condition( victim, COND_BLEEDING, 1 );
+		}
+    }
    if( ch != victim )
       if (immune)
          dam = -1;
@@ -2378,6 +2400,9 @@ ch_ret damage( CHAR_DATA * ch, CHAR_DATA * victim, int dam, int dt )
          if( dam > victim->max_hit / 4 )
          {
             act( AT_HURT, "That really did HURT!", victim, 0, 0, TO_CHAR );
+	   /* Start bleeding unless level is 5 or less */
+	   if ( !IS_NPC(victim) && victim->level > 5 )
+	   gain_condition( victim, COND_BLEEDING, 3 );
             if( number_bits( 3 ) == 0 )
                worsen_mental_state( victim, 1 );
          }
@@ -3520,6 +3545,7 @@ OBJ_DATA *raw_kill( CHAR_DATA * ch, CHAR_DATA * victim )
    victim->damroll = 0;
    victim->hitroll = 0;
    victim->mental_state = -10;
+    victim->pcdata->condition[COND_BLEEDING] = 0;
    victim->alignment = URANGE( -1000, victim->alignment, 1000 );
 /*  victim->alignment		= race_table[victim->race]->alignment;
 -- switched lines just for now to prevent mortals from building up
