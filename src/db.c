@@ -146,6 +146,7 @@ short gsn_pounce;
 
 /* other   */
 short gsn_aid;
+short gsn_bandage;
 short gsn_track;
 short gsn_search;
 short gsn_dig;
@@ -617,6 +618,7 @@ void boot_db( bool fCopyOver )
       ASSIGN_GSN( gsn_broach, "broach" );
       ASSIGN_GSN( gsn_mistwalk, "mistwalk" );
       ASSIGN_GSN( gsn_aid, "aid" );
+      ASSIGN_GSN( gsn_bandage, "bandage" );
       ASSIGN_GSN( gsn_track, "track" );
       ASSIGN_GSN( gsn_meditate, "meditate" );
       ASSIGN_GSN( gsn_trance, "trance" );
@@ -2889,6 +2891,7 @@ OBJ_DATA *create_object( OBJ_INDEX_DATA * pObjIndex, int level )
       case ITEM_QUIVER:
       case ITEM_SHOVEL:
       case ITEM_JOURNAL:
+      case ITEM_BANDAGE:
          break;
 
       case ITEM_SALVE:

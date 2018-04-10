@@ -1661,6 +1661,7 @@ typedef enum
 #define OBJ_VNUM_NOTE		     36
 #define OBJ_VNUM_DEITY		     64
 
+
 #define OBJ_VNUM_PUDDLE		     95
 
 /* Academy eq */
@@ -1689,10 +1690,10 @@ typedef enum
    ITEM_TINDER, ITEM_LOCKPICK, ITEM_SPIKE, ITEM_DISEASE, ITEM_OIL, ITEM_FUEL,
    ITEM_PUDDLE, ITEM_JOURNAL, ITEM_MISSILE_WEAPON, ITEM_PROJECTILE, ITEM_QUIVER,
    ITEM_SHOVEL, ITEM_SALVE, ITEM_COOK, ITEM_KEYRING, ITEM_ODOR, ITEM_CHANCE,
-   ITEM_PIECE, ITEM_HOUSEKEY, ITEM_DRINK_MIX
+   ITEM_PIECE, ITEM_HOUSEKEY, ITEM_DRINK_MIX, ITEM_BANDAGE
 } item_types;
 
-#define MAX_ITEM_TYPE		     ITEM_DRINK_MIX
+#define MAX_ITEM_TYPE		     ITEM_BANDAGE
 
 /*
  * Extra flags.
@@ -3011,6 +3012,7 @@ extern short gsn_broach;
 extern short gsn_mistwalk;
 
 extern short gsn_aid;
+extern short gsn_bandage;
 extern short gsn_cleave;
 
 /* used to do specific lookups */
@@ -3724,6 +3726,7 @@ DECLARE_DO_FUN( do_aecho );
 DECLARE_DO_FUN( do_affected );
 DECLARE_DO_FUN( do_afk );
 DECLARE_DO_FUN( do_aid );
+DECLARE_DO_FUN( do_bandage );
 DECLARE_DO_FUN( do_alinks );
 DECLARE_DO_FUN( do_allow );
 DECLARE_DO_FUN( do_ansi );

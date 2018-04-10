@@ -2122,7 +2122,7 @@ void do_mstat( CHAR_DATA* ch, const char* argument)
    pager_printf_color( ch, "&cMentalState: &w%-3d   &cEmotionalState: &w%-3d   ", victim->mental_state,
                        victim->emotional_state );
     if ( !IS_NPC( victim ) )
-      pager_printf_color( ch, "&cThirst: &w%d   &cFull: &w%d   &cDrunk: &w%d   &cBl: %d\n\r",
+      pager_printf_color( ch, "\r\n&cThirst: &w%d   &cFull: &w%d   &cDrunk:   &w%d   &cBl: %d\n\r",
 	victim->pcdata->condition[COND_THIRST],
 	victim->pcdata->condition[COND_FULL],
 	victim->pcdata->condition[COND_DRUNK],
