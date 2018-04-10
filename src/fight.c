@@ -2285,7 +2285,9 @@ ch_ret damage( CHAR_DATA * ch, CHAR_DATA * victim, int dam, int dt )
     }
    if( ch != victim )
 {
-      if (immune)
+
+     if (immune)
+
          dam = -1;
       dam_message( ch, victim, dam, dt );
 }
