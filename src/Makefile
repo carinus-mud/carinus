@@ -1,6 +1,7 @@
 CC      = g++
 #PROF    = -p
 
+
 #Uncomment to compile in Cygwin
 #CYGWIN = -DCYGWIN
 
