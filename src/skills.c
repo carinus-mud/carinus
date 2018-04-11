@@ -6599,3 +6599,114 @@ void do_cook( CHAR_DATA* ch, const char* argument)
    }
    learn_from_success( ch, gsn_cook );
 }
+
+void do_bandage( CHAR_DATA* ch, const char* argument)
+{
+   char arg[MAX_INPUT_LENGTH];
+   CHAR_DATA *victim;
+   int percent;
+   OBJ_DATA *bandage;
+
+
+   if( IS_NPC( ch ) && IS_AFFECTED( ch, AFF_CHARM ) )
+   {
+      send_to_char( "You can't concentrate enough for that.\r\n", ch );
+      return;
+   }
+
+
+      if( ( bandage = get_eq_char( ch, WEAR_HOLD ) ) == NULL )
+   {
+      send_to_char( "You must be holding a bandage.\r\n", ch );
+      return;
+   }
+
+   if( bandage->item_type != ITEM_BANDAGE )
+   {
+      send_to_char( "You must be holding a bandage.\r\n", ch );
+      return;
+   }
+
+   one_argument( argument, arg );
+  
+	 if( arg[0] == '\0' )
+   {
+	do_bandage(ch, "self");
+      return;
+   }
+   
+   if( ( victim = get_char_room( ch, arg ) ) == NULL )
+   {
+      send_to_char( "They aren't here.\r\n", ch );
+      return;
+   }
+
+   if( IS_NPC( victim ) )  
+   {
+      send_to_char( "Not on mobs.\r\n", ch );
+      return;
+   }
+
+   if( ch->mount )
+   {
+      send_to_char( "You can't do that while mounted.\r\n", ch );
+      return;
+   }
+
+
+   if( victim->hit <= -6 )
+   {
+      act( AT_PLAIN, "$N's immediate condition is beyond the need of bandages.", ch, NULL, victim, TO_CHAR );
+      return;
+   }
+   percent = number_percent(  ) - ( get_curr_lck( ch ) - 13 );
+   WAIT_STATE( ch, skill_table[gsn_aid]->beats );
+   if( !can_use_skill( ch, percent, gsn_bandage ) )
+   {
+      send_to_char( "You fail.\r\n", ch );
+      learn_from_failure( ch, gsn_bandage );
+      return;
+   }
+
+   if( (victim->pcdata->condition[COND_BLEEDING] == 0))
+	{
+	send_to_char("That would be a waste of a bandage.\r\n", ch);
+	return;
+	}
+
+
+if (ch == victim)
+	send_to_char("You bandage yourself\r\n", ch);
+	else
+   act( AT_SKILL, "You bandage $N!", ch, NULL, victim, TO_CHAR );
+if (ch == victim)
+   act( AT_SKILL, "$n bandages themselves!", ch, NULL, victim, TO_NOTVICT );
+else
+   act( AT_SKILL, "$n bandages $N!", ch, NULL, victim, TO_NOTVICT );
+   learn_from_success( ch, gsn_bandage );
+   adjust_favor( ch, 8, 1 );
+   if( victim->hit < 1 )
+      victim->hit = 1;
+	victim->pcdata->condition[COND_BLEEDING] -= ( 1+ (get_curr_lck(victim) - 13));
+if (victim->pcdata->condition[COND_BLEEDING] < 0)
+	victim->pcdata->condition[COND_BLEEDING] = 0;
+
+
+if ((bandage->value[0] == 1))
+{
+send_to_char("You have used up your bandage\r\n", ch);
+extract_obj( bandage );
+}
+else
+ bandage->value[0] -- ;
+
+   update_pos( victim );
+if( ch != victim)
+   act( AT_SKILL, "$n bandages you!", ch, NULL, victim, TO_VICT );
+   pager_printf( victim, "%d bleeing counters remain.\r\n", victim->pcdata->condition[COND_BLEEDING]); 
+	if (ch != victim)
+   pager_printf( ch, "%d bleeing counters remain.\r\n", victim->pcdata->condition[COND_BLEEDING]); 
+   return;
+}
+
+

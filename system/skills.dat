@@ -131,6 +131,19 @@ Minlevel     4
 End
 
 #SKILL
+Name         bandage~
+Type         Skill
+Info         0
+Flags        0
+Minpos       107
+Rounds       12
+Code         do_bandage
+Dammsg       ~
+Wearoff      !Bandage!~
+Minlevel     4
+End
+
+#SKILL
 Name         alertness~
 Type         Spell
 Info         0
