@@ -6680,7 +6680,9 @@ else
    if( victim->hit < 1 )
       victim->hit = 1;
 	victim->pcdata->condition[COND_BLEEDING] -= ( 1+ (get_curr_lck(victim) - 13);
-   extract_obj( bandage );
+if (victim->pcdata->condition[COND_BLEEDING] < 0)
+	victim->pcdata->condition[COND_BLEEDING] = 0;
+extract_obj( bandage );
    update_pos( victim );
 if( ch != victim)
    act( AT_SKILL, "$n bandages you!", ch, NULL, victim, TO_VICT );
