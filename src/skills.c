@@ -6679,6 +6679,7 @@ else
    adjust_favor( ch, 8, 1 );
    if( victim->hit < 1 )
       victim->hit = 1;
+	victim->pcdata->condition[COND_BLEEDING] -= ( 1+ (get_curr_lck(victim) - 13);
    extract_obj( bandage );
    update_pos( victim );
 if( ch != victim)
