@@ -6605,7 +6605,7 @@ void do_bandage( CHAR_DATA* ch, const char* argument)
    char arg[MAX_INPUT_LENGTH];
    CHAR_DATA *victim;
    int percent;
-	   OBJ_DATA *bandage;
+   OBJ_DATA *bandage;
 
 
    if( IS_NPC( ch ) && IS_AFFECTED( ch, AFF_CHARM ) )
@@ -6628,12 +6628,13 @@ void do_bandage( CHAR_DATA* ch, const char* argument)
    }
 
    one_argument( argument, arg );
-   if( arg[0] == '\0' )
+  
+	 if( arg[0] == '\0' )
    {
-      send_to_char( "Bandage whom?\r\n", ch );
+	do_bandage(ch, "self");
       return;
    }
-
+   
    if( ( victim = get_char_room( ch, arg ) ) == NULL )
    {
       send_to_char( "They aren't here.\r\n", ch );
@@ -6667,6 +6668,13 @@ void do_bandage( CHAR_DATA* ch, const char* argument)
       return;
    }
 
+   if( (victim->pcdata->condition[COND_BLEEDING] == 0))
+	{
+	send_to_char("That would be a waste of a bandage.\r\n", ch);
+	return;
+	}
+
+
 if (ch == victim)
 	send_to_char("You bandage yourself\r\n", ch);
 	else
@@ -6682,10 +6690,22 @@ else
 	victim->pcdata->condition[COND_BLEEDING] -= ( 1+ (get_curr_lck(victim) - 13));
 if (victim->pcdata->condition[COND_BLEEDING] < 0)
 	victim->pcdata->condition[COND_BLEEDING] = 0;
+
+
+if ((bandage->value[0] == 1))
+{
+send_to_char("You have used up your bandage\r\n", ch);
 extract_obj( bandage );
+}
+else
+ bandage->value[0] -- ;
+
    update_pos( victim );
 if( ch != victim)
    act( AT_SKILL, "$n bandages you!", ch, NULL, victim, TO_VICT );
+   pager_printf( victim, "%d bleeing counters remain.\r\n", victim->pcdata->condition[COND_BLEEDING]); 
+	if (ch != victim)
+   pager_printf( ch, "%d bleeing counters remain.\r\n", victim->pcdata->condition[COND_BLEEDING]); 
    return;
 }
 
