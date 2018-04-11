@@ -296,7 +296,7 @@ void do_skills( CHAR_DATA* ch, const char* )
 if ( ch->pcdata->learned[normalSn] <= 0 )
   continue;
          ++cnt;
-         pager_printf( ch, "%22.20s", skill->name );
+         pager_printf( ch, "%18.18s", skill->name );
 	if (ch->pcdata->learned[normalSn] > 0)  
        pager_printf( ch, " %3d%% ", ch->pcdata->learned[normalSn] );
 
@@ -462,6 +462,13 @@ void set_customclass( CHAR_DATA * ch, const char *customclass )
 
 void do_newscore( CHAR_DATA* ch, const char* argument )
 {
+
+	if (IS_NPC(ch))
+	{
+	send_to_char("Mobiles do not have score sheets. Use Mstat.\r\n", ch);
+	return;
+	}
+
    char buf[MAX_STRING_LENGTH];
    char buf2[MAX_STRING_LENGTH];
 //   CLAN_DATA *pClan = NULL;
@@ -469,13 +476,13 @@ void do_newscore( CHAR_DATA* ch, const char* argument )
 //   AFFECT_DATA *paf;
 
 send_to_char( "\r\n&r+===========================================================================+\n\r", ch);
-pager_printf( ch, "&r|&W %-15s Level %-2d %-12s Hometown: %-4s            &r|\r\n",
+pager_printf( ch, "&r|&W %-15s Level %-2d %-12s Hometown: %-19s       &r|\r\n",
         ch->name, ch->level, capitalize( get_race(ch)), ch->pcdata->hometown );
 send_to_char( "&r+===========================================================================+\n\r", ch);
-pager_printf( ch, "&r| &CFaction: &W%-15s     &CTier: &W%d           &CStat Major: &W(not coded)    &r|\r\n",
-        ch->pcdata->clan_name, ch->pcdata->tier);
-pager_printf( ch, "&r| &CRank:    &W%-15s    &CAlign: &W%-5d       &CStat Minor: &W(not coded)    &r|\r\n",
-	ch->pcdata->rank, ch->alignment);
+pager_printf( ch, "&r| &CFaction: &W%-15s     &CTier: &W%d           &CBleed Counters: &R%-3d        &r|\r\n",
+        ch->pcdata->clan_name, ch->pcdata->tier, ch->pcdata->condition[COND_BLEEDING]);
+pager_printf( ch, "&r| &CRank:    &W%-15s    &CAlign: &W%-5d       &CAP: &W%-5d                  &r|\r\n",
+	ch->pcdata->rank, ch->alignment, ch->pcdata->ap);
 pager_printf( ch, "&r| &CWorships: &W%-15s   &CFavor: &W%-5d       &CArmor: &W%-4d                &r|\r\n",
         ch->pcdata->deity ? ch->pcdata->deity->name : "(none)", ch->pcdata->favor, GET_AC(ch));
 pager_printf( ch, "&r| &CHitroll: &W%-3d              &CDamroll: &W%-3d                                    &r|\r\n",
@@ -527,9 +534,9 @@ value = 25.0 * ((float) ch->move / (float) ch->max_move) ;
                                 }
                     send_to_char("&W]&r         &r|\n\r",ch);
 
-pager_printf( ch, "&r| &CLuck:          &W%2d(%2d)       &r|            &CExp TNL: &W%-10s              &r|\r\n",
+pager_printf( ch, "&r| &CLuck:          &W%2d(%2d)       &r|            &CExp TNL: &W%-15s         &r|\r\n",
         get_curr_lck( ch ), ch->perm_lck,  num_punct( exp_level( ch, ch->level + 1 ) - ch->exp ));
-pager_printf( ch, "&r| &CAP:            &W%-5d        &r|         ", ch->pcdata->ap);
+pager_printf( ch, "&r|                             &r|         ");
 send_to_char("&W[",ch);
 value = 25.0 * (((float) ch->exp )/((float) exp_level( ch, ch->level + 1 ) + ch->exp )) ;
                           for (start = 1; start <= 25; start++ )

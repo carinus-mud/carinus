@@ -78,13 +78,14 @@ void advance_level( CHAR_DATA * ch )
    add_hp = UMAX( 1, add_hp ) + ( get_curr_lck (ch) * .3 );
    add_mana = UMAX( 0, add_mana ) + ( ( get_curr_lck( ch) * .4)  );
    add_move = UMAX( 10, add_move ) + (( get_curr_lck(ch) * .5 ) );
+   
 
 
    ch->max_hit += add_hp;
    ch->max_mana += add_mana;
    ch->max_move += add_move;
    ch->practice += add_prac;
-   
+   ch->pcdata->tier = (ch->level/10);
 
 
    if( !IS_NPC( ch ) )
@@ -104,6 +105,7 @@ void advance_level( CHAR_DATA * ch )
       do_help( ch, "M_ADVHERO_" );
    }
 
+
    ch->hit = ch->max_hit;
    ch->mana = ch->max_mana;
    ch->move = ch->max_move;
@@ -115,7 +117,21 @@ void advance_level( CHAR_DATA * ch )
                    add_hp, ch->max_hit, add_mana, ch->max_mana, add_move, ch->max_move, add_prac, ch->practice );
      set_char_color( AT_WHITE, ch );
       send_to_char( buf, ch );
-	send_to_char (" You have gained 1 Str, 1 Agi, 1 Int, 1 Lck\r\n", ch); 
+
+   if ( (ch->level == 10))
+	send_to_char("&Yyou gained a tier!\r\n", ch);
+	else
+   if ( (ch->level == 20))
+	send_to_char("&Yyou gained a tier!\r\n", ch);
+	else
+   if ( (ch->level == 30))
+	send_to_char("&Yyou gained a tier!\r\n", ch);
+	else
+   if ( (ch->level == 40))
+	send_to_char("&Yyou gained a tier!\r\n", ch);
+	else
+   if ( (ch->level == 50))
+	send_to_char("&Yyou gained a tier!\r\n", ch);
 
    }
 }
@@ -1280,7 +1296,7 @@ void char_update( void )
                   if( IS_VALID_SN( paf->modifier )
                       && ( skill = skill_table[paf->modifier] ) != NULL && skill->type == SKILL_SPELL )
                   {
-                     if( ( *skill->spell_fun ) ( paf->modifier, ch->level, ch, ch ) == rCHAR_DIED || char_died( ch ) )
+                    if( ( *skill->spell_fun ) ( paf->modifier, ch->level, ch, ch ) == rCHAR_DIED || char_died( ch ) )
                      {
                         died = TRUE;
                         break;

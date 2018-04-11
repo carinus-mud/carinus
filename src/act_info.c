@@ -1274,7 +1274,10 @@ void do_look( CHAR_DATA * ch, const char *argument )
       /*
        * Added AUTOMAP check because it shows them next to the map now if its active 
        */
-      if( !IS_NPC( ch ) && ( xIS_SET( ch->act, PLR_AUTOEXIT ) && !xIS_SET( ch->act, PLR_AUTOMAP ) ) )
+      
+
+//	if( !IS_NPC( ch ) && ( xIS_SET( ch->act, PLR_AUTOEXIT ) && !xIS_SET( ch->act, PLR_AUTOMAP ) ) )
+	if( !IS_NPC(ch))
          do_exits( ch, "auto" );
 
       show_list_to_char( ch->in_room->first_content, ch, FALSE, FALSE );
@@ -2087,7 +2090,7 @@ void do_exits( CHAR_DATA* ch, const char* argument)
    }
 
    set_char_color( AT_EXITS, ch );
-   mudstrlcpy( buf, fAuto ? "Exits:" : "Obvious exits:\r\n", MAX_STRING_LENGTH );
+   mudstrlcpy( buf, fAuto ? "&W[Exits:] " : "Obvious exits:\r\n", MAX_STRING_LENGTH );
 
    found = FALSE;
    for( pexit = ch->in_room->first_exit; pexit; pexit = pexit->next )
@@ -2107,13 +2110,15 @@ void do_exits( CHAR_DATA* ch, const char* argument)
             {
                mudstrlcat( buf, dir_name[pexit->vdir], MAX_STRING_LENGTH );
                mudstrlcat( buf, " ", MAX_STRING_LENGTH );
+	
             }
          }
          else
          {
-            snprintf( buf + strlen( buf ), ( MAX_STRING_LENGTH - strlen( buf ) ), "%-5s - %s\r\n",
+            snprintf( buf + strlen( buf ), ( MAX_STRING_LENGTH - strlen( buf ) ), "%-5s - %s \r\n",
                capitalize( dir_name[pexit->vdir] ), room_is_dark( pexit->to_room ) ? "Too dark to tell" : pexit->to_room->name );
          }
+
       }
    }
 
