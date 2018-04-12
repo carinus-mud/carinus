@@ -1990,14 +1990,10 @@ void do_vstat( CHAR_DATA* ch, const char* argument)
 void do_mstat( CHAR_DATA* ch, const char* argument)
 {
    char arg[MAX_INPUT_LENGTH];
-   char hpbuf[MAX_STRING_LENGTH];
-   char mnbuf[MAX_STRING_LENGTH];
-   char mvbuf[MAX_STRING_LENGTH];
-   char bdbuf[MAX_STRING_LENGTH];
-   AFFECT_DATA *paf;
+   char buf[MAX_STRING_LENGTH];
+   char buf2[MAX_STRING_LENGTH];
+
    CHAR_DATA *victim;
-   SKILLTYPE *skill;
-   VARIABLE_DATA *vd;
    int x;
 
    set_pager_color( AT_CYAN, ch );
@@ -2029,151 +2025,284 @@ void do_mstat( CHAR_DATA* ch, const char* argument)
       return;
    }
 
+  if(!IS_NPC(victim))
+    {
 
-   pager_printf_color( ch, "\r\n&c%s: &C%-20s", IS_NPC( victim ) ? "Mobile name" : "Name", victim->name );
-   if( !IS_NPC( victim ) )
-      pager_printf_color( ch, "&cStatus : &w%-10s", CAN_PKILL( victim ) ? "Deadly" :
-                          IS_PKILL( victim ) ? "Pre-Deadly" : "Non-Deadly" );
-   if( !IS_NPC( victim ) && victim->pcdata->clan )
-      pager_printf_color( ch, "   &c%s: &w%s",
-                          victim->pcdata->clan->clan_type == CLAN_ORDER ? "Order" :
-                          victim->pcdata->clan->clan_type == CLAN_GUILD ? "Guild" : "Clan", victim->pcdata->clan->name );
-   send_to_pager( "\r\n", ch );
-   if( get_trust( ch ) >= LEVEL_GOD && !IS_NPC( victim ) && victim->desc )
-      pager_printf_color( ch, "&cHost: &w%s   Descriptor: %d  &cTrust: &w%d  &cAuthBy: &w%s\r\n",
-                          victim->desc->host, victim->desc->descriptor,
-                          victim->trust, victim->pcdata->authed_by[0] != '\0' ? victim->pcdata->authed_by : "(unknown)" );
-   if( !IS_NPC( victim ) )
+	pager_printf_color( ch,"\r\n&r+===========================================================================+\r\n");
+	pager_printf_color( ch,"&r| &cHost:&W%-14s  &cRecent IP:&W%-14s &cPrevious IP:&w%-14s&r  |\r\n",
+			victim->desc->host,
+			victim->pcdata->recent_site ? victim->pcdata->recent_site : "Unknown", 
+			victim->pcdata->prev_site ? victim->pcdata->prev_site : "Unknown" );
+        pager_printf_color( ch, "&R| &cStatus: &w%-11s   &cAuth By: &W%-17s                          &r|\r\n", 
+			CAN_PKILL( victim ) ? "Deadly" :
+                        IS_PKILL( victim ) ? "Pre-Deadly" : "Non-Deadly",
+			victim->pcdata->authed_by[0] != '\0' ? victim->pcdata->authed_by : "(unknown)");
+
+send_to_char( "&r+===========================================================================+\n\r", ch);
+pager_printf( ch, "&r|&W %-15s Level %-2d %-12s Hometown: %-14s            &r|\r\n",
+        victim->name, victim->level, capitalize( get_race(victim)), victim->pcdata->hometown );
+send_to_char( "&r+===========================================================================+\n\r", ch);
+pager_printf( ch, "&r| &CFaction: &W%-15s     &CTier: &W%d           &CStat Major: &W(not coded)    &r|\r\n",
+        victim->pcdata->clan_name, victim->pcdata->tier);
+pager_printf( ch, "&r| &CRank:    &W%-15s    &CAlign: &W%-5d       &CStat Minor: &W(not coded)    &r|\r\n",
+	victim->pcdata->rank, victim->alignment);
+pager_printf( ch, "&r| &CWorships: &W%-15s   &CFavor: &W%-5d       &CArmor: &W%-4d                &r|\r\n",
+        victim->pcdata->deity ? victim->pcdata->deity->name : "(none)", victim->pcdata->favor, GET_AC(victim));
+pager_printf( ch, "&r| &CHitroll: &W%-3d              &CDamroll: &W%-3d         &CBlood Counters: &R%-3d        &r|\r\n",
+	GET_HITROLL(victim), GET_DAMROLL(victim), victim->pcdata->condition[COND_BLEEDING]);
+send_to_char( "&r+=============================+=============================================+\n\r", ch);
+pager_printf( ch, "&r| &CStrength:      &W%2d(%2d)       &r|             &CHealth: &W%-5d/%-5d             &r|\r\n",
+        get_curr_str( ch ), victim->perm_str, victim->hit, victim->max_hit);
+pager_printf( ch, "&r| &CDexterity:     &W%2d(%2d)       &r|         ", get_curr_dex(victim), victim->perm_dex);
+
+send_to_char( "&W[",ch);
+int start;
+float value = 25.0 * ((float) victim->hit / (float) victim->max_hit) ;
+                          for (start = 1; start <= 25; start++ )
+
+                                {
+                          if (start <=  value )
+                                        send_to_char("&G|",ch);
+                                  else
+                                        send_to_char(" ",ch);
+                                }
+                    send_to_char("&W]&r         |\n\r",ch);
+pager_printf( ch, "&r| &CConstitution:  &W%2d(%2d)       &r|              &CMana:  &W%-5d/%-5d             &r|\r\n",
+	get_curr_con(victim), victim->perm_con, victim->mana, victim->max_mana); 
+pager_printf(ch, "&r| &CIntelligence:  &W%2d(%2d)       &r|         ", get_curr_int(victim), victim->perm_int);
+
+send_to_char("&W[",ch);
+value = 25.0 * ((float) victim->mana / (float) victim->max_mana) ;
+                          for (start = 1; start <= 25; start++ )
+
+                                {
+                          if (start <=  value )
+                                        send_to_char("&C|",ch);
+                                  else
+                                        send_to_char(" ",ch);
+                                }
+                    send_to_char("&W]&r         |\n\r",ch);
+
+pager_printf( ch, "&r| &CWisdom:        &W%2d(%2d)       &r|            &CMovement:  &W%-5d/%-5d           &r|\r\n",
+        get_curr_wis( ch ), victim->perm_wis, victim->move, victim->max_move);
+pager_printf(ch, "&r| &CCharisma:      &W%2d(%2d)       &r|         ", get_curr_cha(victim), victim->perm_cha);
+send_to_char("&W[",ch);
+value = 25.0 * ((float) victim->move / (float) victim->max_move) ;
+                          for (start = 1; start <= 25; start++ )
+                                {
+                          if (start <=  value )
+                                        send_to_char("&P|",ch);
+                                  else
+                                        send_to_char(" ",ch);
+                                }
+                    send_to_char("&W]&r         &r|\n\r",ch);
+
+pager_printf( ch, "&r| &CLuck:          &W%2d(%2d)       &r|            &CExp TNL: &W%-15s         &r|\r\n",
+        get_curr_lck( ch ), victim->perm_lck,  num_punct( exp_level( ch, victim->level + 1 ) - victim->exp ));
+pager_printf( ch, "&r| &CAP:            &W%-5d        &r|         ", victim->pcdata->ap);
+send_to_char("&W[",ch);
+value = 25.0 * (((float) victim->exp )/((float) exp_level( ch, victim->level + 1 ) + victim->exp )) ;
+                          for (start = 1; start <= 25; start++ )
+
+                                {
+                          if (start <=  value )
+                                        send_to_char("&w|",ch);
+                                  else
+                                        send_to_char(" ",ch);
+                                }
+                    send_to_char("&W]&r         |\n\r",ch);
+pager_printf( ch, "&r| &CPractices:     &W%-5d        &r|                                             |  \r\n", victim->practice);
+send_to_char( "&r+=============================+=============================================+\n\r", ch);
+send_to_char( "&r|&CFeats:&r                                                                     |\n\r", ch);
+send_to_char( "&r|                                                                           |\n\r", ch);
+pager_printf( ch, "&r|          &YDeftness: &W%d             &YMight: &W%d         &YOmniscience: &W%d          &r|\n\r"
+		,victim->pcdata->deftness, victim->pcdata->might, victim->pcdata->omniscience);
+pager_printf( ch, "&r|         &YIngenuity: &W%d             &YKarma: &W%d              &YCombat: &W%d          &r|\n\r"
+		,victim->pcdata->ingenuity, victim->pcdata->karma, victim->pcdata->combat);
+pager_printf( ch, "&r|       &zBlack Magic: &W%d         &RRed Magic: &W%d         &GGreen Magic: &W%d          &r|\n\r"
+		,victim->pcdata->blackmagic, victim->pcdata->redmagic, victim->pcdata->greenmagic);
+pager_printf( ch, "&r|        &CBlue Magic: &W%d       &WWhite Magic: &W%d        &PArcana Magic: &W%d          &r|\n\r"
+		,victim->pcdata->bluemagic, victim->pcdata->whitemagic, victim->pcdata->arcanamagic);
+
+
+
+send_to_char( "&r|                                                                           |\n\r", ch);
+send_to_char( "&r+===========================================================================+\n\r", ch);
+
+   switch ( victim->position )
    {
-      pager_printf_color( ch, "&cRecent IP: &w%-15s", victim->pcdata->recent_site ?
-         victim->pcdata->recent_site : "Unknown" );
-      pager_printf_color( ch, "&cPrevious IP: &w%-15s", victim->pcdata->prev_site ?
-         victim->pcdata->prev_site : "Unknown" );
-      pager_printf_color( ch, "&cRank: &w%s\n\r",
-         str_cmp( victim->pcdata->rank, "" ) ? victim->pcdata->rank : "(default)" );
+      case POS_DEAD:
+         snprintf( buf, MAX_STRING_LENGTH, "%s", "slowly decomposing" );
+         break;
+      case POS_MORTAL:
+         snprintf( buf, MAX_STRING_LENGTH, "%s", "mortally wounded" );
+         break;
+      case POS_INCAP:
+         snprintf( buf, MAX_STRING_LENGTH, "%s", "incapacitated" );
+         break;
+      case POS_STUNNED:
+         snprintf( buf, MAX_STRING_LENGTH, "%s", "stunned" );
+         break;
+      case POS_SLEEPING:
+         snprintf( buf, MAX_STRING_LENGTH, "%s", "sleeping" );
+         break;
+      case POS_RESTING:
+         snprintf( buf, MAX_STRING_LENGTH, "%s", "resting" );
+         break;
+      case POS_STANDING:
+         snprintf( buf, MAX_STRING_LENGTH, "%s", "standing" );
+         break;
+      case POS_FIGHTING:
+         snprintf( buf, MAX_STRING_LENGTH, "%s", "fighting" );
+         break;
+      case POS_EVASIVE:
+         snprintf( buf, MAX_STRING_LENGTH, "%s", "fighting (evasive)" );   /* Fighting style support -haus */
+         break;
+      case POS_DEFENSIVE:
+         snprintf( buf, MAX_STRING_LENGTH, "%s", "fighting (defensive)" );
+         break;
+      case POS_AGGRESSIVE:
+         snprintf( buf, MAX_STRING_LENGTH, "%s", "fighting (aggressive)" );
+         break;
+      case POS_BERSERK:
+         snprintf( buf, MAX_STRING_LENGTH, "%s", "fighting (berserk)" );
+         break;
+      case POS_MOUNTED:
+         snprintf( buf, MAX_STRING_LENGTH, "%s", "mounted" );
+         break;
+      case POS_SITTING:
+         snprintf( buf, MAX_STRING_LENGTH, "%s", "sitting" );
+         break;
    }
-   if( !IS_NPC( victim ) && victim->pcdata->release_date != 0 )
-      pager_printf_color( ch, "&cHelled until %24.24s by %s.\r\n",
-                          ctime( &victim->pcdata->release_date ), victim->pcdata->helled_by );
-   pager_printf_color( ch, "&cVnum: &w%-5d    &cSex: &w%-6s    &cRoom: &w%-5d    &cCount: &w%d   &cKilled: &w%d\r\n",
-                       IS_NPC( victim ) ? victim->pIndexData->vnum : 0,
-                       victim->sex == SEX_MALE ? "male" :
-                       victim->sex == SEX_FEMALE ? "female" : "neutral",
-                       victim->in_room == NULL ? 0 : victim->in_room->vnum,
-                       IS_NPC( victim ) ? victim->pIndexData->count : 1,
-                       IS_NPC( victim ) ? victim->pIndexData->killed : victim->pcdata->mdeaths + victim->pcdata->pdeaths );
-   pager_printf_color( ch, "(&cStr: &C%2d&c )( Int: &C%2d&c )( Wis: &C%2d&c )( Dex: &C%2d&c )( Con: &C%2d&c )( Cha: &C%2d&c )( Lck: &C%2d&c)\r\n",
-                       get_curr_str( victim ), get_curr_int( victim ), get_curr_wis( victim ), get_curr_dex( victim ),
-                       get_curr_con( victim ), get_curr_cha( victim ), get_curr_lck( victim ) );
-   if( IS_NPC( victim))
-   pager_printf_color( ch, "&cLevel   : &P%-2d              ", victim->level );
-   if( !IS_NPC( victim))
-   pager_printf_color( ch, "&cLevel   : &P%-2d        &cTier: &W%d&D      \r", victim->level, victim->pcdata->tier );
 
 
-//   if( IS_NPC( victim ) )
-//      pager_printf_color( ch, "&c(&w%-2.2d&c)         ", victim->pIndexData->level );
-   pager_printf_color( ch, "&cclass  : &w%-2.2d/%-10s   &cRace : &w%-2.2d/%-10s\r\n",
-                       victim->Class,
-                       IS_NPC( victim ) ? victim->Class < MAX_NPC_CLASS && victim->Class >= 0 ?
+
+   switch ( victim->style )
+   {
+      case STYLE_EVASIVE:
+         snprintf( buf2, MAX_STRING_LENGTH, "%s", "evasive" );
+         break;
+      case STYLE_DEFENSIVE:
+         snprintf( buf2, MAX_STRING_LENGTH, "%s", "defensive" );
+         break;
+      case STYLE_AGGRESSIVE:
+         snprintf( buf2, MAX_STRING_LENGTH, "%s", "aggressive" );
+         break;
+      case STYLE_BERSERK:
+         snprintf( buf2, MAX_STRING_LENGTH, "%s", "berserk" );
+         break;
+      default:
+         snprintf( buf2, MAX_STRING_LENGTH, "%s", "standard" );
+         break;
+   }
+   pager_printf( ch, "&r| &CPosition:&W %-15s          &CStance:&W   %-15s              &r|\r\n", buf, buf2 );
+
+   pager_printf( ch, "&r| &CCpose is set to: &W%-40s            &r|\r\n", victim->pcdata->cpose );
+send_to_char( "&r+===========================================================================+\n\r", ch);
+
+
+      pager_printf( ch, "&r| &CPKILL DATA:  Pkills &W(%3.3d)     &CIllegal Pkills &W(%3.3d)     &CPdeaths &W(%3.3d)      &r|\r\n",
+                    victim->pcdata->pkills, victim->pcdata->illegal_pk, victim->pcdata->pdeaths );
+send_to_char( "&r+===========================================================================+\n\r", ch);
+
+
+
+   if( IS_IMMORTAL( ch ) )
+   {
+      pager_printf( ch, "&r| &YIMMORTAL DATA:  Wizinvis [%s]  Wizlevel (%-2d)                               &r|\r\n",
+                    xIS_SET( victim->act, PLR_WIZINVIS ) ? "X" : " ", victim->pcdata->wizinvis );
+
+      pager_printf( ch, "&r| &YBamfin:  %-60s     &r|\r\n", ( victim->pcdata->bamfin[0] != '\0' )
+                    ? victim->pcdata->bamfin : "An immortal appears." );
+      pager_printf( ch, "&r| &YBamfout: %-60s     &r|\r\n", ( victim->pcdata->bamfout[0] != '\0' )
+                    ? victim->pcdata->bamfout : "The immortal disappears." );
+send_to_char( "&r+===========================================================================+\n\r", ch);
+
+  }
+      if( victim->pcdata->area )
+      {
+         pager_printf( ch, "Vnums:   Room (%-5.5d - %-5.5d)   Object (%-5.5d - %-5.5d)   Mob (%-5.5d - %-5.5d)\r\n",
+                       victim->pcdata->area->low_r_vnum, victim->pcdata->area->hi_r_vnum,
+                       victim->pcdata->area->low_o_vnum, victim->pcdata->area->hi_o_vnum,
+                       victim->pcdata->area->low_m_vnum, victim->pcdata->area->hi_m_vnum );
+         pager_printf( ch, "Area Loaded [%s]\r\n", ( IS_SET( victim->pcdata->area->status, AREA_LOADED ) ) ? "yes" : "no" );
+      }
+
+
+
+
+
+    }
+
+  if(IS_NPC(victim))
+    {
+	pager_printf_color( ch,"\r\n&R+=============================================================================+\r\n");
+	pager_printf_color( ch,"&R|  &cName: &W%-63s      &R|\r\n", victim->name );
+	pager_printf_color( ch,"&R+===================+============+========================+===================+\r\n");
+	pager_printf_color( ch,"&R|  &cVnum  : &W%-7d &R | &cStr: &W%-3d   &R|  &cClass: &W%-10s     &R|  &cNumAtt: &W%-2d       &R|\r\n",
+			 victim->pIndexData->vnum, get_curr_str( victim ), IS_NPC( victim ) ? victim->Class < MAX_NPC_CLASS && victim->Class >= 0 ?
                        npc_class[victim->Class] : "unknown" : victim->Class < MAX_PC_CLASS &&
                        class_table[victim->Class]->who_name &&
                        class_table[victim->Class]->who_name[0] != '\0' ?
-                       class_table[victim->Class]->who_name : "unknown",
-                       victim->race,
-                       IS_NPC( victim ) ? victim->race < MAX_NPC_RACE && victim->race >= 0 ?
-                       npc_race[victim->race] : "unknown" : victim->race < MAX_PC_RACE &&
-                       race_table[victim->race]->race_name &&
-                       race_table[victim->race]->race_name[0] != '\0' ? race_table[victim->race]->race_name : "unknown" );
-   snprintf( hpbuf, MAX_STRING_LENGTH, "%d/%d", victim->hit, victim->max_hit );
-   snprintf( mnbuf, MAX_STRING_LENGTH, "%d/%d", victim->mana, victim->max_mana );
-   snprintf( mvbuf, MAX_STRING_LENGTH, "%d/%d", victim->move, victim->max_move );
-   if( IS_VAMPIRE( victim ) && !IS_NPC( victim ) )
-   {
-      snprintf( bdbuf, MAX_STRING_LENGTH, "%d/%d", victim->pcdata->condition[COND_BLOODTHIRST], 10 + victim->level );
-      pager_printf_color( ch, "&cHps     : &w%-12s    &cBlood  : &w%-12s    &cMove      : &w%-12s\r\n",
-                          hpbuf, bdbuf, mvbuf );
-   }
-   else
-      pager_printf_color( ch, "&cHps     : &w%-12s    &cMana   : &w%-12s    &cMove      : &w%-12s\r\n",
-                          hpbuf, mnbuf, mvbuf );
-   pager_printf_color( ch, "&cHitroll : &C%-5d           &cAlign  : &w%-5d           &cArmorclass: &w%d\r\n",
-                       GET_HITROLL( victim ), victim->alignment, GET_AC( victim ) );
-   pager_printf_color( ch, "&cDamroll : &C%-5d           &cWimpy  : &w%-5d           &cPosition  : &w%d\r\n",
-                       GET_DAMROLL( victim ), victim->wimpy, victim->position );
-   pager_printf_color( ch, "&cFighting: &w%-13s   &cMaster : &w%-13s   &cLeader    : &w%s\r\n",
+                       class_table[victim->Class]->who_name : "unknown", victim->numattacks);
+	pager_printf_color( ch,"&R|  &cSex   : &W%-7s &R | &cDex: &W%-3d   &R|  &cRace : &W%-15s&R|  &cMst   : &W%-2d       &R|\r\n",
+			  victim->sex == SEX_MALE ? "male" :
+                       victim->sex == SEX_FEMALE ? "female" : "neutral", get_curr_dex(victim), 
+                       race_table[victim->race]->race_name[0] != '\0' ? race_table[victim->race]->race_name : "unknown",
+ 		       victim->mental_state);
+	pager_printf_color( ch,"&R|  &cRoom  : &W%-7d &R | &cCon: &W%-3d   &R|  &cLevel: &W%-2d             &R|  &cEst   : &W%-4d     &R|\r\n",
+			victim->in_room == NULL ? 0 : victim->in_room->vnum,
+			get_curr_con(victim), victim->level, victim->emotional_state );
+	pager_printf_color( ch,"&R|  &cCount : &W%-7d &R | &cInt: &W%-3d   &R|  &cHitpt: &W%-5d/%-5d    &R|  &cItems : &W%-4d/%-4d&R|\r\n",
+			   IS_NPC( victim ) ? victim->pIndexData->count : 1,
+			   get_curr_int(victim), victim->hit, victim->max_hit,
+			   victim->carry_number, can_carry_n(victim));
+	pager_printf_color( ch,"&R|  &cKilled: &W%-7d &R | &cWis: &W%-3d   &R|  &cMana : &W%-5d/%-5d    &R|  &cWeight: &W%-4d/%-4d&R|\r\n",
+			IS_NPC( victim ) ? victim->pIndexData->killed : victim->pcdata->mdeaths + victim->pcdata->pdeaths,
+			get_curr_wis(victim), victim->mana, victim->max_mana,
+			 victim->carry_weight, can_carry_w( victim ));
+	pager_printf_color( ch,"&R|  &cHitDie: &W%-2dd%-2d+%-3d&R| &cCha: &W%-3d   &R|  &cMove : &W%-5d/%-5d    &R|  &cYear  :&W%-4d      &R|\r\n",
+			victim->pIndexData->hitnodice, victim->pIndexData->hitsizedice, victim->pIndexData->hitplus,
+			get_curr_cha(victim), victim->move, victim->max_move, calculate_age( victim ));
+	pager_printf_color( ch,"&R|  &cDamDie: &W%-2dd%-2d+%-3d&R| &cLck: &W%-3d   &R|  &cAC   : &W%-5d          &R|  &cSecs  : &W%-4d     &R|\r\n",
+			victim->barenumdie, victim->baresizedie, victim->damplus,
+			get_curr_lck(victim), GET_AC( victim ), ( int )victim->played);
+	pager_printf_color( ch,"&R|  &cIndam : &W%-2dd%-2d+%-3d&R| &cHit: &W%-3d   &R|  &cAlign: &W%-5d          &R|  &cTimer : &W%-4d     &R|\r\n",
+			victim->pIndexData->damnodice, victim->pIndexData->damsizedice, victim->pIndexData->damplus,
+			GET_HITROLL( victim ), victim->alignment, victim->timer); 
+	pager_printf_color( ch,"&R|  &cPos'n : &W%-3d      &R| &cDam: &W%-3d   &R|  &cWimpy: &W%-5d          &R|  &cGold  : &W%-8d &R|\r\n",
+			victim->position, GET_DAMROLL( victim ), victim->wimpy, victim->gold);
+	pager_printf_color( ch,"&R+===================+============+========================+===================+\r\n");
+	pager_printf_color( ch,"&R|    &cFighting: &W%-10s     &cMaster : &W%-10s      &cLeader : &W%-10s    &R|\r\n",
                        victim->fighting ? victim->fighting->who->name : "(none)",
                        victim->master ? victim->master->name : "(none)", victim->leader ? victim->leader->name : "(none)" );
-   if( IS_NPC( victim ) )
-      pager_printf_color( ch, "&cHating  : &w%-13s   &cHunting: &w%-13s   &cFearing   : &w%s\r\n",
+	pager_printf_color( ch,"&R|    &cHating  : &W%-10s     &cHunting: &W%-10s      &cFearing: &W%-10s    &R|\r\n",
                           victim->hating ? victim->hating->name : "(none)",
                           victim->hunting ? victim->hunting->name : "(none)",
                           victim->fearing ? victim->fearing->name : "(none)" );
-   else
-      pager_printf_color( ch, "&cDeity   : &w%-13s&w   &cFavor  : &w%-5d           &cGlory     : &w%-d (%d)\r\n",
-                          victim->pcdata->deity ? victim->pcdata->deity->name : "(none)",
-                          victim->pcdata->favor, victim->pcdata->quest_curr, victim->pcdata->quest_accum );
-   if( IS_NPC( victim ) )
-      pager_printf_color( ch,
-                          "&cMob hitdie : &C%dd%d+%d    &cMob damdie : &C%dd%d+%3d    &cIndex damdie : &C%dd%d+%3d\r\n&cNumAttacks : &C%d\r\n",
-                          victim->pIndexData->hitnodice, victim->pIndexData->hitsizedice, victim->pIndexData->hitplus,
-                          victim->barenumdie, victim->baresizedie, victim->damplus, victim->pIndexData->damnodice,
-                          victim->pIndexData->damsizedice, victim->pIndexData->damplus, victim->numattacks );
-   pager_printf_color( ch, "&cMentalState: &w%-3d   &cEmotionalState: &w%-3d   ", victim->mental_state,
-                       victim->emotional_state );
-    if ( !IS_NPC( victim ) )
-      pager_printf_color( ch, "\r\n&cThirst: &w%d   &cFull: &w%d   &cDrunk:   &w%d   &cBl: %d\n\r",
-	victim->pcdata->condition[COND_THIRST],
-	victim->pcdata->condition[COND_FULL],
-	victim->pcdata->condition[COND_DRUNK],
-	victim->pcdata->condition[COND_BLEEDING] );
-   else
-      send_to_pager( "\r\n", ch );
-   pager_printf_color( ch, "&cSave versus: &w%d %d %d %d %d       &cItems: &w(%d/%d)  &cWeight &w(%d/%d)\r\n",
+	pager_printf_color( ch,"&R+=============================================================================+\r\n");
+	pager_printf_color( ch,"&R|    &cSpeaks: &W%-3d              &cSpeaking: &W%-5d          &cExp: &w%-15d   &R|\r\n",
+                       victim->speaks, victim->speaking, victim->exp);
+	pager_printf_color( ch,"&R+=============================================================================+\r\n");
+	pager_printf_color(ch, "&R| &cSave Vs Poison: &W%-2d  &cVs Wand: &W%-2d  &cVs Para: &W%-2d  &cVs Breath: &W%-2d  &cVs Spell: &W%-2d   &R|\r\n",
                        victim->saving_poison_death,
                        victim->saving_wand,
                        victim->saving_para_petri,
                        victim->saving_breath,
-                       victim->saving_spell_staff,
-                       victim->carry_number, can_carry_n( victim ), victim->carry_weight, can_carry_w( victim ) );
-   pager_printf_color( ch, "&cYear: &w%-5d  &cSecs: &w%d  &cTimer: &w%d  &cGold: &Y%d\r\n",
-                       calculate_age( victim ), ( int )victim->played, victim->timer, victim->gold );
-   if( get_timer( victim, TIMER_PKILLED ) )
-      pager_printf_color( ch, "&cTimerPkilled:  &R%d\r\n", get_timer( victim, TIMER_PKILLED ) );
-   if( get_timer( victim, TIMER_RECENTFIGHT ) )
-      pager_printf_color( ch, "&cTimerRecentfight:  &R%d\r\n", get_timer( victim, TIMER_RECENTFIGHT ) );
-   if( get_timer( victim, TIMER_ASUPRESSED ) )
-      pager_printf_color( ch, "&cTimerAsupressed:  &R%d\r\n", get_timer( victim, TIMER_ASUPRESSED ) );
-   if( IS_NPC( victim ) )
-      pager_printf_color( ch, "&cAct Flags  : &w%s\r\n", ext_flag_string( &victim->act, act_flags ) );
-   else
-   {
-      pager_printf_color( ch, "&cPlayerFlags: &w%s\r\n", ext_flag_string( &victim->act, plr_flags ) );
-      pager_printf_color( ch, "&cPcflags    : &w%s\r\n", flag_string( victim->pcdata->flags, pc_flags ) );
-      if( victim->pcdata->nuisance )
-      {
-         pager_printf_color( ch, "&RNuisance   &cStage: (&R%d&c/%d)  Power:  &w%d  &cTime:  &w%s.\r\n",
-                             victim->pcdata->nuisance->flags, MAX_NUISANCE_STAGE, victim->pcdata->nuisance->power,
-                             ctime( &victim->pcdata->nuisance->set_time ) );
-      }
-   }
-   if( victim->morph )
-   {
-      if( victim->morph->morph )
-         pager_printf_color( ch, "&cMorphed as : (&C%d&c) &C%s    &cTimer: &C%d\r\n",
-                             victim->morph->morph->vnum, victim->morph->morph->short_desc, victim->morph->timer );
-      else
-         pager_printf_color( ch, "&cMorphed as: Morph was deleted.\r\n" );
-   }
-   pager_printf_color( ch, "&cAffected by: &C%s\r\n", affect_bit_name( &victim->affected_by ) );
-   pager_printf_color( ch, "&cSpeaks: &w%d   &cSpeaking: &w%d   &cExperience: &w%d",
-                       victim->speaks, victim->speaking, victim->exp );
-   if( !IS_NPC( victim ) && victim->wait )
-      pager_printf_color( ch, "   &cWaitState: &R%d\r\n", victim->wait / 12 );
-   else
-      send_to_pager( "\r\n", ch );
-   send_to_pager_color( "&cLanguages  : &w", ch );
-   for( x = 0; lang_array[x] != LANG_UNKNOWN; x++ )
+                       victim->saving_spell_staff );
+	pager_printf_color( ch,"&R+=============================================================================+\r\n");
+	
+	pager_printf_color( ch,"&R|&cAct Flags: &W%-66s&R|\r\n",  ext_flag_string( &victim->act, act_flags ) );
+	pager_printf_color( ch,"&R|&cAff By: &W%-69s&R|\r\n",  affect_bit_name( &victim->affected_by ) );
+	pager_printf_color( ch,"&R|&cAttacks : &W%-67s&R|\r\n",ext_flag_string( &victim->attacks, attack_flags ) );
+	pager_printf_color( ch,"&R|&cDefenses: &W%-67s&R|\r\n",ext_flag_string( &victim->defenses, defense_flags ) );
+	pager_printf_color( ch,"&R|&cParts: &W%-70s&R|\r\n",
+			 flag_string( victim->xflags, part_flags ) );
+	pager_printf_color( ch,"&R|&cShort: &W%-70s&R|\r\n",  
+			victim->short_descr[0] != '\0' ? victim->short_descr : "(none set)");
+	pager_printf_color( ch,"&R|&cLong : &W%s", victim->long_descr);
+	pager_printf_color( ch,"&R|&cLanguages: &W"); 
+			   for( x = 0; lang_array[x] != LANG_UNKNOWN; x++ )
       if( knows_language( victim, lang_array[x], victim ) || ( IS_NPC( victim ) && victim->speaks == 0 ) )
       {
          if( IS_SET( lang_array[x], victim->speaking ) || ( IS_NPC( victim ) && !victim->speaking ) )
@@ -2184,100 +2313,23 @@ void do_mstat( CHAR_DATA* ch, const char* argument)
       }
       else if( IS_SET( lang_array[x], victim->speaking ) || ( IS_NPC( victim ) && !victim->speaking ) )
       {
-         set_pager_color( AT_PINK, ch );
          send_to_pager( lang_names[x], ch );
          send_to_pager( " ", ch );
          set_pager_color( AT_PLAIN, ch );
       }
    send_to_pager( "\r\n", ch );
-   if( victim->pcdata && victim->pcdata->bestowments && victim->pcdata->bestowments[0] != '\0' )
-      pager_printf_color( ch, "&cBestowments: &w%s\r\n", victim->pcdata->bestowments );
-   if( IS_NPC( victim ) )
-      pager_printf_color( ch, "&cShortdesc  : &w%s\r\n&cLongdesc   : &w%s",
-                          victim->short_descr[0] != '\0' ? victim->short_descr : "(none set)",
-                          victim->long_descr[0] != '\0' ? victim->long_descr : "(none set)\r\n" );
-   else
-   {
-      if( victim->short_descr[0] != '\0' )
-         pager_printf_color( ch, "&cShortdesc  : &w%s\r\n", victim->short_descr );
-      if( victim->long_descr[0] != '\0' )
-         pager_printf_color( ch, "&cLongdesc   : &w%s\r\n", victim->long_descr );
-   }
-   if( IS_NPC( victim ) && victim->spec_fun )
-      pager_printf_color( ch, "&cMobile has spec fun: &w%s\r\n", victim->spec_funname );
-   if( IS_NPC( victim ) )
-      pager_printf_color( ch, "&cBody Parts : &w%s\r\n", flag_string( victim->xflags, part_flags ) );
-   if( victim->resistant > 0 )
-      pager_printf_color( ch, "&cResistant  : &w%s\r\n", flag_string( victim->resistant, ris_flags ) );
-   if( victim->immune > 0 )
-      pager_printf_color( ch, "&cImmune     : &w%s\r\n", flag_string( victim->immune, ris_flags ) );
-   if( victim->susceptible > 0 )
-      pager_printf_color( ch, "&cSusceptible: &w%s\r\n", flag_string( victim->susceptible, ris_flags ) );
-   if( IS_NPC( victim ) )
-   {
-      pager_printf_color( ch, "&cAttacks    : &w%s\r\n", ext_flag_string( &victim->attacks, attack_flags ) );
-      pager_printf_color( ch, "&cDefenses   : &w%s\r\n", ext_flag_string( &victim->defenses, defense_flags ) );
-   }
 
-   for( paf = victim->first_affect; paf; paf = paf->next )
-   {
-      if( ( skill = get_skilltype( paf->type ) ) != NULL )
-         pager_printf_color( ch,
-                             "&c%s: &w'%s' mods %s by %d for %d rnds with bits %s.",
-                             skill_tname[skill->type],
-                             skill->name,
-                             affect_loc_name( paf->location ),
-                             paf->modifier, paf->duration, affect_bit_name( &paf->bitvector ) );
-      send_to_pager( "\r\n", ch );
-   }
 
-   if( victim->variables )
-   {
-      send_to_pager( "&cVariables  : &w", ch );
-      for( vd = victim->variables; vd; vd = vd->next )
-      {
-         pager_printf( ch, "%s:%d", vd->tag, vd->vnum );
-         switch ( vd->type )
-         {
-            case vtSTR:
-               if( vd->data )
-                  pager_printf( ch, "=%s", ( char * )vd->data );
-               break;
 
-            case vtINT:
-               if( vd->data )
-                  pager_printf( ch, "=%ld", ( long )vd->data );
-               break;
 
-            case vtXBIT:
-               if( vd->data )
-               {
-                  char buf[MAX_STRING_LENGTH];
-                  int started = 0;
 
-                  buf[0] = '\0';
-                  for( x = MAX_BITS; x > 0; --x )
-                  {
-                     if( !started && xIS_SET( *( EXT_BV * ) vd->data, x ) )
-                        started = x;
-                  }
+	pager_printf_color( ch,"&R+=============================================================================+\r\n");
 
-                  for( x = 1; x <= started; x++ )
-                     strcat( buf, xIS_SET( *( EXT_BV * ) vd->data, x ) ? "1 " : "0 " );
 
-                  if( buf[0] != '\0' )
-                     buf[strlen( buf ) - 1] = '\0';
-                  pager_printf( ch, "=[%s]", buf );
-               }
-         }
-         if( vd->next )
-            send_to_pager( "  ", ch );
-      }
-      send_to_pager( "\r\n", ch );
-   }
-   return;
+
+
 }
-
+}
 void do_mfind( CHAR_DATA* ch, const char* argument)
 {
    char arg[MAX_INPUT_LENGTH];
