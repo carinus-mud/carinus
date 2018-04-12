@@ -121,79 +121,6 @@ void get_exit_dir( int dir, int *x, int *y, int xorig, int yorig )
    }
 }
 
-char *get_exits( CHAR_DATA * ch )
-{
-   static char buf[MAX_STRING_LENGTH];
-   EXIT_DATA *pexit;
-   bool found = FALSE;
-
-   buf[0] = '\0';
-
-   if( !check_blind( ch ) )
-      return buf;
-
-   set_char_color( AT_EXITS, ch );
-
-   mudstrlcpy( buf, "[Exits:", MAX_STRING_LENGTH );
-
-   for( pexit = ch->in_room->first_exit; pexit; pexit = pexit->next )
-   {
-      if( IS_IMMORTAL( ch ) )
-         /*
-          * Immortals see all exits, even secret ones 
-          */
-      {
-         if( pexit->to_room )
-         {
-            found = TRUE;
-            mudstrlcat( buf, " ", MAX_STRING_LENGTH );
-
-            mudstrlcat( buf, capitalize( dir_name[pexit->vdir] ), MAX_STRING_LENGTH );
-
-            /*
-             * New code added to display closed, or otherwise invisible exits to immortals 
-             * Installed by Samson 1-25-98 
-             */
-            if( IS_SET( pexit->exit_info, EX_CLOSED ) )
-               mudstrlcat( buf, "->(Closed)", MAX_STRING_LENGTH );
-            if( IS_SET( pexit->exit_info, EX_DIG ) )
-               mudstrlcat( buf, "->(Dig)", MAX_STRING_LENGTH );
-            if( IS_SET( pexit->exit_info, EX_WINDOW ) )
-               mudstrlcat( buf, "->(Window)", MAX_STRING_LENGTH );
-            if( IS_SET( pexit->exit_info, EX_HIDDEN ) )
-               mudstrlcat( buf, "->(Hidden)", MAX_STRING_LENGTH );
-            if( xIS_SET( pexit->to_room->room_flags, ROOM_DEATH ) )
-               mudstrlcat( buf, "->(Deathtrap)", MAX_STRING_LENGTH );
-         }
-      }
-      else
-      {
-         if( pexit->to_room
-             && !IS_SET( pexit->exit_info, EX_SECRET )
-             && ( !IS_SET( pexit->exit_info, EX_WINDOW ) || IS_SET( pexit->exit_info, EX_ISDOOR ) )
-             && !IS_SET( pexit->exit_info, EX_HIDDEN ) )
-         {
-            found = TRUE;
-            mudstrlcat( buf, " ", MAX_STRING_LENGTH );
-
-            mudstrlcat( buf, capitalize( dir_name[pexit->vdir] ), MAX_STRING_LENGTH );
-
-            if( IS_SET( pexit->exit_info, EX_CLOSED ) )
-               mudstrlcat( buf, "->(Closed)", MAX_STRING_LENGTH );
-            if( IS_AFFECTED( ch, AFF_DETECTTRAPS ) && xIS_SET( pexit->to_room->room_flags, ROOM_DEATH ) )
-               mudstrlcat( buf, "->(Deathtrap)", MAX_STRING_LENGTH );
-         }
-      }
-   }
-
-   if( !found )
-      mudstrlcat( buf, " none]", MAX_STRING_LENGTH );
-   else
-      mudstrlcat( buf, "]", MAX_STRING_LENGTH );
-   mudstrlcat( buf, "\r\n", MAX_STRING_LENGTH );
-   return buf;
-}
-
 /* Clear one map coord */
 void clear_coord( int x, int y )
 {
@@ -529,10 +456,10 @@ void show_map( CHAR_DATA * ch, char *text )
    /*
     * Show exits 
     */
-   if( xIS_SET( ch->act, PLR_AUTOEXIT ) )
-      snprintf( buf, MAX_STRING_LENGTH * 2, "%s%s", color_str( AT_EXITS, ch ), get_exits( ch ) );
-   else
-      mudstrlcpy( buf, "", MAX_STRING_LENGTH * 2 );
+//   if( xIS_SET( ch->act, PLR_AUTOEXIT ) )
+//      snprintf( buf, MAX_STRING_LENGTH * 2, "%s%s", color_str( AT_EXITS, ch ), get_exits( ch ) );
+//   else
+//      mudstrlcpy( buf, "", MAX_STRING_LENGTH * 2 );
 
    /*
     * Top of map frame 
