@@ -402,8 +402,7 @@ void do_affected( CHAR_DATA* ch, const char* argument)
    set_char_color( AT_SCORE, ch );
 
    argument = one_argument( argument, arg );
-   if( !str_cmp( arg, "by" ) )
-   {
+   
       send_to_char_color( "\r\n&BImbued with:\r\n", ch );
       ch_printf_color( ch, "&C%s\r\n", !xIS_EMPTY( ch->affected_by ) ? affect_bit_name( &ch->affected_by ) : "nothing" );
       if( ch->level >= 20 )
@@ -425,8 +424,8 @@ void do_affected( CHAR_DATA* ch, const char* argument)
             ch_printf_color( ch, "&C%s\r\n", flag_string( ch->susceptible, ris_flags ) );
          }
       }
-      return;
-   }
+   
+   
 
    if( !ch->first_affect )
    {
