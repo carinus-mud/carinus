@@ -650,7 +650,7 @@ send_to_char( "&r+==============================================================
 
   }
 
-pager_printf(ch,"&bboop \r\n");
+pager_printf(ch,"&gType 'aff' to see what you are affected by. \r\n");
 
       if( ch->pcdata->area )
       {

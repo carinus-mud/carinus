@@ -405,25 +405,42 @@ void do_affected( CHAR_DATA* ch, const char* argument)
    
       send_to_char_color( "\r\n&BImbued with:\r\n", ch );
       ch_printf_color( ch, "&C%s\r\n", !xIS_EMPTY( ch->affected_by ) ? affect_bit_name( &ch->affected_by ) : "nothing" );
-      if( ch->level >= 20 )
-      {
+     
          send_to_char( "\r\n", ch );
+            send_to_char_color( "&BResistances:  ", ch );
+
          if( ch->resistant > 0 )
          {
-            send_to_char_color( "&BResistances:  ", ch );
             ch_printf_color( ch, "&C%s\r\n", flag_string( ch->resistant, ris_flags ) );
          }
+         else
+         {
+               ch_printf_color( ch, "&Cnone\r\n" );
+         }
+
+        send_to_char_color( "&BImmunities:   ", ch );
          if( ch->immune > 0 )
          {
-            send_to_char_color( "&BImmunities:   ", ch );
             ch_printf_color( ch, "&C%s\r\n", flag_string( ch->immune, ris_flags ) );
          }
+         else
+         {
+               ch_printf_color( ch, "&Cnone\r\n" );
+         }
+
+
+            send_to_char_color( "&BSuscepts:     ", ch );
          if( ch->susceptible > 0 )
          {
-            send_to_char_color( "&BSuscepts:     ", ch );
             ch_printf_color( ch, "&C%s\r\n", flag_string( ch->susceptible, ris_flags ) );
          }
-      }
+         else
+         {
+               ch_printf_color( ch, "&Cnone\r\n" );
+         }
+
+      
+      
    
    
 
