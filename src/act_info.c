@@ -3918,7 +3918,7 @@ void do_commands( CHAR_DATA* ch, const char* argument)
 	send_to_char("lock     -  Locks a door if player has the key. Usage: 'lock (direction)'.\r\n", ch);
 	send_to_char("open     -  Opens a door/item. Usage: 'open (direction)/(item)'.\r\n", ch);
 	send_to_char("pull     -  Pull certain objects, such as ropes. Usage: 'pull (object)'.\r\n", ch);
-	send_to_char("push     -  Push certain objects, such as buttons. Usage: 'pull (object)'.\r\n", ch);
+	send_to_char("push     -  Push certain objects, such as buttons. Usage: 'push (object)'.\r\n", ch);
 	send_to_char("put      -  Places an item in a location.  Usage: 'put (item) [location]'.\r\n", ch);
 	send_to_char("knock    -  Knock on a door alerting adjoining room. Usage: 'rap (direction)'.\r\n", ch);
 	send_to_char("unbolt   -  Unbolt (unlock) certain doors. Usage: 'unbolt (direction)'.\r\n", ch);
@@ -4139,9 +4139,9 @@ void do_commands( CHAR_DATA* ch, const char* argument)
 	if( !str_cmp( arg, "bank" ) )
 		{
 	send_to_char("bank - Usage 1: 'bank balance' - Shows current balance.\r\n", ch);
-	send_to_char("       Usage 2: 'bank deposit (amt)' - Deposits amount into account.\r\n", ch);
-	send_to_char("       Usage 3: 'bank withdraw (amt)' - Withdraws amount from account.\r\n", ch);
-	send_to_char("       Usage 4: 'bank transfer (amt) [player]' - Transfers amount to a player'.\r\n", ch);
+	send_to_char("       Usage 2: 'bank deposit (amount)' - Deposits amount into account.\r\n", ch);
+	send_to_char("       Usage 3: 'bank withdraw (amount)' - Withdraws amount from account.\r\n", ch);
+	send_to_char("       Usage 4: 'bank transfer (amount) [player]' - Transfers amount to a player'.\r\n", ch);
 		}
 	else
 		{
