@@ -105,10 +105,11 @@ void advance_level( CHAR_DATA * ch )
       do_help( ch, "M_ADVHERO_" );
    }
 
-
+   
    ch->hit = ch->max_hit;
    ch->mana = ch->max_mana;
    ch->move = ch->max_move;
+   do_save(ch, "auto");
 
    if( ch->level < LEVEL_IMMORTAL )
    {
@@ -287,6 +288,8 @@ int hit_gain( CHAR_DATA * ch )
       gain /= 4;
 
    return UMIN( gain, ch->max_hit - ch->hit );
+   do_save(ch, "auto");
+
 }
 
 int mana_gain( CHAR_DATA * ch )

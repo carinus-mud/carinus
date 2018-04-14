@@ -2442,7 +2442,10 @@ void do_quit( CHAR_DATA* ch, const char* argument)
       save_clan( ch->pcdata->clan );
 
    saving_char = NULL;
+	do_save (ch, "auto");
 
+   if (IS_IMMORTAL(ch) && ch->pcdata->area )
+	do_savearea (ch, "");
    level = get_trust( ch );
    /*
     * After extract_char the ch is no longer valid!
