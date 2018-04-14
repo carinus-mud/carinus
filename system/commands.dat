@@ -3576,6 +3576,14 @@ Log         0
 End
 
 #COMMAND
+Name        score~
+Code        do_score
+Position    100
+Level       65
+Log         0
+End
+
+#COMMAND
 Name        scatter~
 Code        do_scatter
 Position    100
@@ -3596,14 +3604,6 @@ Name        statreport~
 Code        do_statreport
 Position    100
 Level       2
-Log         0
-End
-
-#COMMAND
-Name        score~
-Code        do_score
-Position    100
-Level       65
 Log         0
 End
 
