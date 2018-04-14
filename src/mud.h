@@ -3954,7 +3954,6 @@ DECLARE_DO_FUN( do_name );
 DECLARE_DO_FUN( do_newbiechat );
 DECLARE_DO_FUN( do_newbieset );
 DECLARE_DO_FUN( do_news );
-DECLARE_DO_FUN( do_newscore );
 DECLARE_DO_FUN( do_newzones );
 DECLARE_DO_FUN( do_nobeckon );
 DECLARE_DO_FUN( do_nobio );
