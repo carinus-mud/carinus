@@ -3890,47 +3890,268 @@ void do_socials( CHAR_DATA* ch, const char* argument)
 
 void do_commands( CHAR_DATA* ch, const char* argument)
 {
-   int col;
-   bool found;
-   int hash;
-   CMDTYPE *command;
+   char arg[MAX_STRING_LENGTH];
+   argument = one_argument( argument, arg );
 
-   col = 0;
+
    set_pager_color( AT_PLAIN, ch );
-   if( argument[0] == '\0' )
-   {
-      for( hash = 0; hash < 126; hash++ )
-         for( command = command_hash[hash]; command; command = command->next )
-            if( command->level < LEVEL_HERO
-                && command->level <= get_trust( ch ) && ( command->name[0] != 'm' || command->name[1] != 'p' ) )
-            {
-               pager_printf( ch, "%-12s", command->name );
-               if( ++col % 6 == 0 )
-                  send_to_pager( "\r\n", ch );
-            }
-      if( col % 6 != 0 )
-         send_to_pager( "\r\n", ch );
-   }
-   else
-   {
-      found = FALSE;
-      for( hash = 0; hash < 126; hash++ )
-         for( command = command_hash[hash]; command; command = command->next )
-            if( command->level < LEVEL_HERO
-                && command->level <= get_trust( ch )
-                && !str_prefix( argument, command->name ) && ( command->name[0] != 'm' || command->name[1] != 'p' ) )
-            {
-               pager_printf( ch, "%-12s", command->name );
-               found = TRUE;
-               if( ++col % 6 == 0 )
-                  send_to_pager( "\r\n", ch );
-            }
 
-      if( col % 6 != 0 )
-         send_to_pager( "\r\n", ch );
-      if( !found )
-         ch_printf( ch, "No command found under %s.\r\n", argument );
-   }
+	 if( arg[0] == '\0' )
+		{
+	send_to_char("\r\nPlease specify a command type.\r\n", ch);
+	send_to_char("Loading basic commands...\r\n", ch);
+		do_commands( ch, "basic");
+		return;
+		}
+	else
+	 if( !str_cmp( arg, "area" ) )
+		{
+	send_to_char("bolt     -  Bolt (lock) certain doors. Usage: 'bolt (direction)'.\r\n", ch); 
+	send_to_char("bury     -  Bury (hide) items on the ground. Usage: 'bury (item)'.\r\n", ch);
+	send_to_char("close    -  Closes a door or item. Usage: 'close (direction)/(item)'.\r\n", ch);
+	send_to_char("consider -  Gauges toughnes of enemy. Usage: 'consider (target)'.\r\n", ch);
+	send_to_char("dig      -  Uncovers buried items.\r\n", ch);
+	send_to_char("examine  -  Examine items and look inside containers. Usage: 'examine (item)'.\r\n", ch);
+	send_to_char("exits    -  Lists available exits and the room names they exit to.\r\n", ch);
+	send_to_char("enter    -  Enter a special exit, like a portal. Usage: 'enter (exit)'.\r\n", ch);
+	send_to_char("glance   -  Gives a brief room readout without the description. \r\n", ch);
+	send_to_char("leave    -  Exits player from an indoor room, if an outdoor exit is available.\r\n", ch);
+	send_to_char("lock     -  Locks a door if player has the key. Usage: 'lock (direction)'.\r\n", ch);
+	send_to_char("open     -  Opens a door/item. Usage: 'open (direction)/(item)'.\r\n", ch);
+	send_to_char("pull     -  Pull certain objects, such as ropes. Usage: 'pull (object)'.\r\n", ch);
+	send_to_char("push     -  Push certain objects, such as buttons. Usage: 'pull (object)'.\r\n", ch);
+	send_to_char("put      -  Places an item in a location.  Usage: 'put (item) [location]'.\r\n", ch);
+	send_to_char("rap      -  Knock on a door alerting adjoining room. Usage: 'rap (direction)'.\r\n", ch);
+	send_to_char("unbolt   -  Unbolt (unlock) certain doors. Usage: 'unbolt (direction)'.\r\n", ch);
+	send_to_char("unlock   -  Unlocks a door if player has the key. Usage: 'unlock (direction)'.\r\n", ch);
+	send_to_char("where    -  Shows nearby characters and their locations. \r\n", ch);
+		}
+	else
+	if( !str_cmp( arg, "communicate" ) )
+		{
+	send_to_char("beckon      - Sends an auible notification to player. Usage: 'beckon (player)'.\r\n", ch);
+	send_to_char("channels    - Shows a list of channels and displays if they are active.\r\n", ch);
+	send_to_char("chat        - Sends a mud-wide message. Usage: 'chat (message)'.\r\n", ch);
+	send_to_char("clantalk    - Sends a message to your clan. Usage: 'clantalk (message)'.\r\n", ch);
+	send_to_char("counciltalk - Sends a message to your council. Usage: 'counciltalk (message).\r\n", ch);
+	send_to_char("emote       - Displays a custom action to the room. Usage: 'emote (action)'.\r\n", ch);
+	send_to_char("gtell       - Displays a message to your group. Usage: 'getell (message)'.\r\n", ch);
+	send_to_char("guildtalk   - Sends a message to your guild. Usage: 'guildtalk (message)'.\r\n", ch);
+	send_to_char("languages   - Displays a list of languages you can speak.\r\n", ch);
+	send_to_char("newbiechat  - For newbies-Sends a mud-wide chat. Usage: 'newbiechat (message)'.\r\n", ch);
+	send_to_char("ordertalk   - Sends a message to your order. Usage: 'ordertalk (message)'.\r\n", ch);
+	send_to_char("racetalk    - Sends mud-wide message to your race. Usage: 'racetalk (message)'.\r\n", ch);
+	send_to_char("reply       - Replys to a 'tell' message. Usage: 'reply (message)'.\r\n", ch);
+	send_to_char("say         - Displays a message to the room. Usage: 'say (message)'.\r\n", ch);
+	send_to_char("sayto       - Directs a message to a person in room. Usage: 'sayto (person)'.\r\n", ch);
+	send_to_char("socials     - Lists all the social commands.\r\n", ch);
+	send_to_char("speak       - Switches the language that you speak. Usage: 'speak (language)'.\r\n", ch);
+	send_to_char("whisper     - PM someone in room. Usage: 'whisper (person) [message]'.\r\n", ch);
+	send_to_char("yell        - Sends an area-wide message. Usage: 'yell (message'.\r\n", ch);
+		}
+	else
+	if( !str_cmp( arg, "basic" ) )
+		{
+	send_to_char("affected  - Displays spells currently affecting your character.\r\n", ch);
+	send_to_char("cast      - Ccast a learned spell. Usage: 'cast (spell) *(target)'.\r\n", ch);
+	send_to_char("chat      - Sends a mud-wide message. Usage: 'chat (message)'.\r\n", ch);
+	send_to_char("drop      - Drops an item on the ground. UUsage: 'drop (item)'.\r\n", ch);
+	send_to_char("equipment - Shows a list of items currently equipped.\r\n", ch);
+	send_to_char("get       - Allows player to pick up an item. Usage: 'get (item) [location]'.\r\n", ch);
+	send_to_char("give      - Allows player to give an item. Usage: 'give (item) [receiver]'.\r\n", ch);
+	send_to_char("hold      - Allows player to hold item in their hand. Usage: 'hold (item)'.\r\n", ch);
+	send_to_char("inventory - Shows a list of items currently being carried.\r\n", ch);
+	send_to_char("kill      - Initiates combat on a Mob. Usage: 'kill (mob name)'.\r\n", ch);
+	send_to_char("laws      - Displays a list of the laws of the game.\r\n", ch);
+	send_to_char("look      - Shows the room description to character.\r\n", ch);
+	send_to_char("quit      - Disconnects your character.\r\n", ch);
+	send_to_char("remove    - Removes an equipped item. Usage: 'remove (item)'.\r\n", ch);
+	send_to_char("save      - Saves your current progress.\r\n", ch);
+	send_to_char("score     - Displays your character's stat sheet.\r\n", ch);
+	send_to_char("wear      - Equips an item. Usage: 'wear (item)'.\r\n", ch);
+	send_to_char("who       - Displays a list of visible online players.\r\n", ch);
+	send_to_char("whois     - Gives description of character. Usage: 'whois (player)'.\r\n", ch);
+	send_to_char("wield     - Wields a weapon. Usage 'wield (weapon)'.\r\n",ch);
+	send_to_char("wizlist   - Shows an output of the game admin and their jobs.\r\n\r\n",ch);
+	send_to_char("\r\n      * is optional.\r\n", ch);
+		}
+	else
+	if( !str_cmp( arg, "action" ) )
+		{
+	send_to_char("apply      - Applies a salve to character. Usage: 'apply (salve)'.\r\n", ch);
+	send_to_char("connect    - Connects two items together. Usage 'connect (item1) (item2)'.\r\n", ch);
+	send_to_char("compare    - Compares quality of two items. Usage: 'compare (Item1) (Item2)'.\r\n", ch);
+	send_to_char("decapitate - Decapitates a corpse. Usage: 'decapitate ('corpse' or name)'.\r\n", ch);
+	send_to_char("dismiss    - Dismisses a charmed follower or pet. Usage: 'dismiss (name)'.\r\n", ch);
+	send_to_char("drag       - Drags a character from room. Usage: 'drag (name)'.\r\n", ch);
+	send_to_char("drink      - Drink from an item, such as a skin. Usage: 'drink (item)'.\r\n", ch);
+	send_to_char("drop       - Drops an item on the ground. UUsage: 'drop (item)'.\r\n", ch);
+	send_to_char("eat        - Eats a food item from inventory. Usage: 'eat (item)'.\r\n", ch);
+	send_to_char("empty      - Empties an item. Usage: 'empty (item)'.\r\n", ch);
+	send_to_char("fill       - Fill an item. Usage: 'fill (item)'.\r\n", ch);
+	send_to_char("fire       - Fire a bow. Usage: 'fire (direction) [target].\r\n", ch);
+	send_to_char("follow     - Follow a player or mob. Usage: 'follow (name)'.\r\n", ch);
+	send_to_char("get        - Allows player to pick up an item. Usage: 'get (item) [location]'.\r\n", ch);
+	send_to_char("give       - Allows player to give an item. Usage: 'give (item) [receiver]'.\r\n", ch);
+	send_to_char("hold       - Allows player to hold item in their hand. Usage: 'hold (item)'.\r\n", ch);
+	send_to_char("kill       - Initiates combat on a Mob. Usage: 'kill (mob name)'.\r\n", ch);
+	send_to_char("light      - Lights an item. Usage: 'light (item)'.\r\n", ch);
+	send_to_char("mix        - Mixes certain items together. Usage: 'mix (item1) (item2)'.\r\n", ch);
+	send_to_char("murder     - Attacks a player. Usage: 'murder (name)'.\r\n", ch);
+	send_to_char("quaff      - Drinks a potion. Usage: 'quaff (potion)'.\r\n", ch);
+	send_to_char("recite     - Uses a scroll. Usage: 'recite (scroll)'.\r\n", ch);
+	send_to_char("remove     - Removes an equipped item. Usage: 'remove (item)'.\r\n", ch);
+	send_to_char("rest       - Puts character into resting position.\r\n", ch);
+	send_to_char("sacrifice  - Sacrifices object to gain favor. Usage: 'sacrifice (object)'.\r\n", ch);
+	send_to_char("shove      - Shoves a character out of the room. Usage: 'shove (name)'.\r\n", ch);
+	send_to_char("sit        - Places character into the sitting position.\r\n", ch);
+	send_to_char("sleep      - Places character into the sleeping position.\r\n", ch);
+	send_to_char("smoke      - Smokes an object (such as a pipe). Usage: 'smoke (item)'.\r\n", ch);
+	send_to_char("split      - Splits gold with group. Usage: 'split (amount)'.\r\n", ch);
+	send_to_char("stand      - Places character into the standing position.\r\n", ch);
+	send_to_char("visible    - Removes all sneak/hidden/invisible statuses.\r\n", ch);
+	send_to_char("wake       - Wakes character from sleeping.\r\n", ch);
+	send_to_char("wear       - Equips an item. Usage: 'wear (item)'.\r\n", ch);
+	send_to_char("wield      - Wields a weapon. Usage 'wield (weapon)'.\r\n",ch);
+		}
+	else
+	if( !str_cmp( arg, "council" ) )
+		{
+	send_to_char("coinduct    - Inducts character into your council. Usage: 'coinduct (player)'.\r\n", ch);
+	send_to_char("cooutcast   - Removes a member. Usage: 'cooutcast (player)'.\r\n", ch);
+	send_to_char("councils    - Displays a list of councils.\r\n", ch);
+	send_to_char("counciltalk - Sends a message to your council. Usage: 'counciltalk (message).\r\n", ch);
+	send_to_char("coinduct    - Inducts a character into your council (leaders only).\r\n", ch);
+	send_to_char("cooutcast   - Outcasts a member of your council (leaders only).\r\n", ch);
+		}
+	else
+	if( !str_cmp( arg, "clan" ) )
+		{
+	send_to_char("defeats   - Shows a list of clan defeats.\r\n", ch);
+	send_to_char("clantalk  - Sends a message to your clan. Usage: 'clantalk (message)'.\r\n", ch);
+	send_to_char("induct    - Inducts a character into your clan. Usage: 'induct (player)'.\r\n", ch);
+	send_to_char("outcast   - Removes a member. Usage: 'outcast (player)'.\r\n", ch);
+	send_to_char("roster    - Shows a list of members.\r\n", ch);
+	send_to_char("            Usage: roster <clanname>\r\n", ch );
+	send_to_char("            Usage: roster <clanname> remove <name>\r\n", ch );
+	send_to_char("victories - Shows a list of clan victories.\r\n", ch);
+		}
+	else
+	if( !str_cmp( arg, "guild" ) )
+		{
+	send_to_char("guildtalk - Sends a message to your guild. Usage: 'guildtalk (message)'.\r\n", ch);
+	send_to_char("induct    - Inducts a character into your guild. Usage: 'induct (player)'.\r\n", ch);
+	send_to_char("outcast   - Removes a member. Usage: 'outcast (player)'.\r\n", ch);
+	send_to_char("roster    - Shows a list of members.\r\n", ch);
+	send_to_char("            Usage: roster <guild name>\r\n", ch );
+	send_to_char("            Usage: roster <guild name> remove <name>\r\n", ch );
+		}
+	else
+	if( !str_cmp( arg, "Player" ) )
+		{
+	send_to_char("affected    - Displays spells currently affecting your character.\r\n", ch);
+	send_to_char("afk         - Sets an AK flag on your character.\r\n", ch);
+	send_to_char("apbuy       - Allows you to spend AP on bonuses. Usage: 'apbuy (item)'.\r\n", ch);
+	send_to_char("bio         - Opens up a buffer for you to write character bio.\r\n", ch);
+	send_to_char("class       - Set your class name. Usage: 'class (class name)'.\r\n", ch);
+	send_to_char("color       - Set custom color outputs. Usage: 'color (item) [color].\r\n", ch);
+	send_to_char("config      - Shows a list of config options. Usage: 'config (+/-setting).\r\n", ch);
+	send_to_char("cpose       - Sets temp. pose others see. Usage: 'cpose (your pose)'.\r\n", ch);
+	send_to_char("delete      - Deletes your character..\r\n", ch);
+	send_to_char("description - Opens a buffer for your character description.\r\n", ch);
+	send_to_char("devote      - Devotes your character to a diety. Usage: 'devote (diety)'.\r\n", ch);
+	send_to_char("dnd         - Sets a DND flag on your character.\r\n", ch);
+	send_to_char("equipment   - Shows a list of items currently equipped.\r\n", ch);
+	send_to_char("favor       - Shows how much your diety favors you.\r\n", ch);
+	send_to_char("flee        - Flees from combat..\r\n", ch);
+	send_to_char("fprompt     - Sets your fighting prompt. See HELP PROMPT for detailed info.\r\n", ch);
+	send_to_char("ignore      - Ignores a player. Usage: 'ignore (player)'.\r\n", ch);
+	send_to_char("inventory   - Shows a list of items currently being carried.\r\n", ch);
+	send_to_char("journal     - Opens a writing buffer for personal journal.\r\n", ch);
+	send_to_char("pager       - Sets the number of lines before screen pause. Usage: 'pager (#)'.\r\n", ch);
+	send_to_char("password    - Changes your password. Usage: 'password (new) (new)'.\r\n", ch);
+	send_to_char("prompt      - Sets your default prompt. See HELP PROMPT for detailed info.\r\n", ch);
+	send_to_char("quit        - Disconnects your character.\r\n", ch);
+	send_to_char("remains     - Shows your corpse remains location.\r\n", ch);
+	send_to_char("save        - Saves your current progress.\r\n", ch);
+	send_to_char("score       - Displays your character's stat sheet.\r\n", ch);
+	send_to_char("skills      - Displays a list of acquired skills and spells.\r\n", ch);
+	send_to_char("statreport  - Reports your character's statistics to the room.\r\n", ch);
+	send_to_char("style       - Switches combat style. Usage: 'style (style)'.\r\n", ch);
+	send_to_char("title       - Sets character title. Usage: 'title (new title)'.\r\n", ch);
+	send_to_char("wimpy       - Set a HP target to auto-flee. Usage: 'wimpy (HP #)'.\r\n", ch);
+		}
+	else
+	if( !str_cmp( arg, "world" ) )
+		{
+	send_to_char("areas      - Shows a list of areas.\r\n", ch);
+	send_to_char("auction    - Allows you to auction or bid on an item.\r\n", ch);
+	send_to_char("             Usage 1: 'auction bid (amt)'.\r\n", ch);
+	send_to_char("             Usage 2: 'auction (item).\r\n", ch);
+	send_to_char("date       - See the current date.\r\n", ch);
+	send_to_char("holidays   - See a list of holidays.\r\n", ch);
+	send_to_char("repair     - Repairs items at a blacksmith. Usage: 'repair (item)'.\r\n", ch);
+	send_to_char("supplicate - Uses your favor to supplicate items.\r\n", ch);
+	send_to_char("             Usage 1: 'supplicate (item)' - grants an item.\r\n", ch);
+	send_to_char("             Usage 2: 'supplicate corpse' - transports your corpse.\r\n", ch);
+	send_to_char("             Usage 3: 'supplicate recall' - recalls you to home.\r\n", ch);
+	send_to_char("             Usage 4: 'supplicate avatar' - grants an avatar pet.\r\n", ch);
+	send_to_char("time       - Displays current mud time.\r\n", ch);
+	send_to_char("weather    - Displays the current weather.\r\n", ch);
+		}
+	else
+	if( !str_cmp( arg, "magic" ) )
+		{
+	send_to_char("brandish  - Uses inbued staff's power. Usage: 'brandish (item) *(target).\r\n", ch);
+	send_to_char("cast      - Cast a learned spell. Usage: 'cast (spell) *(target)'.\r\n", ch);
+	send_to_char("revert    - When polymorphed, returns character to original form.\r\n", ch);
+	send_to_char("zap       - Uses imbued power of a wand. Usage: 'zap (target)'.\r\n", ch);
+	send_to_char("\r\n      * is optional.\r\n", ch);
+		}
+	else
+	if( !str_cmp( arg, "factions" ) )
+		{
+	send_to_char("clans    - Displays a list of clans.\r\n", ch);
+	send_to_char("councils - Displays a list of councils.\r\n", ch);
+	send_to_char("guilds   - Displays a list of guilds.\r\n", ch);
+	send_to_char("orders   - Displays a list of orders.\r\n", ch);
+	send_to_char("deities  - Displays a list of deities.\r\n", ch);
+		}
+	else
+	if( !str_cmp( arg, "group" ) )
+		{
+	send_to_char("group - Group has several functions.\r\n", ch);
+	send_to_char("        Usage 1: 'group' - shows group status.\r\n", ch);
+	send_to_char("        Usage 2: 'group add (follower)' adds member to your group.\r\n", ch);
+	send_to_char("        Usage 3: 'group remove (name)' - removes person from group.\r\n", ch);
+	send_to_char("        Usage 4: 'group all' - adds everyone following to the group.\r\n", ch);
+	send_to_char("        Usage 5: 'group disband' - disbands the group.\r\n", ch);
+	send_to_char("gtell - Displays a message to your group. Usage: 'getell (message)'.\r\n", ch);
+		}
+	else
+	if( !str_cmp( arg, "shop" ) )
+		{
+	send_to_char("buy      - Buys an item. Usage: 'buy (item)'.\r\n", ch);
+	send_to_char("list     - Lists the items for sale.\r\n", ch);
+	send_to_char("Sell     - Sells an item to the shop. Usage: 'sell (item)'.\r\n", ch);
+	send_to_char("value    - Checks if shopkeep is interested in item. Usage: 'value (item)'.\r\n", ch);
+		}
+	else
+	if( !str_cmp( arg, "bank" ) )
+		{
+	send_to_char("bank - Usage 1: 'bank balance' - Shows current balance.\r\n", ch);
+	send_to_char("       Usage 2: 'bank deposit (amt)' - Deposits amount into account.\r\n", ch);
+	send_to_char("       Usage 3: 'bank withdraw (amt)' - Withdraws amount from account.\r\n", ch);
+	send_to_char("       Usage 4: 'bank transfer (amt) [player]' - Transfers amount to a player'.\r\n", ch);
+		}
+	else
+		{
+		do_commands( ch, "basic");
+		return;
+		}
+	send_to_char("\r\n", ch);	
+	send_to_char("SEE ALSO: commands [basic, area, council, clan, guild, magic, group, shop,\r\n",ch);
+	send_to_char("                    communicate, action, factions, player, bank, world]\r\n", ch);
    return;
 }
 
