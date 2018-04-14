@@ -3898,8 +3898,7 @@ void do_commands( CHAR_DATA* ch, const char* argument)
 
 	 if( arg[0] == '\0' )
 		{
-	send_to_char("\r\nPlease specify a command type.\r\n", ch);
-	send_to_char("Loading basic commands...\r\n", ch);
+	send_to_char("\r\nLoading basic commands...\r\n", ch);
 		do_commands( ch, "basic");
 		return;
 		}
@@ -3921,15 +3920,15 @@ void do_commands( CHAR_DATA* ch, const char* argument)
 	send_to_char("pull     -  Pull certain objects, such as ropes. Usage: 'pull (object)'.\r\n", ch);
 	send_to_char("push     -  Push certain objects, such as buttons. Usage: 'pull (object)'.\r\n", ch);
 	send_to_char("put      -  Places an item in a location.  Usage: 'put (item) [location]'.\r\n", ch);
-	send_to_char("rap      -  Knock on a door alerting adjoining room. Usage: 'rap (direction)'.\r\n", ch);
+	send_to_char("knock    -  Knock on a door alerting adjoining room. Usage: 'rap (direction)'.\r\n", ch);
 	send_to_char("unbolt   -  Unbolt (unlock) certain doors. Usage: 'unbolt (direction)'.\r\n", ch);
 	send_to_char("unlock   -  Unlocks a door if player has the key. Usage: 'unlock (direction)'.\r\n", ch);
 	send_to_char("where    -  Shows nearby characters and their locations. \r\n", ch);
 		}
 	else
-	if( !str_cmp( arg, "communicate" ) )
+	if( !str_cmp( arg, "communicate" ) || !str_cmp( arg, "comm") )
 		{
-	send_to_char("beckon      - Sends an auible notification to player. Usage: 'beckon (player)'.\r\n", ch);
+	send_to_char("beckon      - Sends an audible notification to player. Usage: 'beckon (player)'.\r\n", ch);
 	send_to_char("channels    - Shows a list of channels and displays if they are active.\r\n", ch);
 	send_to_char("chat        - Sends a mud-wide message. Usage: 'chat (message)'.\r\n", ch);
 	send_to_char("clantalk    - Sends a message to your clan. Usage: 'clantalk (message)'.\r\n", ch);
@@ -3953,9 +3952,9 @@ void do_commands( CHAR_DATA* ch, const char* argument)
 	if( !str_cmp( arg, "basic" ) )
 		{
 	send_to_char("affected  - Displays spells currently affecting your character.\r\n", ch);
-	send_to_char("cast      - Ccast a learned spell. Usage: 'cast (spell) *(target)'.\r\n", ch);
+	send_to_char("cast      - Cast a learned spell. Usage: 'cast (spell) *(target)'.\r\n", ch);
 	send_to_char("chat      - Sends a mud-wide message. Usage: 'chat (message)'.\r\n", ch);
-	send_to_char("drop      - Drops an item on the ground. UUsage: 'drop (item)'.\r\n", ch);
+	send_to_char("drop      - Drops an item on the ground. Usage: 'drop (item)'.\r\n", ch);
 	send_to_char("equipment - Shows a list of items currently equipped.\r\n", ch);
 	send_to_char("get       - Allows player to pick up an item. Usage: 'get (item) [location]'.\r\n", ch);
 	send_to_char("give      - Allows player to give an item. Usage: 'give (item) [receiver]'.\r\n", ch);
@@ -3985,7 +3984,7 @@ void do_commands( CHAR_DATA* ch, const char* argument)
 	send_to_char("dismiss    - Dismisses a charmed follower or pet. Usage: 'dismiss (name)'.\r\n", ch);
 	send_to_char("drag       - Drags a character from room. Usage: 'drag (name)'.\r\n", ch);
 	send_to_char("drink      - Drink from an item, such as a skin. Usage: 'drink (item)'.\r\n", ch);
-	send_to_char("drop       - Drops an item on the ground. UUsage: 'drop (item)'.\r\n", ch);
+	send_to_char("drop       - Drops an item on the ground. Usage: 'drop (item)'.\r\n", ch);
 	send_to_char("eat        - Eats a food item from inventory. Usage: 'eat (item)'.\r\n", ch);
 	send_to_char("empty      - Empties an item. Usage: 'empty (item)'.\r\n", ch);
 	send_to_char("fill       - Fill an item. Usage: 'fill (item)'.\r\n", ch);
@@ -4086,7 +4085,7 @@ void do_commands( CHAR_DATA* ch, const char* argument)
 		{
 	send_to_char("areas      - Shows a list of areas.\r\n", ch);
 	send_to_char("auction    - Allows you to auction or bid on an item.\r\n", ch);
-	send_to_char("             Usage 1: 'auction bid (amt)'.\r\n", ch);
+	send_to_char("             Usage 1: 'auction bid (amount)'.\r\n", ch);
 	send_to_char("             Usage 2: 'auction (item).\r\n", ch);
 	send_to_char("date       - See the current date.\r\n", ch);
 	send_to_char("holidays   - See a list of holidays.\r\n", ch);
@@ -4133,7 +4132,7 @@ void do_commands( CHAR_DATA* ch, const char* argument)
 		{
 	send_to_char("buy      - Buys an item. Usage: 'buy (item)'.\r\n", ch);
 	send_to_char("list     - Lists the items for sale.\r\n", ch);
-	send_to_char("Sell     - Sells an item to the shop. Usage: 'sell (item)'.\r\n", ch);
+	send_to_char("sell     - Sells an item to the shop. Usage: 'sell (item)'.\r\n", ch);
 	send_to_char("value    - Checks if shopkeep is interested in item. Usage: 'value (item)'.\r\n", ch);
 		}
 	else
