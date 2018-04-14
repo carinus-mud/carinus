@@ -288,7 +288,6 @@ int hit_gain( CHAR_DATA * ch )
       gain /= 4;
 
    return UMIN( gain, ch->max_hit - ch->hit );
-   do_save(ch, "auto");
 
 }
 
@@ -399,6 +398,7 @@ void gain_condition( CHAR_DATA * ch, int iCond, int value )
    int condition;
    ch_ret retcode = rNONE;
 
+   do_save(ch, "auto");
    if( value == 0 || IS_NPC( ch ) || ch->level >= LEVEL_IMMORTAL || NOT_AUTHED( ch ) )
       return;
 
