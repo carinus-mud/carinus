@@ -763,11 +763,9 @@ void do_clantalk( CHAR_DATA* ch, const char* argument)
 
 void do_newbiechat( CHAR_DATA* ch, const char* argument)
 {
-   if( IS_NPC( ch )
-       || ( !NOT_AUTHED( ch ) && !IS_IMMORTAL( ch )
-            && !( ch->pcdata->council && !str_cmp( ch->pcdata->council->name, "Newbie Council" ) ) ) )
+   if( IS_NPC( ch ) || ((ch->level > 5) && !IS_IMMORTAL(ch) && !( ch->pcdata->council && !str_cmp( ch->pcdata->council->name, "Newbie Council" )) ) )
    {
-      send_to_char( "Huh?\r\n", ch );
+      send_to_char( "You must be either level 5 or less, immortal, or on the newbie council to newbiechat\r\n", ch );
       return;
    }
    talk_channel( ch, argument, CHANNEL_NEWBIE, "newbiechat" );
