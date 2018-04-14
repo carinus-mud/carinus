@@ -2392,26 +2392,10 @@ Log         1
 End
 
 #COMMAND
-Name        newscore~
-Code        do_newscore
-Position    100
-Level       65
-Log         0
-End
-
-#COMMAND
 Name        nohelps~
 Code        do_nohelps
 Position    100
 Level       51
-Log         0
-End
-
-#COMMAND
-Name        nsc~
-Code        do_rpgscore
-Position    100
-Level       65
 Log         0
 End
 
@@ -3080,14 +3064,6 @@ Log         0
 End
 
 #COMMAND
-Name        rpgscore~
-Code        do_rpgscore
-Position    100
-Level       65
-Log         0
-End
-
-#COMMAND
 Name        rdig~
 Code        do_rdig
 Position    100
@@ -3167,14 +3143,6 @@ Name        stand~
 Code        do_stand
 Position    104
 Level       0
-Log         0
-End
-
-#COMMAND
-Name        stat~
-Code        do_newscore
-Position    100
-Level       1
 Log         0
 End
 
@@ -3608,14 +3576,6 @@ Log         0
 End
 
 #COMMAND
-Name        score~
-Code        do_newscore
-Position    100
-Level       1
-Log         0
-End
-
-#COMMAND
 Name        scatter~
 Code        do_scatter
 Position    100
@@ -3632,26 +3592,18 @@ Log         0
 End
 
 #COMMAND
-Name        stats~
-Code        do_newscore
-Position    100
-Level       1
-Log         0
-End
-
-#COMMAND
-Name        status~
-Code        do_newscore
-Position    100
-Level       0
-Log         0
-End
-
-#COMMAND
 Name        statreport~
 Code        do_statreport
 Position    100
 Level       2
+Log         0
+End
+
+#COMMAND
+Name        score~
+Code        do_score
+Position    100
+Level       65
 Log         0
 End
 

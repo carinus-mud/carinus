@@ -460,7 +460,7 @@ void set_customclass( CHAR_DATA * ch, const char *customclass )
 }
 
 
-void do_newscore( CHAR_DATA* ch, const char* argument )
+void do_score( CHAR_DATA* ch, const char* argument )
 {
 
 	if (IS_NPC(ch))
@@ -656,6 +656,9 @@ send_to_char( "&r+==============================================================
 send_to_char( "&r+===========================================================================+\n\r", ch);
 
   }
+
+pager_printf(ch,"&gType 'aff' to see what you are affected by. \r\n");
+
       if( ch->pcdata->area )
       {
          pager_printf( ch, "Vnums:   Room (%-5.5d - %-5.5d)   Object (%-5.5d - %-5.5d)   Mob (%-5.5d - %-5.5d)\r\n",
