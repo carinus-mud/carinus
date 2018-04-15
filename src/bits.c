@@ -353,7 +353,7 @@ void remove_qbit( CHAR_DATA * ch, int number )
 }
 
 /* Show an abit from the mud's linked list, or all of them if 'all' is the argument */
-void do_showabit( CHAR_DATA * ch, char *argument )
+void do_showabit( CHAR_DATA * ch, const char *argument )
 {
    int number;
    BIT_DATA *bit;
@@ -393,7 +393,7 @@ void do_showabit( CHAR_DATA * ch, char *argument )
 }
 
 /* Show a qbit from the mud's linked list or all of them if 'all' is the argument */
-void do_showqbit( CHAR_DATA * ch, char *argument )
+void do_showqbit( CHAR_DATA * ch, const char *argument )
 {
    int number;
    BIT_DATA *bit;
@@ -434,7 +434,7 @@ void do_showqbit( CHAR_DATA * ch, char *argument )
 
 /* setabit <number> <desc> */
 /* Set the description for a particular abit */
-void do_setabit( CHAR_DATA * ch, char *argument )
+void do_setabit( CHAR_DATA * ch, const char *argument )
 {
    BIT_DATA *bit;
    int number;
@@ -442,7 +442,7 @@ void do_setabit( CHAR_DATA * ch, char *argument )
 
    argument = one_argument( argument, arg );
 
-   if( !arg || arg[0] == '\0' )
+   if(  arg[0] == '\0' )
    {
       send_to_char( "You must supply a bit number!\n\r", ch );
       return;
@@ -469,7 +469,7 @@ void do_setabit( CHAR_DATA * ch, char *argument )
       return;
    }
 
-   if( !arg || arg[0] == '\0' )
+   if(  arg[0] == '\0' )
    {
       send_to_char( "Syntax: setabit <number> <description>\n\r", ch );
       send_to_char( "Syntax: setabit <number> delete\n\r", ch );
@@ -505,7 +505,7 @@ void do_setabit( CHAR_DATA * ch, char *argument )
 
 /* setqbit <number> <desc> */
 /* Set the description for a particular qbit */
-void do_setqbit( CHAR_DATA * ch, char *argument )
+void do_setqbit( CHAR_DATA * ch, const char *argument )
 {
    BIT_DATA *bit;
    int number;
@@ -513,7 +513,7 @@ void do_setqbit( CHAR_DATA * ch, char *argument )
 
    argument = one_argument( argument, arg );
 
-   if( !arg || arg[0] == '\0' )
+   if( arg[0] == '\0' )
    {
       send_to_char( "You must supply a bit number!\n\r", ch );
       return;
@@ -540,7 +540,7 @@ void do_setqbit( CHAR_DATA * ch, char *argument )
       return;
    }
 
-   if( !arg || arg[0] == '\0' )
+   if(  arg[0] == '\0' )
    {
       send_to_char( "Syntax: setqbit <number> <description>\n\r", ch );
       send_to_char( "Syntax: setqbit <number> delete\n\r", ch );
@@ -575,7 +575,7 @@ void do_setqbit( CHAR_DATA * ch, char *argument )
 }
 
 /* Imm command to toggle an abit on a character or to list the abits already on a character */
-void do_abit( CHAR_DATA * ch, char *argument )
+void do_abit( CHAR_DATA * ch, const char *argument )
 {
    BIT_DATA *bit;
    char buf[MAX_STRING_LENGTH];
@@ -583,7 +583,7 @@ void do_abit( CHAR_DATA * ch, char *argument )
 
    argument = one_argument( argument, buf );
 
-   if( !buf || buf[0] == '\0' )
+   if(  buf[0] == '\0' )
    {
       send_to_char( "Whose bits do you want to examine?\n\r", ch );
       return;
@@ -597,7 +597,7 @@ void do_abit( CHAR_DATA * ch, char *argument )
 
    argument = one_argument( argument, buf );
 
-   if( !buf || buf[0] == '\0' )
+   if(  buf[0] == '\0' )
    {
       if( !victim->first_abit )
       {
@@ -636,7 +636,7 @@ void do_abit( CHAR_DATA * ch, char *argument )
 }
 
 /* Immortal command to toggle a qbit on a character or to list the qbits already on a character */
-void do_qbit( CHAR_DATA * ch, char *argument )
+void do_qbit( CHAR_DATA * ch, const char *argument )
 {
    BIT_DATA *bit;
    CHAR_DATA *victim;
@@ -644,7 +644,7 @@ void do_qbit( CHAR_DATA * ch, char *argument )
 
    argument = one_argument( argument, buf );
 
-   if( !buf || buf[0] == '\0' )
+   if(  buf[0] == '\0' )
    {
       send_to_char( "Whose bits do you want to examine?\n\r", ch );
       return;
@@ -664,7 +664,7 @@ void do_qbit( CHAR_DATA * ch, char *argument )
 
    argument = one_argument( argument, buf );
 
-   if( !buf || buf[0] == '\0' )
+   if( buf[0] == '\0' )
    {
       if( !victim->pcdata->first_qbit )
       {
@@ -708,7 +708,7 @@ void do_qbit( CHAR_DATA * ch, char *argument )
  * be in another room. If the target will be in a different location after the prog, set the
  * bit BEFORE they move.
  */
-void do_mpaset( CHAR_DATA * ch, char *argument )
+void do_mpaset( CHAR_DATA * ch, const char *argument )
 {
    char arg1[MAX_INPUT_LENGTH];
    char arg2[MAX_INPUT_LENGTH];
@@ -724,13 +724,13 @@ void do_mpaset( CHAR_DATA * ch, char *argument )
    argument = one_argument( argument, arg1 );
    argument = one_argument( argument, arg2 );
 
-   if( !arg1 || arg1[0] == '\0' )
+   if( arg1[0] == '\0' )
    {
       progbug( "Mpaset: missing victim", ch );
       return;
    }
 
-   if( !arg2 || arg2[0] == '\0' )
+   if( arg2[0] == '\0' )
    {
       progbug( "Mpaset: missing bit", ch );
       return;
@@ -754,7 +754,7 @@ void do_mpaset( CHAR_DATA * ch, char *argument )
 /* Because this can be used on death_progs, be SURE your victim is correct or you could
  * end up setting a bit on the wrong person. Use 0.$n as your victim target in progs.
  */
-void do_mpqset( CHAR_DATA * ch, char *argument )
+void do_mpqset( CHAR_DATA * ch, const char *argument )
 {
    char arg1[MAX_INPUT_LENGTH];
    char arg2[MAX_INPUT_LENGTH];
@@ -770,13 +770,13 @@ void do_mpqset( CHAR_DATA * ch, char *argument )
    argument = one_argument( argument, arg1 );
    argument = one_argument( argument, arg2 );
 
-   if( !arg1 || arg1[0] == '\0' )
+   if( arg1[0] == '\0' )
    {
       progbug( "Mpqset: missing victim", ch );
       return;
    }
 
-   if( !arg2 || arg2[0] == '\0' )
+   if( arg2[0] == '\0' )
    {
       progbug( "Mpqset: missing bit", ch );
       return;
