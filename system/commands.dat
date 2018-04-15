@@ -1360,6 +1360,14 @@ Log         0
 End
 
 #COMMAND
+Name        knock~
+Code        do_rap
+Position    100
+Level       0
+Log         0
+End
+
+#COMMAND
 Name        look~
 Code        do_look
 Position    106
@@ -2991,14 +2999,6 @@ Log         1
 End
 
 #COMMAND
-Name        rap~
-Code        do_rap
-Position    100
-Level       1
-Log         0
-End
-
-#COMMAND
 Name        remains~
 Code        do_remains
 Position    100
@@ -3576,14 +3576,7 @@ Log         0
 End
 
 #COMMAND
-Name        score~
-Code        do_score
-Position    100
-Level       65
-Log         0
-End
 
-#COMMAND
 Name        scatter~
 Code        do_scatter
 Position    100
@@ -3602,8 +3595,9 @@ End
 #COMMAND
 Name        statreport~
 Code        do_statreport
+
 Position    100
-Level       2
+Level       65
 Log         0
 End
 
