@@ -2197,7 +2197,7 @@ send_to_char( "&r+==============================================================
    }
    pager_printf( ch, "&r| &CPosition:&W %-15s          &CStance:&W   %-15s              &r|\r\n", buf, buf2 );
 
-   pager_printf( ch, "&r| &CCpose is set to: &W%-40s            &r|\r\n", victim->pcdata->cpose );
+   pager_printf( ch, "&r| &CCpose is set to: &W%-45s            &r|\r\n", victim->pcdata->cpose );
 send_to_char( "&r+===========================================================================+\n\r", ch);
 
 
@@ -2207,7 +2207,7 @@ send_to_char( "&r+==============================================================
 
 
 
-   if( IS_IMMORTAL( ch ) )
+   if( IS_IMMORTAL( victim ) )
    {
       pager_printf( ch, "&r| &YIMMORTAL DATA:  Wizinvis [%s]  Wizlevel (%-2d)                               &r|\r\n",
                     xIS_SET( victim->act, PLR_WIZINVIS ) ? "X" : " ", victim->pcdata->wizinvis );
