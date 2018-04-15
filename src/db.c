@@ -447,6 +447,12 @@ void boot_db( bool fCopyOver )
    log_string( "Loading tongues" );
    load_tongues(  );
 
+   /*
+    * abit/qbit code
+    */
+   log_string( "Loading quest bit tables" );
+   load_bits(  );
+
 //   log_string( "Making wizlist" );
 //   make_wizlist(  );
 
@@ -3032,6 +3038,7 @@ void free_char( CHAR_DATA * ch )
    AFFECT_DATA *paf;
    TIMER *timer;
    MPROG_ACT_LIST *mpact, *mpact_next;
+   BIT_DATA *abit, *abit_next;
    NOTE_DATA *comments, *comments_next;
    VARIABLE_DATA *vd, *vd_next;
 
@@ -3070,6 +3077,14 @@ void free_char( CHAR_DATA * ch )
    stop_fearing( ch );
    free_fight( ch );
 
+   for( abit = ch->first_abit; abit; abit = abit_next )
+   {
+      abit_next = abit->next;
+
+      UNLINK( abit, ch->first_abit, ch->last_abit, next, prev );
+      DISPOSE( abit );
+   }
+
    if( ch->pnote )
       free_note( ch->pnote );
 
@@ -3082,7 +3097,7 @@ void free_char( CHAR_DATA * ch )
    if( ch->pcdata )
    {
       IGNORE_DATA *temp, *next;
-
+      BIT_DATA *qbit, *qbit_next;
       if( ch->pcdata->pet )
       {
          extract_char( ch->pcdata->pet, TRUE );
@@ -3132,6 +3147,13 @@ void free_char( CHAR_DATA * ch )
                STRFREE( ch->pcdata->tell_history[i] );
          }
          DISPOSE( ch->pcdata->tell_history );
+      }
+      for( qbit = ch->pcdata->first_qbit; qbit; qbit = qbit_next )
+      {
+         qbit_next = qbit->next;
+
+         UNLINK( qbit, ch->pcdata->first_qbit, ch->pcdata->last_qbit, next, prev );
+         DISPOSE( qbit );
       }
 #ifdef IMC
       imc_freechardata( ch );

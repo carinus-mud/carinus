@@ -645,7 +645,13 @@ void fwrite_char( CHAR_DATA * ch, FILE * fp )
 #ifdef IMC
    imc_savechar( ch, fp );
 #endif
+   if( ch->pcdata->first_qbit )
+   {
+      BIT_DATA *bit;
 
+      for( bit = ch->pcdata->first_qbit; bit; bit = bit->next )
+         fprintf( fp, "Qbit        %d %s~\n", bit->number, bit->desc );
+   }
    fprintf( fp, "End\n\n" );
    return;
 }
@@ -1744,7 +1750,27 @@ void fread_char( CHAR_DATA * ch, FILE * fp, bool preload, bool copyover )
                break;
             }
             break;
+         case 'Q':
+            if( !str_cmp( word, "Qbit" ) )
+            {
+               BIT_DATA *bit;
+               BIT_DATA *desc;
 
+               CREATE( bit, BIT_DATA, 1 );
+
+               bit->number = fread_number( fp );
+               if( !( desc = find_qbit( bit->number ) ) )
+                  mudstrlcpy( bit->desc, fread_flagstring( fp ), MAX_STRING_LENGTH );
+               else
+               {
+                  mudstrlcpy( bit->desc, desc->desc, MAX_STRING_LENGTH );
+                  fread_flagstring( fp );
+               }
+               LINK( bit, ch->pcdata->first_qbit, ch->pcdata->last_qbit, next, prev );
+               fMatch = TRUE;
+               break;
+            }
+            break;
          case 'R':
             KEY( "Race", ch->race, fread_number( fp ) );
             KEY( "Rank", ch->pcdata->rank, fread_string_nohash( fp ) );
