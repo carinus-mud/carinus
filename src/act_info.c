@@ -644,9 +644,9 @@ void show_list_to_char( OBJ_DATA * list, CHAR_DATA * ch, bool fShort, bool fShow
             break;
       }
       if( fShowNothing )
-         send_to_char( "     ", ch );
+         send_to_char( "", ch );
       send_to_char( prgpstrShow[iShow], ch );
-/*	if ( IS_NPC(ch) || xIS_SET(ch->act, PLR_COMBINE) ) */
+	if ( IS_NPC(ch) || xIS_SET(ch->act, PLR_COMBINE) )
       {
          if( prgnShow[iShow] != 1 )
             ch_printf( ch, " (%d)", prgnShow[iShow] );

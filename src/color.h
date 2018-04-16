@@ -157,7 +157,7 @@ DECLARE_DO_FUN( do_color );
 #define AT_HURT         41
 #define AT_FALLING      42
 #define AT_DANGER       43
-#define AT_MAGIC        44
+#define AT_MAGIC        103
 #define AT_CONSIDER     45
 #define AT_REPORT       46
 #define AT_POISON       47
