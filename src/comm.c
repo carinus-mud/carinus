@@ -274,7 +274,9 @@ void cleanup_memory( void )
       UNLINK( desc, first_descriptor, last_descriptor, next, prev );
       free_desc( desc );
    }
-
+   /* Questbits */
+   fprintf( stdout, "%s", "Questbits.\n" );
+   free_questbits();
    /*
     * Liquids 
     */

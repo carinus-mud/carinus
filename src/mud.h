@@ -383,7 +383,7 @@ struct extended_bitvector
 {
    unsigned int bits[XBI];
 };
-
+#include "bits.h"
 #include "color.h"
 #include "dns.h"
 #include "hotboot.h"
@@ -2254,6 +2254,8 @@ struct char_data
    ROOM_INDEX_DATA *in_room;
    ROOM_INDEX_DATA *was_in_room;
    PC_DATA *pcdata;
+   BIT_DATA *first_abit;  /* abit/qbit code */
+   BIT_DATA *last_abit;
    DO_FUN *last_cmd;
    DO_FUN *prev_cmd; /* mapping */
    void *dest_buf;   /* This one is to assign to differen things */
@@ -2381,6 +2383,8 @@ struct pc_data
    COUNCIL_DATA *council;
    AREA_DATA *area;
    DEITY_DATA *deity;
+   BIT_DATA *first_qbit;  /* abit/qbit code */
+   BIT_DATA *last_qbit;
    GAME_BOARD_DATA *game_board;
    NUISANCE_DATA *nuisance;   /* New Nuisance structure */
    KILLED_DATA killed[MAX_KILLTRACK];
@@ -4173,6 +4177,15 @@ DECLARE_DO_FUN( do_worth );
 DECLARE_DO_FUN( do_yell );
 DECLARE_DO_FUN( do_zap );
 DECLARE_DO_FUN( do_zones );
+/* quest bits */
+DECLARE_DO_FUN( do_showabit );
+DECLARE_DO_FUN( do_showqbit );
+DECLARE_DO_FUN( do_setabit );
+DECLARE_DO_FUN( do_setqbit );
+DECLARE_DO_FUN( do_abit );
+DECLARE_DO_FUN( do_qbit );
+DECLARE_DO_FUN( do_mpaset );
+DECLARE_DO_FUN( do_mpqset );
 
 /* mob prog stuff */
 DECLARE_DO_FUN( do_mp_close_passage );

@@ -1014,6 +1014,45 @@ int mprog_do_ifcheck( const char *ifcheck, CHAR_DATA * mob, CHAR_DATA * actor, O
          }
          return IS_AFFECTED( chkchar, value ) ? TRUE : FALSE;
       }
+      /*
+       * abits and qbits 
+       */
+      if( !str_cmp( chck, "hasabit" ) )
+      {
+         int number;
+
+         if( is_number( rval ) )
+         {
+            number = atoi( rval );
+
+            if( get_abit( chkchar, number ) == NULL )
+               return mprog_veval( 0, opr, 1, mob );
+            else
+               return mprog_veval( 1, opr, 1, mob );
+         }
+         progbug( "hasabit: bad abit number", mob );
+         return BERR;
+      }
+
+      /*
+       * abits and qbits 
+       */
+      if( !str_cmp( chck, "hasqbit" ) )
+      {
+         int number;
+
+         if( is_number( rval ) )
+         {
+            number = atoi( rval );
+
+            if( get_qbit( chkchar, number ) == NULL )
+               return mprog_veval( 0, opr, 1, mob );
+            else
+               return mprog_veval( 1, opr, 1, mob );
+         }
+         progbug( "hasqbit: bad qbit number", mob );
+         return BERR;
+      }
       if( !str_cmp( chck, "numfighting" ) )
       {
          return mprog_veval( chkchar->num_fighting - 1, opr, atoi( rval ), mob );
