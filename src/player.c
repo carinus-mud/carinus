@@ -487,11 +487,12 @@ void do_inventory( CHAR_DATA* ch, const char* argument)
    }
 
    if( victim != ch )
-      ch_printf( ch, "&R%s is carrying:\r\n", IS_NPC( victim ) ? victim->short_descr : victim->name );
+      ch_printf( ch, "&c%s is carrying:\r\n", IS_NPC( victim ) ? victim->short_descr : victim->name );
    else
-      send_to_char( "&RYou are carrying:\r\n", ch );
+      send_to_char( "&C\r\n------------------[&wInventory&C]-----------------&D\r\n", ch );
 
    show_list_to_char( victim->first_carrying, ch, TRUE, TRUE );
+      ch_printf(ch, "\r\n&YGold: %s\r\n", num_punct( ch->gold ) );
    return;
 }
 
