@@ -2261,9 +2261,9 @@ send_to_char( "&r+==============================================================
 			IS_NPC( victim ) ? victim->pIndexData->killed : victim->pcdata->mdeaths + victim->pcdata->pdeaths,
 			get_curr_wis(victim), victim->mana, victim->max_mana,
 			 victim->carry_weight, can_carry_w( victim ));
-	pager_printf_color( ch,"&R|  &cHitDie: &W%-2dd%-2d+%-3d&R| &cCha: &W%-3d   &R|  &cMove : &W%-5d/%-5d    &R|  &cYear  :&W%-4d      &R|\r\n",
+	pager_printf_color( ch,"&R|  &cHitDie: &W%-2dd%-2d+%-3d&R| &cCha: &W%-3d   &R|  &cMove : &W%-5d/%-5d    &R|                    &R|\r\n",
 			victim->pIndexData->hitnodice, victim->pIndexData->hitsizedice, victim->pIndexData->hitplus,
-			get_curr_cha(victim), victim->move, victim->max_move, calculate_age( victim ));
+			get_curr_cha(victim), victim->move, victim->max_move);
 	pager_printf_color( ch,"&R|  &cDamDie: &W%-2dd%-2d+%-3d&R| &cLck: &W%-3d   &R|  &cAC   : &W%-5d          &R|  &cSecs  : &W%-4d     &R|\r\n",
 			victim->barenumdie, victim->baresizedie, victim->damplus,
 			get_curr_lck(victim), GET_AC( victim ), ( int )victim->played);

@@ -502,11 +502,6 @@ void do_time( CHAR_DATA* ch, const char* argument)
    if( holiday != NULL )
       ch_printf( ch, "&wIt's a holiday today:&W %s\r\n", holiday->name );
 
-   if( !IS_NPC( ch ) )
-   {
-      if( day == ch->pcdata->day + 1 && time_info.month == ch->pcdata->month )
-         send_to_char( "&WToday is your &Pb&pi&Yr&Oth&Yd&pa&Py&R!&D\r\n", ch );
-   }
 
   /* Uncomment if you have Samson's Pfile Cleanup Snippet installed.
    if( IS_IMMORTAL( ch ) && sysdata.CLEANPFILES == TRUE )

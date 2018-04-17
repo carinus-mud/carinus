@@ -749,9 +749,6 @@ int rd_parse( CHAR_DATA * ch, int level, char *texp )
          case 'U':
          case 'u':
             return get_curr_lck( ch );
-         case 'Y':
-         case 'y':
-            return calculate_age( ch );
       }
    }
 

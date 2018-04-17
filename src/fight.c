@@ -2677,25 +2677,16 @@ bool is_safe( CHAR_DATA * ch, CHAR_DATA * victim, bool show_messg )
    if( IS_NPC( ch ) || IS_NPC( victim ) )
       return FALSE;
 
-   if( calculate_age( ch ) < 18 || ch->level < 5 )
+   if(  ch->level < 5 )
    {
       if( show_messg )
       {
          set_char_color( AT_WHITE, ch );
-         send_to_char( "You are not yet ready, needing age or experience, if not both. \r\n", ch );
+         send_to_char( "You are not yet ready, needing experience. \r\n", ch );
       }
       return TRUE;
    }
 
-   if( calculate_age( victim ) < 18 || victim->level < 5 )
-   {
-      if( show_messg )
-      {
-         set_char_color( AT_WHITE, ch );
-         send_to_char( "They are yet too young to die.\r\n", ch );
-      }
-      return TRUE;
-   }
 
    if( ch->level - victim->level > 5 || victim->level - ch->level > 5 )
    {

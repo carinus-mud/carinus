@@ -2464,11 +2464,6 @@ struct pc_data
    IMC_CHARDATA *imcchardata;
 #endif
    bool hotboot;  /* hotboot tracker */
-   short age_bonus;
-   short age;
-   short day;
-   short month;
-   short year;
    int timezone;
 };
 
@@ -3382,7 +3377,7 @@ do								\
 #define IS_IDLE(ch)		((ch)->pcdata && IS_SET( (ch)->pcdata->flags, PCFLAG_IDLE ))
 #define IS_PKILL(ch)            ((ch)->pcdata && IS_SET( (ch)->pcdata->flags, PCFLAG_DEADLY ))
 
-#define CAN_PKILL(ch)           (IS_PKILL((ch)) && (ch)->level >= 5 && calculate_age( (ch) ) >= 18 )
+#define CAN_PKILL(ch)           (IS_PKILL((ch)) && (ch)->level >= 5  )
 
 /* Addition to make people with nuisance flag have more wait */
 
@@ -4835,7 +4830,6 @@ int get_exp( CHAR_DATA * ch );
 int get_exp_worth( CHAR_DATA * ch );
 int exp_level( CHAR_DATA * ch, short level );
 short get_trust( CHAR_DATA * ch );
-short calculate_age( CHAR_DATA * ch );
 short get_curr_str( CHAR_DATA * ch );
 short get_curr_int( CHAR_DATA * ch );
 short get_curr_wis( CHAR_DATA * ch );
