@@ -132,22 +132,8 @@ OBJ_DATA *make_corpse( CHAR_DATA * ch, CHAR_DATA * killer )
       name = ch->short_descr;
       corpse = create_object( get_obj_index( OBJ_VNUM_CORPSE_NPC ), 0 );
       corpse->timer = 6;
-      if( ch->gold > 0 )
-      {
-         if( ch->in_room )
-         {
-            ch->in_room->area->gold_looted += ch->gold;
-            sysdata.global_looted += ch->gold / 100;
-         }
-         obj_to_obj( create_money( ch->gold ), corpse );
-         ch->gold = 0;
-      }
-
-/* Cannot use these!  They are used.
-	corpse->value[0] = (int)ch->pIndexData->vnum;
-	corpse->value[1] = (int)ch->max_hit;
-*/
-/*	Using corpse cost to cheat, since corpses not sellable */
+   
+/* Using corpse cost to cheat, since corpses not sellable */
       corpse->cost = ( -( int )ch->pIndexData->vnum );
       corpse->value[2] = corpse->timer;
    }

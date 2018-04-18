@@ -2374,10 +2374,8 @@ void do_sacrifice( CHAR_DATA* ch, const char* argument)
    {
       mudstrlcpy( name, "Thoric", 50 );
    }
-   ch->gold += 1;
    if( obj->item_type == ITEM_CORPSE_NPC || obj->item_type == ITEM_CORPSE_PC )
       adjust_favor( ch, 5, 1 );
-   ch_printf( ch, "%s gives you one gold coin for your sacrifice.\r\n", name );
 
    if( obj->item_type == ITEM_PAPER )
 	   snprintf( buf, MAX_STRING_LENGTH, "$n sacrifices a note to %s.", name );

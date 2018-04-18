@@ -740,22 +740,12 @@ void do_list( CHAR_DATA* ch, const char* argument)
             if( !found )
             {
                found = TRUE;
-               send_to_pager( "[Lv Price] Item\r\n", ch );
+               send_to_pager( "&G[Item]                      &c[Tier]     &Y[Price]\r\n", ch );
+	       send_to_pager("&W-------------------------------------------------------------\r\n", ch);
             }
 
-            if( obj->level <= upper )
-            {
-               pager_printf( ch, "%s%2d%s\r\n", divleft, upper, divright );
-               upper = -1;
-            }
 
-            if( obj->level < lower )
-            {
-               pager_printf( ch, "%s%2d%s\r\n", divleft, lower, divright );
-               lower = -1;
-            }
-
-            pager_printf( ch, "[%2d %5d] %s.\r\n", obj->level, cost, capitalize( obj->short_descr ) );
+            pager_printf( ch, "&G%-30s &c%d        &Y%d&W\r\n", capitalize( obj->short_descr), obj->tier, cost  );
          }
       }
 
@@ -782,7 +772,6 @@ void do_sell( CHAR_DATA* ch, const char* argument)
    CHAR_DATA *keeper;
    OBJ_DATA *obj;
    int cost;
-
    one_argument( argument, arg );
 
    if( arg[0] == '\0' )
@@ -822,7 +811,9 @@ void do_sell( CHAR_DATA* ch, const char* argument)
       return;
    }
 
-   if( ( cost = get_cost( ch, keeper, obj, FALSE ) ) <= 0 )
+   cost = obj->cost/10;
+
+   if( ( cost  <= 0 ))
    {
       act( AT_ACTION, "$n looks uninterested in $p.", keeper, obj, ch, TO_VICT );
       return;
