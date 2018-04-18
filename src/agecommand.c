@@ -216,7 +216,9 @@ void do_skills( CHAR_DATA* ch, const char* )
    int sn;
 
 
-
+send_to_char( "\r\n&c+===========================================================================+\n\r", ch);
+        send_to_char( "   &OSCORE    &YSKILLS    &OINVENTORY    EQUIPMENT    FEATS    CONFIG   AFFECTS\r\n", ch);
+send_to_char( "&c+===========================================================================+\n\r", ch);
       int col;
       short lasttype, cnt;
       bool is_ok;
@@ -471,15 +473,12 @@ void do_score( CHAR_DATA* ch, const char* argument )
 
    char buf[MAX_STRING_LENGTH];
    char buf2[MAX_STRING_LENGTH];
-   SKILLTYPE *skill;
-
-    AFFECT_DATA *paf;
 
 send_to_char( "\r\n&c+===========================================================================+\n\r", ch);
-pager_printf( ch, "&r&W %s %-30s Hometown: %-13s Race: %-10s\r\n",
-        ch->name, ch->pcdata->title, ch->pcdata->hometown,  capitalize( get_race(ch)) );
+        send_to_char( "   &YSCORE&O    SKILLS    INVENTORY    EQUIPMENT    FEATS    CONFIG   AFFECTS\r\n", ch);
 send_to_char( "&c+===========================================================================+\n\r", ch);
-        send_to_char( "&C  SEE ALSO:&O    SKILLS      INVENTORY      EQUIPMENT      FEATS      CONFIG  \r\n", ch);
+pager_printf( ch, "&r&W %s %-30s &cHometown: &W%-13s &cRace: &W%-10s\r\n",
+        ch->name, ch->pcdata->title, ch->pcdata->hometown,  capitalize( get_race(ch)) );
 	send_to_char( "&c+===========================================================================+\n\r", ch);
 pager_printf( ch, " &CLevel: &W%2d         &CTier: &W%-3d       &CAlign: &W%-6d   &CFavor:&W %-5d \r\n",
         ch->level, ch->pcdata->tier, ch->alignment, ch->pcdata->favor);
@@ -614,57 +613,6 @@ value = 20.0 * ((float) ch->move / (float) ch->max_move) ;
                                         send_to_char(" ",ch);
                                 }
                     send_to_char("&W]\n\r\n\r",ch);
-      send_to_char_color( " &CImbued with: ", ch );
-      ch_printf_color( ch, "&W%s\r\n", !xIS_EMPTY( ch->affected_by ) ? affect_bit_name( &ch->affected_by ) : "&CYou are not imbued with anything." );
-            send_to_char_color( " &CResistances: ", ch );
-
-         if( ch->resistant > 0 )
-         {
-            ch_printf_color( ch, "&W%s\r\n", flag_string( ch->resistant, ris_flags ) );
-         }
-         else
-         {
-               ch_printf_color( ch, "&CYou are not resistant to anything.\r\n" );
-         }
-        send_to_char_color( "  &CImmunities: ", ch );
-         if( ch->immune > 0 )
-         {
-            ch_printf_color( ch, "&W%s\r\n", flag_string( ch->immune, ris_flags ) );
-         }
-         else
-         {
-               ch_printf_color( ch, "&CYou are not immune to anything.\r\n" );
-         }
-
-
-            send_to_char_color( "    &CSuscepts: ", ch );
-         if( ch->susceptible > 0 )
-         {
-            ch_printf_color( ch, "&W%s\r\n", flag_string( ch->susceptible, ris_flags ) );
-         }
-         else
-         {
-               ch_printf_color( ch, "&CYou are not susceptible to anything.\r\n" );
-         }
-
-      send_to_char_color("&C    Affected: ", ch);
-   if( !ch->first_affect )
-   {
-      send_to_char_color( "&CYou are not affected by a cantrip or skill.\r\n", ch );
-   }
-   else
-   {
-      for( paf = ch->first_affect; paf; paf = paf->next )
-         if( ( skill = get_skilltype( paf->type ) ) != NULL )
-         {
-               if( paf->duration < 25 )
-                  set_char_color( AT_WHITE, ch );
-               if( paf->duration < 6 )
-                  set_char_color( AT_WHITE, ch );
-               ch_printf( ch, "&c[&W(%d) ", paf->duration );
-            ch_printf( ch, "&W%s&c]", skill->name );
-         }
-    }
 
 	send_to_char( "&c+===========================================================================+\n\r", ch);
 
