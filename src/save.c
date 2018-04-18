@@ -213,25 +213,6 @@ void re_equip_char( CHAR_DATA * ch )
    }
 }
 
-short find_old_age( CHAR_DATA * ch )
-{
-   short age;
-
-   if( IS_NPC( ch ) )
-      return -1;
-
-   age = ch->played / 86400;   /* Calculate realtime number of days played */
-
-   age = age / 7; /* Calculates rough estimate on number of mud years played */
-
-   age += 17;  /* Add 17 years, new characters begin at 17. */
-
-   ch->pcdata->day = ( number_range( 1, sysdata.dayspermonth ) - 1 );   /* Assign random day of birth */
-   ch->pcdata->month = ( number_range( 1, sysdata.monthsperyear ) - 1 );   /* Assign random month of birth */
-   ch->pcdata->year = time_info.year - age;  /* Assign birth year based on calculations above */
-
-   return age;
-}
 
 /*
  * Save a character and inventory.
@@ -383,8 +364,6 @@ void fwrite_char( CHAR_DATA * ch, FILE * fp )
    fprintf( fp, "Sex          %d\n", ch->sex );
    fprintf( fp, "Class        %d\n", ch->Class );
    fprintf( fp, "Race         %d\n", ch->race );
-   fprintf( fp, "Age          %d %d %d %d\n",
-            ch->pcdata->age_bonus, ch->pcdata->day, ch->pcdata->month, ch->pcdata->year );
    fprintf( fp, "Languages    %d %d\n", ch->speaks, ch->speaking );
    fprintf( fp, "Level        %d\n", ch->level );
    fprintf( fp, "Played       %d\n", ch->played + ( int )( current_time - ch->logon ) );
@@ -1214,23 +1193,6 @@ void fread_char( CHAR_DATA * ch, FILE * fp, bool preload, bool copyover )
                break;
             }
 
-            if( file_ver < 5 )
-               find_old_age( ch );
-            else
-            {
-               if( !str_cmp( word, "Age" ) )
-               {
-                  line = fread_line( fp );
-                  x1 = x2 = x3 = x4 = 0;
-                  sscanf( line, "%d %d %d %d", &x1, &x2, &x3, &x4 );
-                  ch->pcdata->age_bonus = x1;
-                  ch->pcdata->day = x2;
-                  ch->pcdata->month = x3;
-                  ch->pcdata->year = x4;
-                  fMatch = TRUE;
-                  break;
-               }
-            }
 
             if( !strcmp( word, "AttrMod" ) )
             {

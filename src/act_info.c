@@ -4977,7 +4977,7 @@ void do_whois( CHAR_DATA* ch, const char* argument)
    }
 
    set_pager_color( AT_GREY, ch );
-   pager_printf( ch, "\r\n'%s%s.'\r\n %s is a %s level %d %s %s, %d years of age.\r\n",
+   pager_printf( ch, "\r\n'%s%s.'\r\n %s is a %s level %d %s %s.\r\n",
                  victim->name,
                  victim->pcdata->title,
                  victim->sex == SEX_MALE ? "He" :
@@ -4986,7 +4986,7 @@ void do_whois( CHAR_DATA* ch, const char* argument)
                  victim->sex == SEX_FEMALE ? "female" : "neutral",
                  victim->level,
                  capitalize( race_table[victim->race]->race_name ),
-                 class_table[victim->Class]->who_name, calculate_age( victim ) );
+                 class_table[victim->Class]->who_name );
 
    pager_printf( ch, " %s is a %sdeadly player",
                  victim->sex == SEX_MALE ? "He" :

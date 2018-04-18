@@ -2592,7 +2592,6 @@ void nanny_read_motd( DESCRIPTOR_DATA * d, const char *argument )
        */
 
       reset_colors( ch );
-  //    name_stamp_stats( ch );
 
       ch->level = 1;
       ch->exp = 0;
@@ -2605,12 +2604,6 @@ void nanny_read_motd( DESCRIPTOR_DATA * d, const char *argument )
       /*
        * Set player birthday to current mud day, -17 years - Samson 10-25-99
        */
-      ch->pcdata->day = time_info.day;
-      ch->pcdata->month = time_info.month;
-      ch->pcdata->year = time_info.year - 17;
-      ch->pcdata->age = 17;
-      ch->pcdata->age_bonus = 0;
- //     snprintf( buf, MAX_STRING_LENGTH, "the %s", title_table[ch->Class][ch->level][ch->sex == SEX_FEMALE ? 1 : 0] );
       mudstrlcpy( buf, "The Adventurer", MAX_STRING_LENGTH );
 
 	set_title( ch, buf );

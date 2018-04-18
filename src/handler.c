@@ -700,28 +700,6 @@ short get_trust( CHAR_DATA * ch )
    return ch->level;
 }
 
-/* One hopes this will do as planned and determine how old a PC is based on the birthdate
-   we record at creation. - Samson 10-25-99 */
-short calculate_age( CHAR_DATA * ch )
-{
-   short age, num_days, ch_days;
-
-   if( IS_NPC( ch ) )
-      return -1;
-
-   num_days = ( time_info.month + 1 ) * sysdata.dayspermonth;
-   num_days += time_info.day;
-
-   ch_days = ( ch->pcdata->month + 1 ) * sysdata.dayspermonth;
-   ch_days += ch->pcdata->day;
-
-   age = time_info.year - ch->pcdata->year;
-
-   if( ch_days - num_days > 0 )
-      age -= 1;
-
-   return age;
-}
 
 /*
  * Retrieve character's current strength.
