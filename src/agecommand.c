@@ -471,100 +471,36 @@ void do_score( CHAR_DATA* ch, const char* argument )
 
    char buf[MAX_STRING_LENGTH];
    char buf2[MAX_STRING_LENGTH];
-//   CLAN_DATA *pClan = NULL;
+   SKILLTYPE *skill;
 
-//   AFFECT_DATA *paf;
+    AFFECT_DATA *paf;
 
-send_to_char( "\r\n&r+===========================================================================+\n\r", ch);
-pager_printf( ch, "&r|&W %-15s Level %-2d %-12s Hometown: %-19s       &r|\r\n",
-        ch->name, ch->level, capitalize( get_race(ch)), ch->pcdata->hometown );
-send_to_char( "&r+===========================================================================+\n\r", ch);
-pager_printf( ch, "&r| &CFaction: &W%-15s     &CTier: &W%d           &CBleed Counters: &R%-3d        &r|\r\n",
-        ch->pcdata->clan_name, ch->pcdata->tier, ch->pcdata->condition[COND_BLEEDING]);
-pager_printf( ch, "&r| &CRank:    &W%-15s    &CAlign: &W%-5d       &CAP: &W%-5d                  &r|\r\n",
-	ch->pcdata->rank, ch->alignment, ch->pcdata->ap);
-pager_printf( ch, "&r| &CWorships: &W%-15s   &CFavor: &W%-5d       &CArmor: &W%-4d                &r|\r\n",
-        ch->pcdata->deity ? ch->pcdata->deity->name : "(none)", ch->pcdata->favor, GET_AC(ch));
-pager_printf( ch, "&r| &CHitroll: &W%-3d              &CDamroll: &W%-3d                                    &r|\r\n",
-	GET_HITROLL(ch), GET_DAMROLL(ch));
-send_to_char( "&r+=============================+=============================================+\n\r", ch);
-pager_printf( ch, "&r| &CStrength:      &W%2d(%2d)       &r|             &CHealth: &W%-5d/%-5d             &r|\r\n",
-        get_curr_str( ch ), ch->perm_str, ch->hit, ch->max_hit);
-pager_printf( ch, "&r| &CDexterity:     &W%2d(%2d)       &r|         ", get_curr_dex(ch), ch->perm_dex);
+send_to_char( "\r\n&c+===========================================================================+\n\r", ch);
+pager_printf( ch, "&r&W %s %-30s Hometown: %-13s Race: %-10s\r\n",
+        ch->name, ch->pcdata->title, ch->pcdata->hometown,  capitalize( get_race(ch)) );
+send_to_char( "&c+===========================================================================+\n\r", ch);
+        send_to_char( "&C  SEE ALSO:&O    SKILLS      INVENTORY      EQUIPMENT      FEATS      CONFIG  \r\n", ch);
+	send_to_char( "&c+===========================================================================+\n\r", ch);
+pager_printf( ch, " &CLevel: &W%2d         &CTier: &W%-3d       &CAlign: &W%-6d   &CFavor:&W %-5d \r\n",
+        ch->level, ch->pcdata->tier, ch->alignment, ch->pcdata->favor);
 
-send_to_char( "&W[",ch);
-int start;
-float value = 25.0 * ((float) ch->hit / (float) ch->max_hit) ;
-                          for (start = 1; start <= 25; start++ )
+pager_printf( ch, " &CSTR:&W%2d(%2d)     &CHitroll: &W%-3d    &CBleeding: &W%-6d  &CHunger: &W%d\r\n",
+        get_curr_str(ch), ch->perm_str, GET_HITROLL(ch), ch->pcdata->condition[COND_BLEEDING], ch->pcdata->condition[COND_FULL]);
 
-                                {
-                          if (start <=  value )
-                                        send_to_char("&G|",ch);
-                                  else
-                                        send_to_char(" ",ch);
-                                }
-                    send_to_char("&W]&r         |\n\r",ch);
-pager_printf( ch, "&r| &CConstitution:  &W%2d(%2d)       &r|              &CMana:  &W%-5d/%-5d             &r|\r\n",
-	get_curr_con(ch), ch->perm_con, ch->mana, ch->max_mana); 
-pager_printf(ch, "&r| &CIntelligence:  &W%2d(%2d)       &r|         ", get_curr_int(ch), ch->perm_int);
+pager_printf( ch, " &CDEX:&W%2d(%2d)     &CDamroll: &W%-3d      &CAP pts: &W%-6d  &CThirst: &W%d\r\n",
+        get_curr_dex(ch), ch->perm_dex, GET_DAMROLL(ch), ch->pcdata->ap, ch->pcdata->condition[COND_THIRST]);
 
-send_to_char("&W[",ch);
-value = 25.0 * ((float) ch->mana / (float) ch->max_mana) ;
-                          for (start = 1; start <= 25; start++ )
+pager_printf( ch, " &CCON:&W%2d(%2d)     &C  Armor: &W%-4d   &C   Glory: &W%-6d  &CMental: &W%d\r\n",
+        get_curr_con(ch), ch->perm_con, GET_AC(ch), ch->pcdata->quest_curr, ch->mental_state);
 
-                                {
-                          if (start <=  value )
-                                        send_to_char("&C|",ch);
-                                  else
-                                        send_to_char(" ",ch);
-                                }
-                    send_to_char("&W]&r         |\n\r",ch);
+pager_printf( ch, " &CINT:&W%2d(%2d)\r\n",
+        get_curr_int(ch), ch->perm_int);
 
-pager_printf( ch, "&r| &CWisdom:        &W%2d(%2d)       &r|            &CMovement:  &W%-5d/%-5d           &r|\r\n",
-        get_curr_wis( ch ), ch->perm_wis, ch->move, ch->max_move);
-pager_printf(ch, "&r| &CCharisma:      &W%2d(%2d)       &r|         ", get_curr_cha(ch), ch->perm_cha);
-send_to_char("&W[",ch);
-value = 25.0 * ((float) ch->move / (float) ch->max_move) ;
-                          for (start = 1; start <= 25; start++ )
-                                {
-                          if (start <=  value )
-                                        send_to_char("&P|",ch);
-                                  else
-                                        send_to_char(" ",ch);
-                                }
-                    send_to_char("&W]&r         &r|\n\r",ch);
+pager_printf( ch, " &CWIS:&W%2d(%2d)    &CEXP to next level: &W%s\r\n",
+        get_curr_wis(ch), ch->perm_wis, num_punct( exp_level( ch, ch->level + 1 ) - ch->exp ));
 
-pager_printf( ch, "&r| &CLuck:          &W%2d(%2d)       &r|            &CExp TNL: &W%-15s         &r|\r\n",
-        get_curr_lck( ch ), ch->perm_lck,  num_punct( exp_level( ch, ch->level + 1 ) - ch->exp ));
-pager_printf( ch, "&r|                             &r|         ");
-send_to_char("&W[",ch);
-value = 25.0 * (((float) ch->exp )/((float) exp_level( ch, ch->level + 1 ) + ch->exp )) ;
-                          for (start = 1; start <= 25; start++ )
-
-                                {
-                          if (start <=  value )
-                                        send_to_char("&w|",ch);
-                                  else
-                                        send_to_char(" ",ch);
-                                }
-                    send_to_char("&W]&r         |\n\r",ch);
-pager_printf( ch, "&r| &CPractices:     &W%-5d        &r|                                             |  \r\n", ch->practice);
-send_to_char( "&r+=============================+=============================================+\n\r", ch);
-send_to_char( "&r|&CFeats:&r                                                                     |\n\r", ch);
-send_to_char( "&r|                                                                           |\n\r", ch);
-pager_printf( ch, "&r|          &YDeftness: &W%d             &YMight: &W%d         &YOmniscience: &W%d          &r|\n\r"
-		,ch->pcdata->deftness, ch->pcdata->might, ch->pcdata->omniscience);
-pager_printf( ch, "&r|         &YIngenuity: &W%d             &YKarma: &W%d              &YCombat: &W%d          &r|\n\r"
-		,ch->pcdata->ingenuity, ch->pcdata->karma, ch->pcdata->combat);
-pager_printf( ch, "&r|       &zBlack Magic: &W%d         &RRed Magic: &W%d         &GGreen Magic: &W%d          &r|\n\r"
-		,ch->pcdata->blackmagic, ch->pcdata->redmagic, ch->pcdata->greenmagic);
-pager_printf( ch, "&r|        &CBlue Magic: &W%d       &WWhite Magic: &W%d        &PArcana Magic: &W%d          &r|\n\r"
-		,ch->pcdata->bluemagic, ch->pcdata->whitemagic, ch->pcdata->arcanamagic);
-
-
-
-send_to_char( "&r|                                                                           |\n\r", ch);
-send_to_char( "&r+===========================================================================+\n\r", ch);
+pager_printf( ch, " &CCHA:&W%2d(%2d)    &CMemberships: &W[%s] [%s]\r\n",
+        get_curr_cha(ch), ch->perm_cha, ch->pcdata->clan_name, ch->pcdata->council_name);
 
    switch ( ch->position )
    {
@@ -632,42 +568,144 @@ send_to_char( "&r+==============================================================
          snprintf( buf2, MAX_STRING_LENGTH, "%s", "standard" );
          break;
    }
-   pager_printf( ch, "&r| &CPosition:&W %-15s          &CStance:&W   %-15s              &r|\r\n", buf, buf2 );
+	pager_printf( ch, " &CLCK:&W%2d(%2d)    &CPosition: &WYou are %s and your stance is %s\r\n",
+        get_curr_lck(ch), ch->perm_lck, buf, buf2 );
 
-   pager_printf( ch, "&r| &CYour Cpose is set to: &W%-40s            &r|\r\n", ch->pcdata->cpose );
-send_to_char( "&r+===========================================================================+\n\r", ch);
+	pager_printf( ch, "               &CWorships: &W%s\r\n",
+         ch->pcdata->deity ? ch->pcdata->deity->name : "(none)" );
+       pager_printf( ch, "               &CCpose: &W%s\r\n\r\n", ch->pcdata->cpose );
 
 
-      pager_printf( ch, "&r| &CPKILL DATA:  Pkills &W(%3.3d)     &CIllegal Pkills &W(%3.3d)     &CPdeaths &W(%3.3d)      &r|\r\n",
+	pager_printf(ch,  "  &CHealth: &W%-5d/%-5d        &CMana:&W %-5d/%-5d       &CMovement: &W%-5d/%-5d\r\n", 
+		ch->hit, ch->max_hit, ch->mana, ch->max_mana, ch->move, ch->max_move);
+
+int start;
+send_to_char_color(" &W[",ch);
+float value = 20.0 * ((float) ch->hit / (float) ch->max_hit) ;
+                          for (start = 1; start <= 20; start++ )
+
+                                {
+                          if (start <=  value )
+                                        send_to_char("&G|",ch);
+                                  else
+                                        send_to_char(" ",ch);
+                                }
+                    send_to_char("&W]   ",ch);
+
+send_to_char_color("&W[",ch);
+value = 20.0 * ((float) ch->mana / (float) ch->max_mana) ;
+                          for (start = 1; start <= 20; start++ )
+
+                                {
+                          if (start <=  value )
+                                        send_to_char("&C|",ch);
+                                  else
+                                        send_to_char(" ",ch);
+                                }
+                    send_to_char("&W]   ",ch);
+
+send_to_char_color("&W[",ch);
+value = 20.0 * ((float) ch->move / (float) ch->max_move) ;
+                          for (start = 1; start <= 20; start++ )
+                                {
+                          if (start <=  value )
+                                        send_to_char("&P|",ch);
+                                  else
+                                        send_to_char(" ",ch);
+                                }
+                    send_to_char("&W]\n\r\n\r",ch);
+      send_to_char_color( " &CImbued with: ", ch );
+      ch_printf_color( ch, "&W%s\r\n", !xIS_EMPTY( ch->affected_by ) ? affect_bit_name( &ch->affected_by ) : "&CYou are not imbued with anything." );
+            send_to_char_color( " &CResistances: ", ch );
+
+         if( ch->resistant > 0 )
+         {
+            ch_printf_color( ch, "&W%s\r\n", flag_string( ch->resistant, ris_flags ) );
+         }
+         else
+         {
+               ch_printf_color( ch, "&CYou are not resistant to anything.\r\n" );
+         }
+        send_to_char_color( "  &CImmunities: ", ch );
+         if( ch->immune > 0 )
+         {
+            ch_printf_color( ch, "&W%s\r\n", flag_string( ch->immune, ris_flags ) );
+         }
+         else
+         {
+               ch_printf_color( ch, "&CYou are not immune to anything.\r\n" );
+         }
+
+
+            send_to_char_color( "    &CSuscepts: ", ch );
+         if( ch->susceptible > 0 )
+         {
+            ch_printf_color( ch, "&W%s\r\n", flag_string( ch->susceptible, ris_flags ) );
+         }
+         else
+         {
+               ch_printf_color( ch, "&CYou are not susceptible to anything.\r\n" );
+         }
+
+      send_to_char_color("&C    Affected: ", ch);
+   if( !ch->first_affect )
+   {
+      send_to_char_color( "&CYou are not affected by a cantrip or skill.\r\n", ch );
+   }
+   else
+   {
+      for( paf = ch->first_affect; paf; paf = paf->next )
+         if( ( skill = get_skilltype( paf->type ) ) != NULL )
+         {
+               if( paf->duration < 25 )
+                  set_char_color( AT_WHITE, ch );
+               if( paf->duration < 6 )
+                  set_char_color( AT_WHITE, ch );
+               ch_printf( ch, "&c[&W(%d) ", paf->duration );
+            ch_printf( ch, "&W%s&c]", skill->name );
+         }
+    }
+
+	send_to_char( "&c+===========================================================================+\n\r", ch);
+
+	if IS_PKILL(ch)
+	{
+
+      pager_printf( ch, "  &CPKILL DATA:  Pkills &W(%3.3d)     &CIllegal Pkills &W(%3.3d)     &CPdeaths &W(%3.3d)\r\n",
                     ch->pcdata->pkills, ch->pcdata->illegal_pk, ch->pcdata->pdeaths );
-send_to_char( "&r+===========================================================================+\n\r", ch);
-
-
+	send_to_char( "&c+===========================================================================+\n\r", ch);
+	}
 
    if( IS_IMMORTAL( ch ) )
    {
-      pager_printf( ch, "&r| &YIMMORTAL DATA:  Wizinvis [%s]  Wizlevel (%-2d)                               &r|\r\n",
+      pager_printf( ch, "  &YIMMORTAL DATA:  Wizinvis [%s]  Wizlevel (%-2d)  ",
                     xIS_SET( ch->act, PLR_WIZINVIS ) ? "X" : " ", ch->pcdata->wizinvis );
 
-      pager_printf( ch, "&r| &YBamfin:  %-60s     &r|\r\n", ( ch->pcdata->bamfin[0] != '\0' )
+	if(ch->pcdata->area)
+		{
+         pager_printf( ch, " &YArea Loaded &W[%s]\r\n", ( IS_SET( ch->pcdata->area->status, AREA_LOADED ) ) ? "yes" : "no" );
+		}
+		else
+	send_to_char("\r\n",ch);
+
+      pager_printf( ch, "  &YBamfin:  %s\r\n", ( ch->pcdata->bamfin[0] != '\0' )
                     ? ch->pcdata->bamfin : "An immortal appears." );
-      pager_printf( ch, "&r| &YBamfout: %-60s     &r|\r\n", ( ch->pcdata->bamfout[0] != '\0' )
+      pager_printf( ch, "  &YBamfout: %s \r\n", ( ch->pcdata->bamfout[0] != '\0' )
                     ? ch->pcdata->bamfout : "The immortal disappears." );
-send_to_char( "&r+===========================================================================+\n\r", ch);
+	send_to_char( "&c+===========================================================================+\n\r", ch);
 
   }
 
-pager_printf(ch,"&gType 'aff' to see what you are affected by. \r\n");
 
       if( ch->pcdata->area )
       {
-         pager_printf( ch, "Vnums:   Room (%-5.5d - %-5.5d)   Object (%-5.5d - %-5.5d)   Mob (%-5.5d - %-5.5d)\r\n",
+         pager_printf( ch, "  &CVnums: Room &W(%-5.5d - %-5.5d)  &CObject &W(%-5.5d - %-5.5d)  &CMob &W(%-5.5d - %-5.5d)\r\n",
                        ch->pcdata->area->low_r_vnum, ch->pcdata->area->hi_r_vnum,
                        ch->pcdata->area->low_o_vnum, ch->pcdata->area->hi_o_vnum,
                        ch->pcdata->area->low_m_vnum, ch->pcdata->area->hi_m_vnum );
-         pager_printf( ch, "Area Loaded [%s]\r\n", ( IS_SET( ch->pcdata->area->status, AREA_LOADED ) ) ? "yes" : "no" );
-      }
+	send_to_char( "&c+===========================================================================+\n\r", ch);
 
+      }
 
 }
 
