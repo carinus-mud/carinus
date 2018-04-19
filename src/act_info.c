@@ -1036,7 +1036,7 @@ void show_char_to_char_1( CHAR_DATA * victim, CHAR_DATA * ch )
 
    if( number_percent(  ) < LEARNED( ch, gsn_peek ) )
    {
-      ch_printf( ch, "\r\nYou peek at %s inventory:\r\n", victim->sex == 1 ? "his" : victim->sex == 2 ? "her" : "its" );
+      ch_printf( ch, "\r\nYou peek at %s inventory and see:\r\n\r\n", victim->sex == 1 ? "his" : victim->sex == 2 ? "her" : "its" );
       show_list_to_char( victim->first_carrying, ch, TRUE, TRUE );
       learn_from_success( ch, gsn_peek );
    }
@@ -1238,9 +1238,9 @@ void do_look( CHAR_DATA * ch, const char *argument )
 	if( !IS_NPC(ch) && IS_IMMORTAL(ch) && IS_SET( ch->pcdata->flags, PCFLAG_AUTOFLAGS ) )
 	{
 
-	   ch_printf( ch, "&P[Area Flags: &W%s]\r\n", flag_string( ch->in_room->area->flags, area_flags ) );
+	   ch_printf( ch, "&P[Area Flags:] &W%s\r\n", flag_string( ch->in_room->area->flags, area_flags ) );
 
-	   ch_printf( ch, "&P[Room flags: &W%s\r\n", ext_flag_string( &ch->in_room->room_flags, r_flags ) );
+	   ch_printf( ch, "&P[Room flags:] &W%s\r\n", ext_flag_string( &ch->in_room->room_flags, r_flags ) );
 
 	}
 
@@ -1248,15 +1248,15 @@ void do_look( CHAR_DATA * ch, const char *argument )
       if( !IS_NPC(ch) && IS_IMMORTAL(ch) && IS_SET( ch->pcdata->flags, PCFLAG_SECTORD ) )
 	{
 	
-	   ch_printf( ch, "&P[Sector Type: &W%s]\r\n", sec_flags[ch->in_room->sector_type] );
+	   ch_printf( ch, "&P[Sector Type:] &W%s\r\n", sec_flags[ch->in_room->sector_type] );
 	}
 
 	/* Area name and filename display installed by Samson 12-13-97 */
 	if( !IS_NPC(ch) && IS_IMMORTAL(ch) && IS_SET( ch->pcdata->flags, PCFLAG_ANAME ) )
 	{
-	  ch_printf( ch, "&P[Area name: &W%s]  ", ch->in_room->area->name );
+	  ch_printf( ch, "&P[Area name:] &W%s  ", ch->in_room->area->name );
         if ( ch->level >= LEVEL_CREATOR )
-          ch_printf( ch, "&P[Area filename: &W%s]\r\n", ch->in_room->area->filename );
+          ch_printf( ch, "&P[Area filename:] &W%s\r\n", ch->in_room->area->filename );
         else
 	    send_to_char( "\r\n", ch );
       }	
@@ -4447,12 +4447,13 @@ void do_config( CHAR_DATA* ch, const char* argument)
 
    if( arg[0] == '\0' )
    {
-      set_char_color( AT_DGREEN, ch );
-      send_to_char( "\r\nConfigurations ", ch );
-      set_char_color( AT_GREEN, ch );
-      send_to_char( "(use 'config +/- <keyword>' to toggle, see 'help config')\r\n\r\n", ch );
-      set_char_color( AT_DGREEN, ch );
-      send_to_char( "Display:   ", ch );
+      send_to_char( "\r\n&cConfigurations ", ch );
+      send_to_char( "&W(use 'config +/- <keyword>' to toggle, see 'help config')\r\n\r\n", ch );
+	send_to_char( "\r\n&c+===========================================================================+\n\r", ch);
+        send_to_char( "   &OSCORE    SKILLS    INVENTORY    EQUIPMENT    FEATS    &YCONFIG&O   AFFECTS\r\n", ch);
+	send_to_char( "&c+===========================================================================+\n\r", ch);
+
+      send_to_char( "&cDisplay:   ", ch );
       set_char_color( AT_GREY, ch );
       ch_printf( ch, "%-12s   %-12s   %-12s   %-12s\r\n           %-12s   %-12s   %-12s   %-12s\r\n           %-12s   %-12s ",
                  IS_SET( ch->pcdata->flags, PCFLAG_PAGERON ) ? "[+] PAGER"
@@ -4474,24 +4475,7 @@ void do_config( CHAR_DATA* ch, const char* argument)
                  xIS_SET( ch->act, PLR_COMPASS ) ? "[+] COMPASS"
                  : "[-] compass", xIS_SET( ch->act, PLR_AUTOMAP ) ? "[+] AUTOMAP" : "[-] automap" );
       
-	/* Config option for Room Flag display added by Samson 12-10-97 */
-	/* Config option for Sector Type display added by Samson 12-10-97 */
-	/* Config option Area name and filename added by Samson 12-13-97 */
-      if( IS_IMMORTAL( ch ) )
-      {
-	  set_char_color( AT_DGREEN, ch );
-        send_to_char( "\r\nMore Immortal toggles:  ", ch );
-        set_char_color( AT_GREY, ch );
-        ch_printf( ch, "Roomflags [%s] Sectortypes [%s] Filename [%s]\r\n",
-        IS_SET(ch->pcdata->flags, PCFLAG_AUTOFLAGS) ? "+"
-							          : " ",
-	  IS_SET(ch->pcdata->flags, PCFLAG_SECTORD)   ? "+"
-							          : " ",
-	  IS_SET(ch->pcdata->flags, PCFLAG_ANAME)     ? "+"
-								    : " " );
-      }
-	set_char_color( AT_DGREEN, ch );
-      send_to_char( "\r\n\r\nAuto:      ", ch );
+      send_to_char( "\r\n\r\n&cAuto:      ", ch );
       set_char_color( AT_GREY, ch );
       ch_printf( ch, "%-12s   %-12s   %-12s   %-12s",
                  xIS_SET( ch->act, PLR_AUTOSAC ) ? "[+] AUTOSAC"
@@ -4501,8 +4485,7 @@ void do_config( CHAR_DATA* ch, const char* argument)
                  xIS_SET( ch->act, PLR_AUTOLOOT ) ? "[+] AUTOLOOT"
                  : "[-] autoloot", xIS_SET( ch->act, PLR_AUTOEXIT ) ? "[+] AUTOEXIT" : "[-] autoexit" );
 
-      set_char_color( AT_DGREEN, ch );
-      send_to_char( "\r\n\r\nSafeties:  ", ch );
+      send_to_char( "\r\n\r\n&cSafeties:  ", ch );
       set_char_color( AT_GREY, ch );
       ch_printf( ch, "%-12s   %-12s",
                  IS_SET( ch->pcdata->flags, PCFLAG_NORECALL ) ? "[+] NORECALL"
@@ -4513,8 +4496,7 @@ void do_config( CHAR_DATA* ch, const char* argument)
                     xIS_SET( ch->act, PLR_SHOVEDRAG ) ? "[+] DRAG"
                     : "[-] drag", xIS_SET( ch->act, PLR_NICE ) ? "[+] NICE" : "[-] nice" );
 
-      set_char_color( AT_DGREEN, ch );
-      send_to_char( "\r\n\r\nMisc:      ", ch );
+      send_to_char( "\r\n\r\n&cMisc:      ", ch );
       set_char_color( AT_GREY, ch );
       ch_printf( ch, "%-12s   %-12s   %-12s   %-12s",
                  xIS_SET( ch->act, PLR_TELNET_GA ) ? "[+] TELNETGA" : "[-] telnetga",
@@ -4522,21 +4504,31 @@ void do_config( CHAR_DATA* ch, const char* argument)
                  IS_SET( ch->pcdata->flags, PCFLAG_NOINTRO ) ? "[+] NOINTRO" : "[-] nointro",
                  IS_SET( ch->pcdata->flags, PCFLAG_BECKON ) ? "[+] BECKON" : "[-] beckon" );
 
-      set_char_color( AT_DGREEN, ch );
-      send_to_char( "\r\n\r\nSettings:  ", ch );
+      send_to_char( "\r\n\r\n&cSettings:  ", ch );
       set_char_color( AT_GREY, ch );
       ch_printf_color( ch, "Pager Length (%d)    Wimpy (&W%d&w)", ch->pcdata->pagerlen, ch->wimpy );
 
       if( IS_IMMORTAL( ch ) )
       {
          set_char_color( AT_DGREEN, ch );
-         send_to_char( "\r\n\r\nImmortal toggles:  ", ch );
+         send_to_char( "\r\n\r\n&cImmortal:  ", ch );
          set_char_color( AT_GREY, ch );
-         ch_printf( ch, "Roomvnum [%s]", xIS_SET( ch->act, PLR_ROOMVNUM ) ? "+" : " " );
+         ch_printf( ch, "Roomvnum [%s] ", xIS_SET( ch->act, PLR_ROOMVNUM ) ? "+" : " " );
+	/* Config option for Room Flag display added by Samson 12-10-97 */
+	/* Config option for Sector Type display added by Samson 12-10-97 */
+	/* Config option Area name and filename added by Samson 12-13-97 */
+        ch_printf( ch, "Roomflags [%s] Sectortypes [%s] Filename [%s]\r\n",
+        IS_SET(ch->pcdata->flags, PCFLAG_AUTOFLAGS) ? "+"
+							          : " ",
+	  IS_SET(ch->pcdata->flags, PCFLAG_SECTORD)   ? "+"
+							          : " ",
+	  IS_SET(ch->pcdata->flags, PCFLAG_ANAME)     ? "+"
+								    : " " );
       }
 
+
       set_char_color( AT_DGREEN, ch );
-      send_to_char( "\r\n\r\nSentences imposed on you (if any):", ch );
+      send_to_char( "\r\n\r\n&cSentences imposed on you (if any):", ch );
       set_char_color( AT_YELLOW, ch );
       ch_printf( ch, "\r\n%s%s%s%s%s%s%s",
                  xIS_SET( ch->act, PLR_SILENCE ) ?
@@ -4613,7 +4605,7 @@ void do_config( CHAR_DATA* ch, const char* argument)
             xSET_BIT( ch->act, bit );
          else
             xREMOVE_BIT( ch->act, bit );
-         send_to_char( "Ok.\r\n", ch );
+         send_to_char( "Configuration set.\r\n", ch );
          return;
       }
       else
@@ -4651,7 +4643,7 @@ void do_config( CHAR_DATA* ch, const char* argument)
          else
             REMOVE_BIT( ch->pcdata->flags, bit );
 
-         send_to_char( "Ok.\r\n", ch );
+         send_to_char( "Configuration set.\r\n", ch );
          return;
       }
    }

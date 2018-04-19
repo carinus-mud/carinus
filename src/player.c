@@ -399,29 +399,31 @@ void do_affected( CHAR_DATA* ch, const char* argument)
    if( IS_NPC( ch ) )
       return;
 
+send_to_char( "\r\n&c+===========================================================================+\n\r", ch);
+        send_to_char( "   &OSCORE    SKILLS    INVENTORY    EQUIPMENT    FEATS    CONFIG   &YAFFECTS\r\n", ch);
+send_to_char( "&c+===========================================================================+\n\r", ch);
+
    set_char_color( AT_SCORE, ch );
 
    argument = one_argument( argument, arg );
    
-      send_to_char_color( "\r\n&BImbued with:\r\n", ch );
-      ch_printf_color( ch, "&C%s\r\n", !xIS_EMPTY( ch->affected_by ) ? affect_bit_name( &ch->affected_by ) : "nothing" );
      
          send_to_char( "\r\n", ch );
-            send_to_char_color( "&BResistances:  ", ch );
+            send_to_char_color( "&CResistances:  ", ch );
 
          if( ch->resistant > 0 )
          {
-            ch_printf_color( ch, "&C%s\r\n", flag_string( ch->resistant, ris_flags ) );
+            ch_printf_color( ch, "&W%s\r\n", flag_string( ch->resistant, ris_flags ) );
          }
          else
          {
                ch_printf_color( ch, "&Cnone\r\n" );
          }
 
-        send_to_char_color( "&BImmunities:   ", ch );
+        send_to_char_color( "&CImmunities:   ", ch );
          if( ch->immune > 0 )
          {
-            ch_printf_color( ch, "&C%s\r\n", flag_string( ch->immune, ris_flags ) );
+            ch_printf_color( ch, "&W%s\r\n", flag_string( ch->immune, ris_flags ) );
          }
          else
          {
@@ -429,16 +431,16 @@ void do_affected( CHAR_DATA* ch, const char* argument)
          }
 
 
-            send_to_char_color( "&BSuscepts:     ", ch );
+            send_to_char_color( "&CSuscepts:     ", ch );
          if( ch->susceptible > 0 )
          {
-            ch_printf_color( ch, "&C%s\r\n", flag_string( ch->susceptible, ris_flags ) );
+            ch_printf_color( ch, "&W%s\r\n", flag_string( ch->susceptible, ris_flags ) );
          }
          else
          {
                ch_printf_color( ch, "&Cnone\r\n" );
          }
-
+	send_to_char("\r\n", ch);
       
       
    
@@ -450,21 +452,15 @@ void do_affected( CHAR_DATA* ch, const char* argument)
    }
    else
    {
-      send_to_char( "\r\n", ch );
       for( paf = ch->first_affect; paf; paf = paf->next )
          if( ( skill = get_skilltype( paf->type ) ) != NULL )
          {
-            set_char_color( AT_BLUE, ch );
-            send_to_char( "Affected:  ", ch );
-            set_char_color( AT_SCORE, ch );
-            if( ch->level >= 20 || IS_PKILL( ch ) )
-            {
+            send_to_char( "&CAffected:  ", ch );
                if( paf->duration < 25 )
                   set_char_color( AT_WHITE, ch );
                if( paf->duration < 6 )
                   set_char_color( AT_WHITE + AT_BLINK, ch );
-               ch_printf( ch, "(%5d)   ", paf->duration );
-            }
+               ch_printf( ch, "&W(%5d)   ", paf->duration );
             ch_printf( ch, "%-18s\r\n", skill->name );
          }
    }
@@ -489,8 +485,9 @@ void do_inventory( CHAR_DATA* ch, const char* argument)
    if( victim != ch )
       ch_printf( ch, "&c%s is carrying:\r\n", IS_NPC( victim ) ? victim->short_descr : victim->name );
    else
-      send_to_char( "&C\r\n------------------[&wInventory&C]-----------------&D\r\n", ch );
-
+send_to_char( "\r\n&c+===========================================================================+\n\r", ch);
+        send_to_char( "   &OSCORE    SKILLS    &YINVENTORY&O    EQUIPMENT    FEATS    CONFIG   AFFECTS\r\n", ch);
+send_to_char( "&c+===========================================================================+\n\r", ch);
    show_list_to_char( victim->first_carrying, ch, TRUE, TRUE );
       ch_printf(ch, "\r\n&YGold: %s\r\n", num_punct( ch->gold ) );
    return;
@@ -517,7 +514,10 @@ int start, cond;
    if( victim != ch )
       ch_printf( ch, "&R%s is using:\r\n", IS_NPC( victim ) ? victim->short_descr : victim->name );
    else
-      send_to_char( "&RYou are using:\r\n", ch );
+
+send_to_char( "\r\n&c+===========================================================================+\n\r", ch);
+        send_to_char( "   &OSCORE    SKILLS    INVENTORY    &YEQUIPMENT&O    FEATS    CONFIG   AFFECTS\r\n", ch);
+send_to_char( "&c+===========================================================================+\n\r", ch);
 
    found = FALSE;
    set_char_color( AT_OBJECT, ch );

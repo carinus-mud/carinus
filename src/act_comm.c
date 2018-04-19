@@ -2441,7 +2441,7 @@ void do_quit( CHAR_DATA* ch, const char* argument)
 
    saving_char = NULL;
 	do_save (ch, "auto");
-
+   send_to_char("&YYour character has been saved.\r\n",ch);
    if (IS_IMMORTAL(ch) && ch->pcdata->area )
 	do_savearea (ch, "");
    level = get_trust( ch );
@@ -2579,16 +2579,10 @@ void do_save( CHAR_DATA* ch, const char* argument)
 {
    if( IS_NPC( ch ) )
       return;
-   if( ch->level < 2 )
-   {
-      send_to_char_color( "&BYou must be at least second level to save.\r\n", ch );
-      return;
-   }
    WAIT_STATE( ch, 2 ); /* For big muds with save-happy players, like RoD */
    update_aris( ch );   /* update char affects and RIS */
    save_char_obj( ch );
    saving_char = NULL;
-   send_to_char( "Saved...\r\n", ch );
    return;
 }
 
