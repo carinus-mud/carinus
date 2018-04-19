@@ -938,3 +938,62 @@ void do_invade( CHAR_DATA *ch , const char *argument )
 }
 
 
+void do_skin( CHAR_DATA* ch, const char* argument)
+{
+   OBJ_INDEX_DATA *korps;
+   OBJ_DATA *corpse;
+   OBJ_DATA *obj;
+   OBJ_DATA *skin;
+   const char *name;
+   char buf[MAX_STRING_LENGTH];
+
+   if( argument[0] == '\0' )
+   {
+      send_to_char( "What corpse do you wish to skin?\r\n", ch );
+      return;
+   }
+   if( ( corpse = get_obj_here( ch, argument ) ) == NULL )
+   {
+      send_to_char( "You cannot find that here.\r\n", ch );
+      return;
+   }
+   if( ( obj = get_eq_char( ch, WEAR_WIELD ) ) == NULL )
+   {
+      send_to_char( "You have no weapon with which to perform this deed.\r\n", ch );
+      return;
+   }
+   if( corpse->item_type == ITEM_CORPSE_PC )
+   {
+      send_to_char( "You can only skin mobs.\r\n", ch );
+      return;
+   }
+   if( obj->value[3] != 1 && obj->value[3] != 2 && obj->value[3] != 3 && obj->value[3] != 11 )
+   {
+      send_to_char( "There is nothing you can do with this corpse.\r\n", ch );
+      return;
+   }
+   if( get_obj_index( OBJ_VNUM_SKIN ) == NULL )
+   {
+      bug( "Vnum %d (OBJ_VNUM_SKIN) not found for do_skin!", OBJ_VNUM_SKIN );
+      return;
+   }
+   if( !( korps = get_obj_index( OBJ_VNUM_CORPSE_PC ) ) )
+   {
+      bug( "Vnum %d (OBJ_VNUM_CORPSE_PC) not found for %s!", OBJ_VNUM_CORPSE_PC, __FUNCTION__ );
+      return;
+   }
+
+   skin = create_object( get_obj_index( OBJ_VNUM_SKIN ), 0 );
+   name = IS_NPC( ch ) ? korps->short_descr : corpse->short_descr;
+   snprintf( buf, MAX_STRING_LENGTH, skin->short_descr, name );
+   STRFREE( skin->short_descr );
+   skin->short_descr = STRALLOC( buf );
+   snprintf( buf, MAX_STRING_LENGTH, skin->description, name );
+   STRFREE( skin->description );
+   skin->description = STRALLOC( buf );
+   act( AT_BLOOD, "$n strips the skin from $p.", ch, corpse, NULL, TO_ROOM );
+   act( AT_BLOOD, "You strip the skin from $p.", ch, corpse, NULL, TO_CHAR );
+   obj_to_char( skin, ch );
+   return;
+}
+
