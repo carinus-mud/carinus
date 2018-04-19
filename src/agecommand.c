@@ -160,7 +160,13 @@ void do_decapitate( CHAR_DATA* ch, const char* argument)
 
    if( ( obj->value[3] != 1 && obj->value[3] != 2 && obj->value[3] != 3 && obj->value[3] != 11 ) || IS_OBJ_STAT( corpse, ITEM_DECAPITATED ) )
    {
-      send_to_char( "There is nothing you can do with this corpse.\r\n", ch );
+      send_to_char( "This corpse is already decapitated.\r\n", ch );
+      return;
+   }
+
+   if( (corpse->item_type != ITEM_CORPSE_PC ))
+   {
+      send_to_char( "You can only decapitate player corpses.\r\n",ch);
       return;
    }
    if( !IS_IMMORTAL( ch ) )
@@ -962,11 +968,17 @@ void do_skin( CHAR_DATA* ch, const char* argument)
       send_to_char( "You have no weapon with which to perform this deed.\r\n", ch );
       return;
    }
-   if( corpse->item_type == ITEM_CORPSE_PC )
+      if( (corpse->item_type != ITEM_CORPSE_NPC ))
    {
-      send_to_char( "You can only skin mobs.\r\n", ch );
+      send_to_char( "You can only skin animal corpses.\r\n",ch);
       return;
    }
+
+  if( corpse->value[0] != 2)
+	{
+	send_to_char( "You can only skin animal corpses.\r\n", ch);
+	return;
+	}
    if( obj->value[3] != 1 && obj->value[3] != 2 && obj->value[3] != 3 && obj->value[3] != 11 )
    {
       send_to_char( "There is nothing you can do with this corpse.\r\n", ch );
