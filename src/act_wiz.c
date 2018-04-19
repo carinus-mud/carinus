@@ -2119,102 +2119,6 @@ void do_mstat( CHAR_DATA* ch, const char* argument)
 	   send_to_pager( "\r\n", ch );
 
 
-/*
-   pager_printf_color( ch, "&cSave versus: &w%d %d %d %d %d       &cItems: &w(%d/%d)  &cWeight &w(%d/%d)\r\n",
-                       victim->saving_poison_death,
-                       victim->saving_wand,
-                       victim->saving_para_petri,
-                       victim->saving_breath,
-                       victim->saving_spell_staff,
-                       victim->carry_number, can_carry_n( victim ), victim->carry_weight, can_carry_w( victim ) );
- pager_printf_color( ch, "&cSecs: &w%d  &cTimer: &w%d  &cGold: &Y%d\r\n",
-                     ( int )victim->played, victim->timer, victim->gold );
-   if( get_timer( victim, TIMER_PKILLED ) )
-      pager_printf_color( ch, "&cTimerPkilled:  &R%d\r\n", get_timer( victim, TIMER_PKILLED ) );
-   if( get_timer( victim, TIMER_RECENTFIGHT ) )
-      pager_printf_color( ch, "&cTimerRecentfight:  &R%d\r\n", get_timer( victim, TIMER_RECENTFIGHT ) );
-   if( get_timer( victim, TIMER_ASUPRESSED ) )
-      pager_printf_color( ch, "&cTimerAsupressed:  &R%d\r\n", get_timer( victim, TIMER_ASUPRESSED ) );
- pager_printf_color( ch, "&cPlayerFlags: &w%s\r\n", ext_flag_string( &victim->act, plr_flags ) );
-      pager_printf_color( ch, "&cPcflags    : &w%s\r\n", flag_string( victim->pcdata->flags, pc_flags ) );
-      if( victim->pcdata->nuisance )
-      {
-         pager_printf_color( ch, "&RNuisance   &cStage: (&R%d&c/%d)  Power:  &w%d  &cTime:  &w%s.\r\n",
-                             victim->pcdata->nuisance->flags, MAX_NUISANCE_STAGE, victim->pcdata->nuisance->power,
-                             ctime( &victim->pcdata->nuisance->set_time ) );
-      }
-   if( victim->morph )
-   {
-      if( victim->morph->morph )
-         pager_printf_color( ch, "&cMorphed as : (&C%d&c) &C%s    &cTimer: &C%d\r\n",
-                             victim->morph->morph->vnum, victim->morph->morph->short_desc, victim->morph->timer );
-      else
-         pager_printf_color( ch, "&cMorphed as: Morph was deleted.\r\n" );
-   }   
-   pager_printf_color( ch, "&cSpeaks: &w%d   &cSpeaking: &w%d   &cExperience: &w%d",
-                       victim->speaks, victim->speaking, victim->exp );
-   if( !IS_NPC( victim ) && victim->wait )
-      pager_printf_color( ch, "   &cWaitState: &R%d\r\n", victim->wait / 12 );
-   else
-      send_to_pager( "\r\n", ch );
-   if( victim->pcdata && victim->pcdata->bestowments && victim->pcdata->bestowments[0] != '\0' )
-      pager_printf_color( ch, "&cBestowments: &w%s\r\n", victim->pcdata->bestowments );
-   for( paf = victim->first_affect; paf; paf = paf->next )
-   {
-      if( ( skill = get_skilltype( paf->type ) ) != NULL )
-         pager_printf_color( ch,
-                             "&c%s: &w'%s' mods %s by %d for %d rnds with bits %s.",
-                             skill_tname[skill->type],
-                             skill->name,
-                             affect_loc_name( paf->location ),
-                             paf->modifier, paf->duration, affect_bit_name( &paf->bitvector ) );
-      send_to_pager( "\r\n", ch );
-   }
-
-   if( victim->variables )
-   {
-      send_to_pager( "&cVariables  : &w", ch );
-      for( vd = victim->variables; vd; vd = vd->next )
-      {
-         pager_printf( ch, "%s:%d", vd->tag, vd->vnum );
-         switch ( vd->type )
-         {
-            case vtSTR:
-               if( vd->data )
-                  pager_printf( ch, "=%s", ( char * )vd->data );
-               break;
-
-            case vtINT:
-               if( vd->data )
-                  pager_printf( ch, "=%ld", ( long )vd->data );
-               break;
-
-            case vtXBIT:
-               if( vd->data )
-               {
-                  int started = 0;
-
-                  buf[0] = '\0';
-                  for( x = MAX_BITS; x > 0; --x )
-                  {
-                     if( !started && xIS_SET( *( EXT_BV * ) vd->data, x ) )
-                        started = x;
-                  }
-
-                  for( x = 1; x <= started; x++ )
-                     strcat( buf, xIS_SET( *( EXT_BV * ) vd->data, x ) ? "1 " : "0 " );
-
-                  if( buf[0] != '\0' )
-                     buf[strlen( buf ) - 1] = '\0';
-                  pager_printf( ch, "=[%s]", buf );
-               }
-         }
-         if( vd->next )
-            send_to_pager( "  ", ch );
-      }
-
-
-	} */
     }
 
   if(IS_NPC(victim))
@@ -2231,7 +2135,7 @@ void do_mstat( CHAR_DATA* ch, const char* argument)
 	pager_printf_color( ch,"&c|  &cSex   : &W%-7s &c     | &cDex: &W%-3d  &c|  &cRace : &W%-12s&c|  &cMst   : &W%-2d       &c|\r\n",
 			  victim->sex == SEX_MALE ? "male" :
                        victim->sex == SEX_FEMALE ? "female" : "neutral", get_curr_dex(victim), 
-                       race_table[victim->race]->race_name[0] != '\0' ? race_table[victim->race]->race_name : "unknown",
+                       npc_race[victim->race], 
  		       victim->mental_state);
 	pager_printf_color( ch,"&c|  &cRoom  : &W%-7d    &c  | &cCon: &W%-3d  &c|  &cLevel: &W%-2d          &c|  &cEst   : &W%-4d     &c|\r\n",
 			victim->in_room == NULL ? 0 : victim->in_room->vnum,
