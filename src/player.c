@@ -411,6 +411,9 @@ send_to_char( "&c+==============================================================
          send_to_char( "\r\n", ch );
             send_to_char_color( "&CResistances:  ", ch );
 
+	 send_to_char_color( "\r\n&CImbued with:\r\n", ch );
+         ch_printf_color( ch, "&W%s\r\n", !xIS_EMPTY( ch->affected_by ) ? affect_bit_name( &ch->affected_by ) : "nothing" );
+
          if( ch->resistant > 0 )
          {
             ch_printf_color( ch, "&W%s\r\n", flag_string( ch->resistant, ris_flags ) );
