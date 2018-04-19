@@ -3215,7 +3215,7 @@ if ( first_imm )
 {      
     for ( cur_who = first_imm; cur_who; cur_who = next_who )
     {
-      send_to_pager( "&O|mmortal  ", ch);
+      send_to_pager( "&OImmortal  ", ch);
         send_to_pager( cur_who->text, ch );
 
       next_who = cur_who->next;
