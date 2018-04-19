@@ -240,7 +240,7 @@ typedef bool SPEC_FUN( CHAR_DATA * ch );
 #define SPELL_SILENT_MARKER   "silent" /* No OK. or Failed. */
 #define MAX_CLASS             20
 #define MAX_NPC_CLASS         26
-#define MAX_RACE              20
+#define MAX_RACE              90
 #define MAX_NPC_RACE          91
 #define MAX_MSG               18
 #define MAX_OINVOKE_QUANTITY  20
@@ -1650,6 +1650,7 @@ typedef enum
 #define OBJ_VNUM_SHOPPING_BAG	     25
 
 #define OBJ_VNUM_BLOODLET	     26
+#define OBJ_VNUM_SKIN		     27
 
 #define OBJ_VNUM_FIRE		     30
 #define OBJ_VNUM_TRAP		     31
@@ -4095,6 +4096,7 @@ DECLARE_DO_FUN( do_shutdown );
 DECLARE_DO_FUN( do_silence );
 DECLARE_DO_FUN( do_sit );
 DECLARE_DO_FUN( do_skills );
+DECLARE_DO_FUN( do_skin );
 DECLARE_DO_FUN( do_sla );
 DECLARE_DO_FUN( do_slay );
 DECLARE_DO_FUN( do_sleep );

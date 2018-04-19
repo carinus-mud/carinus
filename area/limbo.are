@@ -1104,6 +1104,18 @@ Stats    1 0 0 0 0
 #ENDOBJECT
 
 #OBJECT
+Vnum     27
+Keywords skin~
+Type     cook~
+Short    the skin of %s~
+Long     The skin of %s lies here.~
+Action   %s gobble$q down $p with gusto... disgusting!~
+WFlags   take~
+Values   10 0 0 0 0 0
+Stats    5 0 0 0 0
+#ENDOBJECT
+
+#OBJECT
 Vnum     30
 Keywords fire flame cloud~
 Type     fire~
