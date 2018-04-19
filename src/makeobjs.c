@@ -132,7 +132,11 @@ OBJ_DATA *make_corpse( CHAR_DATA * ch, CHAR_DATA * killer )
       name = ch->short_descr;
       corpse = create_object( get_obj_index( OBJ_VNUM_CORPSE_NPC ), 0 );
       corpse->timer = 6;
-   
+//here
+   	if ((ch->race == 87 ))
+	{
+	corpse->value[0] = 2;
+	}
 /* Using corpse cost to cheat, since corpses not sellable */
       corpse->cost = ( -( int )ch->pIndexData->vnum );
       corpse->value[2] = corpse->timer;
