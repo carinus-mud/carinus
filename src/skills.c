@@ -6709,3 +6709,59 @@ if( ch != victim)
 }
 
 
+/* Allows PCs to learn spells embedded in object. Should prove interesting. - Samson 8-9-98 */
+/* Changed to tomes - Xander 4-20-18 */
+
+void do_study( CHAR_DATA *ch, const char *argument ) /* study by Absalom */
+{
+    char arg[MAX_INPUT_LENGTH];
+    OBJ_DATA *obj;
+    int sn = 0;
+
+    one_argument( argument, arg );
+
+    if ( arg[0] == '\0' )
+    {
+	send_to_char( "Study what?\r\n", ch );
+	return;
+    }
+
+    if ( ( obj = get_obj_carry( ch, arg ) ) == NULL )
+    {
+	send_to_char( "You do not have that item.\r\n", ch );
+	return;
+    }
+
+    if ( obj->item_type != ITEM_TOME )
+    {
+	send_to_char("You must have a tome in order to study\r\n",ch);
+	return;
+    }
+
+    act( AT_MAGIC, "$n studies $p.", ch, obj, NULL, TO_ROOM );
+    act( AT_MAGIC, "You study $p.", ch, obj, NULL, TO_CHAR );
+
+    if (obj->item_type == ITEM_TOME )
+    {
+	sn = obj->value[0];
+	if ( sn < 0 || sn >= MAX_SKILL || skill_table[sn]->spell_fun == spell_null )
+	{
+	  bug( "Do_study: bad sn %d.", sn );
+	  return;
+	}
+	if ( ch->pcdata->learned[sn])
+	{
+	  send_to_char("You already know that spell!\r\n",ch);
+	  return;
+	}
+	ch->pcdata->learned[sn] = 1;
+	act( AT_MAGIC, "You have learned the art of $t!", ch ,skill_table[sn]->name, NULL, TO_CHAR);
+	act( AT_FIRE, "$p burns brightly and is gone.", ch, obj, NULL, TO_CHAR );
+        separate_obj( obj );
+	extract_obj( obj );
+	return;
+    }
+
+
+}
+

@@ -2875,6 +2875,7 @@ OBJ_DATA *create_object( OBJ_INDEX_DATA * pObjIndex, int level )
       case ITEM_INCENSE:
       case ITEM_FIRE:
       case ITEM_BOOK:
+      case ITEM_TOME:
       case ITEM_SWITCH:
       case ITEM_LEVER:
       case ITEM_PULLCHAIN:
