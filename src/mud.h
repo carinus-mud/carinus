@@ -1691,10 +1691,10 @@ typedef enum
    ITEM_TINDER, ITEM_LOCKPICK, ITEM_SPIKE, ITEM_DISEASE, ITEM_OIL, ITEM_FUEL,
    ITEM_PUDDLE, ITEM_JOURNAL, ITEM_MISSILE_WEAPON, ITEM_PROJECTILE, ITEM_QUIVER,
    ITEM_SHOVEL, ITEM_SALVE, ITEM_COOK, ITEM_KEYRING, ITEM_ODOR, ITEM_CHANCE,
-   ITEM_PIECE, ITEM_HOUSEKEY, ITEM_DRINK_MIX, ITEM_BANDAGE
+   ITEM_PIECE, ITEM_HOUSEKEY, ITEM_DRINK_MIX, ITEM_BANDAGE, ITEM_TOME
 } item_types;
 
-#define MAX_ITEM_TYPE		     ITEM_BANDAGE
+#define MAX_ITEM_TYPE		     ITEM_TOME
 
 /*
  * Extra flags.
@@ -2519,7 +2519,7 @@ struct obj_index_data
    short weight;
    short layers;
    short level;
-   short item_type;
+   int item_type;
 };
 
 /*
@@ -4123,6 +4123,7 @@ DECLARE_DO_FUN( do_steal );
 DECLARE_DO_FUN( do_sting );
 DECLARE_DO_FUN( do_strew );
 DECLARE_DO_FUN( do_strip );
+DECLARE_DO_FUN( do_study );
 DECLARE_DO_FUN( do_stun );
 DECLARE_DO_FUN( do_style );
 DECLARE_DO_FUN( do_supplicate );
