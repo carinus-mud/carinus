@@ -2519,7 +2519,7 @@ struct obj_index_data
    short weight;
    short layers;
    short level;
-   short item_type;
+   int item_type;
 };
 
 /*
@@ -4123,6 +4123,7 @@ DECLARE_DO_FUN( do_steal );
 DECLARE_DO_FUN( do_sting );
 DECLARE_DO_FUN( do_strew );
 DECLARE_DO_FUN( do_strip );
+DECLARE_DO_FUN( do_study );
 DECLARE_DO_FUN( do_stun );
 DECLARE_DO_FUN( do_style );
 DECLARE_DO_FUN( do_supplicate );
