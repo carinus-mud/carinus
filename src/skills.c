@@ -6702,9 +6702,9 @@ else
    update_pos( victim );
 if( ch != victim)
    act( AT_SKILL, "$n bandages you!", ch, NULL, victim, TO_VICT );
-   pager_printf( victim, "%d bleeing counters remain.\r\n", victim->pcdata->condition[COND_BLEEDING]); 
+   pager_printf( victim, "%d bleeding counters remain.\r\n", victim->pcdata->condition[COND_BLEEDING]); 
 	if (ch != victim)
-   pager_printf( ch, "%d bleeing counters remain.\r\n", victim->pcdata->condition[COND_BLEEDING]); 
+   pager_printf( ch, "%d bleeding counters remain.\r\n", victim->pcdata->condition[COND_BLEEDING]); 
    return;
 }
 
