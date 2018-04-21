@@ -3505,130 +3505,25 @@ void do_consider( CHAR_DATA* ch, const char* argument)
    return;
 }
 
-/*
- * Place any skill types you don't want them to be able to practice
- * normally in this list.  Separate each with a space.
- * (Uses an is_name check). -- Altrag
- */
-#define CANT_PRAC "Tongue"
 
 void do_practice( CHAR_DATA* ch, const char* argument)
 {
-   CHAR_DATA *mob;
-   char buf[MAX_STRING_LENGTH];
-   int sn;
+   char arg[MAX_INPUT_LENGTH];
+
+   set_char_color( AT_YELLOW, ch );
+   one_argument( argument, arg );
 
    if( IS_NPC( ch ) )
-      return;
+	{
+	send_to_char("mobs cannot practice\r\n", ch);
+       return;
+	}
 
-   for( mob = ch->in_room->first_person; mob; mob = mob->next_in_room )
-      if( IS_NPC( mob ) && xIS_SET( mob->act, ACT_PRACTICE ) )
-         break;
-
-   if( argument[0] == '\0' && ch->level > LEVEL_AVATAR)   
-{
-      int col;
-      short lasttype, cnt;
-      bool is_ok;
-
-      col = cnt = 0;
-      lasttype = SKILL_SPELL;
-      set_pager_color( AT_MAGIC, ch );
-
-      for( sn = 0; sn < num_skills; ++sn )
-      {
-         const SKILLTYPE *skill;
-         int normalSn;
-
-         // the first num_sorted_skills are sorted by type, so we don't want
-         // to index into skill_table -- that is sorted alphabetically -- so
-         // we need to do the following dance to check if we are in the
-         // sorted section or the unsorted section.
-         if( sn < num_sorted_skills )
-         {
-            skill = skill_table_bytype[sn];
-
-            // we are looping over the skills sorted by type.
-            // So, we need to get the normal sn as well.
-            normalSn = skill_lookup( skill->name );
-         }
-         else
-         {
-            skill = skill_table[sn];
-            normalSn = sn;
-         }
-
-         if( !skill || !skill->name || skill->name[0] == '\0' )
-            continue;
-
-         if( strcmp( skill->name, "reserved" ) == 0 && ( IS_IMMORTAL( ch ) || CAN_CAST( ch ) ) )
-         {
-            if( col % 3 != 0 )
-               send_to_pager( "\r\n", ch );
-            set_pager_color( AT_MAGIC, ch );
-            send_to_pager_color( " ----------------------------------[&CSpells&B]----------------------------------\r\n",
-                                 ch );
-            col = 0;
-         }
-
-         if( skill->type != lasttype )
-         {
-            if( !cnt )
-               send_to_pager( "                                   (none)\r\n", ch );
-            else if( col % 3 != 0 )
-               send_to_pager( "\r\n", ch );
-            set_pager_color( AT_MAGIC, ch );
-            pager_printf_color( ch,
-                                " ----------------------------------&C%ss&B----------------------------------\r\n",
-                                skill_tname[skill->type] );
-            col = cnt = 0;
-         }
-         lasttype = skill->type;
-
-         if( !IS_IMMORTAL( ch )
-             && ( skill->guild != CLASS_NONE && ( !IS_GUILDED( ch ) || ( ch->pcdata->clan->Class != skill->guild ) ) ) )
-            continue;
-
-         if( mob )
-         {
-            if( skill->skill_level[mob->Class] > mob->level && skill->race_level[mob->race] > mob->level )
-               continue;
-         }
-         else
-         {
-            is_ok = FALSE;
-
-            if( ch->level >= skill->skill_level[ch->Class] )
-               is_ok = TRUE;
-            if( ch->level >= skill->race_level[ch->race] )
-               is_ok = TRUE;
-
-            if( !is_ok )
-               continue;
-         }
-
-         if( ch->pcdata->learned[sn] <= 0 && SPELL_FLAG( skill, SF_SECRETSKILL ) )
-            continue;
-
-         ++cnt;
-         set_pager_color( AT_MAGIC, ch );
-         pager_printf( ch, "%20.20s", skill->name );
-         if( ch->pcdata->learned[normalSn] > 0 )
-            set_pager_color( AT_SCORE, ch );
-         pager_printf( ch, " %3d%% ", ch->pcdata->learned[normalSn] );
-         if( ++col % 3 == 0 )
-            send_to_pager( "\r\n", ch );
-      }
-
-      if( col % 3 != 0 )
-         send_to_pager( "\r\n", ch );
-      set_pager_color( AT_MAGIC, ch );
-      pager_printf( ch, "You have %d practice sessions left.\r\n", ch->practice );
-   }
-   else
-   {
-      int adept;
-      bool can_prac = TRUE;
+   if( argument[0] == '\0')   
+	{
+	send_to_char("You must specify the skill you would like to practice.\r\n", ch );
+	return;
+	}
 
       if( !IS_AWAKE( ch ) )
       {
@@ -3636,107 +3531,1040 @@ void do_practice( CHAR_DATA* ch, const char* argument)
          return;
       }
 
-      if( !mob )
-      {
-         send_to_char( "You can't do that here.\r\n", ch );
-         return;
-      }
-
-      if( ch->practice <= 0 )
-      {
-         act( AT_TELL, "$n tells you 'You must earn some more practice sessions.'", mob, NULL, ch, TO_VICT );
-         return;
-      }
-
-      sn = skill_lookup( argument );
-
-      if( can_prac && ( ( sn == -1 ) || ( !IS_NPC( ch ) && ch->level < skill_table[sn]->skill_level[ch->Class]
-                                          && ch->level < skill_table[sn]->race_level[ch->race] ) ) )
-      {
-         act( AT_TELL, "$n tells you 'You're not ready to learn that yet...'", mob, NULL, ch, TO_VICT );
-         return;
-      }
-
-      if( is_name( skill_tname[skill_table[sn]->type], CANT_PRAC ) )
-      {
-         act( AT_TELL, "$n tells you 'I do not know how to teach that.'", mob, NULL, ch, TO_VICT );
-         return;
-      }
-
-      /*
-       * Skill requires a special teacher
-       */
-      if( skill_table[sn]->teachers && skill_table[sn]->teachers[0] != '\0' )
-      {
-         snprintf( buf, MAX_STRING_LENGTH, "%d", mob->pIndexData->vnum );
-         if( !is_name( buf, skill_table[sn]->teachers ) )
-         {
-            act( AT_TELL, "$n tells you, 'I know not know how to teach that.'", mob, NULL, ch, TO_VICT );
-            return;
-         }
-      }
-
-/*
- * Guild checks - right now, cant practice guild skills - done on 
- * induct/outcast
- */
-/*	
-	if ( !IS_NPC(ch) && !IS_GUILDED(ch)
-	&&    skill_table[sn]->guild != CLASS_NONE)
+      if ((ch->practice < 1))
 	{
-	    act( AT_TELL, "$n tells you 'Only guild members can use that..'"
-		mob, NULL, ch, TO_VICT );
-	    return;
+	  send_to_char("You need practice points to practice.\r\n", ch);
+	  return;
+	}
+//aid tree
+	else
+        if( !str_cmp( arg, "aid" ) )
+	{
+	if( can_use_skill( ch,1, gsn_aid ) )
+	{
+	send_to_char("You already practiced this.\r\n", ch);
+	return;
 	}
 
-	if ( !IS_NPC(ch) && skill_table[sn]->guild != CLASS_NONE 
-	     && ch->pcdata->clan->class != skill_table[sn]->guild )
-	{
-	    act( AT_TELL, "$n tells you 'That can not be used by your guild.'"
-		mob, NULL, ch, TO_VICT );
-	    return;
+	ch->pcdata->learned[7] = 10;
+	ch->practice --;
+	send_to_char("You practice aid.\r\n", ch);
+	return;
 	}
-*/
-      if( !IS_NPC( ch ) && skill_table[sn]->guild != CLASS_NONE )
-      {
-         act( AT_TELL, "$n tells you 'That is only for members of guilds...'", mob, NULL, ch, TO_VICT );
-         return;
-      }
+	else
+        if( !str_cmp( arg, "rescue" ) )
+	{
+	if( can_use_skill( ch,1, gsn_rescue ) )
+	{
+	send_to_char("You already practiced this.\r\n", ch);
+	return;
+	}
 
-      /*
-       * Disabled for now
-       if ( mob->level < skill_table[sn]->skill_level[ch->class]
-       ||   mob->level < skill_table[sn]->skill_level[mob->class] )
-       {
-       act( AT_TELL, "$n tells you 'You must seek another to teach you that...'",
-       mob, NULL, ch, TO_VICT );
-       return;
-       }
-       */
+	if( !can_use_skill( ch,1, gsn_aid ) )
+	{
+	send_to_char("You must practice aid first\r\n", ch);
+	return;
+	}
+	ch->pcdata->learned[232] = 10;
+	ch->practice --;
+	send_to_char("You practice rescue.\r\n", ch);
+	return;
+	}
+        else
 
-      adept = ( int )( class_table[ch->Class]->skill_adept * 0.2 );
+        if( !str_cmp( arg, "bandaging" ) )
+	{
+	if( can_use_skill( ch,1, gsn_bandage ) )
+	{
+	send_to_char("You already practiced this.\r\n", ch);
+	return;
+	}
 
-      if( ch->pcdata->learned[sn] >= adept )
-      {
-         snprintf( buf, MAX_STRING_LENGTH, "$n tells you, 'I've taught you everything I can about %s.'",
-                   skill_table[sn]->name );
-         act( AT_TELL, buf, mob, NULL, ch, TO_VICT );
-         act( AT_TELL, "$n tells you, 'You'll have to practice it on your own now...'", mob, NULL, ch, TO_VICT );
-      }
-      else
-      {
-         ch->practice--;
-         ch->pcdata->learned[sn] += int_app[get_curr_int( ch )].learn;
-         act( AT_ACTION, "You practice $T.", ch, NULL, skill_table[sn]->name, TO_CHAR );
-         act( AT_ACTION, "$n practices $T.", ch, NULL, skill_table[sn]->name, TO_ROOM );
-         if( ch->pcdata->learned[sn] >= adept )
-         {
-            ch->pcdata->learned[sn] = adept;
-            act( AT_TELL, "$n tells you. 'You'll have to practice it on your own now...'", mob, NULL, ch, TO_VICT );
-         }
-      }
-   }
-   return;
+	if( !can_use_skill( ch,1, gsn_rescue ) )
+	{
+	send_to_char("You must practice rescue first\r\n", ch);
+	return;
+	}
+	ch->pcdata->learned[15] = 10;
+	ch->practice --;
+	send_to_char("You practice bandaging.\r\n", ch);
+	return;
+	}
+        else
+//stun tree
+        if( !str_cmp( arg, "stun" ) )
+	{
+	if( can_use_skill( ch,1, gsn_stun ) )
+	{
+	send_to_char("You already practiced this.\r\n", ch);
+	return;
+	}
+
+	ch->pcdata->learned[276] = 10;
+	ch->practice --;
+	send_to_char("You practice stun.\r\n", ch);
+	return;
+	}
+        else
+
+        if( !str_cmp( arg, "bash" ) )
+	{
+	if( can_use_skill( ch,1, gsn_bash ) )
+	{
+	send_to_char("You already practiced this.\r\n", ch);
+	return;
+	}
+
+	if( !can_use_skill( ch,1, gsn_stun ) )
+	{
+	send_to_char("You must practice stun first\r\n", ch);
+	return;
+	}
+	ch->pcdata->learned[16] = 10;
+	ch->practice --;
+	send_to_char("You practice bash.\r\n", ch);
+	return;
+	}
+
+        else
+        if( !str_cmp( arg, "doorbash" ) )
+	{
+	if( can_use_skill( ch,1, gsn_bashdoor ) )
+	{
+	send_to_char("You already practiced this.\r\n", ch);
+	return;
+	}
+
+	if( !can_use_skill( ch,1, gsn_bash ) )
+	{
+	send_to_char("You must practice bash first\r\n", ch);
+	return;
+	}
+	ch->pcdata->learned[92] = 10;
+	ch->practice --;
+	send_to_char("You practice doorbash.\r\n", ch);
+	return;
+	}
+//scan tree
+        else
+        if( !str_cmp( arg, "scan" ) )
+	{
+	if( can_use_skill( ch,1, gsn_scan ) )
+	{
+	send_to_char("You already practiced this.\r\n", ch);
+	return;
+	}
+
+	ch->pcdata->learned[244] = 10;
+	ch->practice --;
+	send_to_char("You practice scan.\r\n", ch);
+	return;
+	}
+
+        else
+        if( !str_cmp( arg, "search" ) )
+	{
+	if( can_use_skill( ch,1, gsn_search ) )
+	{
+	send_to_char("You already practiced this.\r\n", ch);
+	return;
+	}
+
+	if( !can_use_skill( ch,1, gsn_scan ) )
+	{
+	send_to_char("You must practice scan first\r\n", ch);
+	return;
+	}
+	ch->pcdata->learned[248] = 10;
+	ch->practice --;
+	send_to_char("You practice search.\r\n", ch);
+	return;
+	}
+
+        else
+        if( !str_cmp( arg, "track" ) )
+	{
+	if( can_use_skill( ch,1, gsn_track ) )
+	{
+	send_to_char("You already practiced this.\r\n", ch);
+	return;
+	}
+
+	if( !can_use_skill( ch,1, gsn_search ) )
+	{
+	send_to_char("You must practice search first\r\n", ch);
+	return;
+	}
+	ch->pcdata->learned[288] = 10;
+	ch->practice --;
+	send_to_char("You practice track.\r\n", ch);
+	return;
+	}
+
+//grapple tree
+        else
+        if( !str_cmp( arg, "grapple" ) )
+	{
+	if( can_use_skill( ch,1, gsn_grapple ) )
+	{
+	send_to_char("You already practiced this.\r\n", ch);
+	return;
+	}
+
+	ch->pcdata->learned[141] = 10;
+	ch->practice --;
+	send_to_char("You practice grapple.\r\n", ch);
+	return;
+	}
+
+        else
+        if( !str_cmp( arg, "disarm" ) )
+	{
+	if( can_use_skill( ch,1, gsn_disarm ) )
+	{
+	send_to_char("You already practiced this.\r\n", ch);
+	return;
+	}
+
+	if( !can_use_skill( ch,1, gsn_grapple ) )
+	{
+	send_to_char("You must practice grapple first\r\n", ch);
+	return;
+	}
+	ch->pcdata->learned[83] = 10;
+	ch->practice --;
+	send_to_char("You practice disarm.\r\n", ch);
+	return;
+	}
+
+        else
+        if( !str_cmp( arg, "grip" ) )
+	{
+	if( can_use_skill( ch,1, gsn_grip ) )
+	{
+	send_to_char("You already practiced this.\r\n", ch);
+	return;
+	}
+
+	if( !can_use_skill( ch,1, gsn_grapple ) )
+	{
+	send_to_char("You must practice grapple first\r\n", ch);
+	return;
+	}
+	ch->pcdata->learned[143] = 10;
+	ch->practice --;
+	send_to_char("You practice grip.\r\n", ch);
+	return;
+	}
+
+//parry tree
+        else
+        if( !str_cmp( arg, "parry" ) )
+	{
+	if( can_use_skill( ch,1, gsn_parry ) )
+	{
+	send_to_char("You already practiced this.\r\n", ch);
+	return;
+	}
+
+	ch->pcdata->learned[201] = 10;
+	ch->practice --;
+	send_to_char("You practice parry.\r\n", ch);
+	return;
+	}
+
+        else
+        if( !str_cmp( arg, "dodge" ) )
+	{
+	if( can_use_skill( ch,1, gsn_dodge ) )
+	{
+	send_to_char("You already practiced this.\r\n", ch);
+	return;
+	}
+
+	if( !can_use_skill( ch,1, gsn_parry ) )
+	{
+	send_to_char("You must practice parry first\r\n", ch);
+	return;
+	}
+	ch->pcdata->learned[90] = 10;
+	ch->practice --;
+	send_to_char("You practice dodge.\r\n", ch);
+	return;
+	}
+
+        else
+        if( !str_cmp( arg, "counter" ) )
+	{
+	if( can_use_skill( ch,1, gsn_counter ) )
+	{
+	send_to_char("You already practiced this.\r\n", ch);
+	return;
+	}
+
+	if( !can_use_skill( ch,1, gsn_dodge ) )
+	{
+	send_to_char("You must practice dodge first\r\n", ch);
+	return;
+	}
+	ch->pcdata->learned[57] = 10;
+	ch->practice --;
+	send_to_char("You practice counter attack.\r\n", ch);
+	return;
+	}
+
+//pick lock tree
+        else
+        if( !str_cmp( arg, "pick lock" ) || !str_cmp( arg, "pick"))
+	{
+	if( can_use_skill( ch,1, gsn_pick_lock ) )
+	{
+	send_to_char("You already practiced this.\r\n", ch);
+	return;
+	}
+
+	ch->pcdata->learned[207] = 10;
+	ch->practice --;
+	send_to_char("You practice pick lock.\r\n", ch);
+	return;
+	}
+
+        else
+        if( !str_cmp( arg, "steal" ) )
+	{
+	if( can_use_skill( ch,1, gsn_steal ) )
+	{
+	send_to_char("You already practiced this.\r\n", ch);
+	return;
+	}
+
+	if( !can_use_skill( ch,1, gsn_pick_lock ) )
+	{
+	send_to_char("You must practice pick lock first\r\n", ch);
+	return;
+	}
+	ch->pcdata->learned[272] = 10;
+	ch->practice --;
+	send_to_char("You practice steal.\r\n", ch);
+	return;
+	}
+
+        else
+        if( !str_cmp( arg, "detrap" ) )
+	{
+	if( can_use_skill( ch,1, gsn_detrap ) )
+	{
+	send_to_char("You already practiced this.\r\n", ch);
+	return;
+	}
+
+	if( !can_use_skill( ch,1, gsn_steal ) )
+	{
+	send_to_char("You must practice steal first\r\n", ch);
+	return;
+	}
+	ch->pcdata->learned[81] = 10;
+	ch->practice --;
+	send_to_char("You practice detrap.\r\n", ch);
+	return;
+	}
+
+//mediatate tree
+        else
+        if( !str_cmp( arg, "meditate"))
+	{
+	if( can_use_skill( ch,1, gsn_meditate ) )
+	{
+	send_to_char("You already practiced this.\r\n", ch);
+	return;
+	}
+
+	ch->pcdata->learned[183] = 10;
+	ch->practice --;
+	send_to_char("You practice meditate.\r\n", ch);
+	return;
+	}
+
+        else
+        if( !str_cmp( arg, "trance" ) )
+	{
+	if( can_use_skill( ch,1, gsn_trance ) )
+	{
+	send_to_char("You already practiced this.\r\n", ch);
+	return;
+	}
+
+	if( !can_use_skill( ch,1, gsn_meditate ) )
+	{
+	send_to_char("You must practice meditate first\r\n", ch);
+	return;
+	}
+	ch->pcdata->learned[289] = 10;
+	ch->practice --;
+	send_to_char("You practice trance.\r\n", ch);
+	return;
+	}
+
+//climb tree
+        else
+        if( !str_cmp( arg, "climb" ) )
+	{
+	if( can_use_skill( ch,1, gsn_climb ) )
+	{
+	send_to_char("You already practiced this.\r\n", ch);
+	return;
+	}
+
+	ch->pcdata->learned[51] = 10;
+	ch->practice --;
+	send_to_char("You practice climb.\r\n", ch);
+	return;
+	}
+
+        else
+        if( !str_cmp( arg, "mount" ) )
+	{
+	if( can_use_skill( ch,1, gsn_mount ) )
+	{
+	send_to_char("You already practiced this.\r\n", ch);
+	return;
+	}
+
+	if( !can_use_skill( ch,1, gsn_climb ) )
+	{
+	send_to_char("You must practice climb first\r\n", ch);
+	return;
+	}
+	ch->pcdata->learned[191] = 10;
+	ch->practice --;
+	send_to_char("You practice climb first.\r\n", ch);
+	return;
+	}
+
+//shady tree
+        else
+        if( !str_cmp( arg, "poison weapon" ) || !str_cmp( arg, "poison"))
+	{
+	if( can_use_skill( ch,1, gsn_poison_weapon ) )
+	{
+	send_to_char("You already practiced this.\r\n", ch);
+	return;
+	}
+
+	ch->pcdata->learned[212] = 10;
+	ch->practice --;
+	send_to_char("You practice poison weapon.\r\n", ch);
+	return;
+	}
+
+        else
+        if( !str_cmp( arg, "backstab" ) )
+	{
+	if( can_use_skill( ch,1, gsn_backstab ) )
+	{
+	send_to_char("You already practiced this.\r\n", ch);
+	return;
+	}
+
+	if( !can_use_skill( ch,1, gsn_poison_weapon ) )
+	{
+	send_to_char("You must practice poison weapon first\r\n", ch);
+	return;
+	}
+	ch->pcdata->learned[14] = 10;
+	ch->practice --;
+	send_to_char("You practice backstab.\r\n", ch);
+	return;
+	}
+
+        else
+        if( !str_cmp( arg, "circle" ) )
+	{
+	if( can_use_skill( ch,1, gsn_circle ) )
+	{
+	send_to_char("You already practiced this.\r\n", ch);
+	return;
+	}
+
+	if( !can_use_skill( ch,1, gsn_backstab ) )
+	{
+	send_to_char("You must practice backstab first\r\n", ch);
+	return;
+	}
+	ch->pcdata->learned[48] = 10;
+	ch->practice --;
+	send_to_char("You practice circle.\r\n", ch);
+	return;
+	}
+//damage tree
+        else
+        if( !str_cmp( arg, "enhanced damage" ) || !str_cmp( arg, "enhanced"))
+	{
+	if( can_use_skill( ch,1, gsn_enhanced_damage ) )
+	{
+	send_to_char("You already practiced this.\r\n", ch);
+	return;
+	}
+
+	ch->pcdata->learned[105] = 10;
+	ch->practice --;
+	send_to_char("You practice enhanced damage.\r\n", ch);
+	return;
+	}
+
+        else
+        if( !str_cmp( arg, "dual wield" ) || !str_cmp( arg, "dual") )
+	{
+	if( can_use_skill( ch,1, gsn_dual_wield ) )
+	{
+	send_to_char("You already practiced this.\r\n", ch);
+	return;
+	}
+
+	if( !can_use_skill( ch,1, gsn_enhanced_damage ) )
+	{
+	send_to_char("You must practice enhanced damage first\r\n", ch);
+	return;
+	}
+	ch->pcdata->learned[96] = 10;
+	ch->practice --;
+	send_to_char("You practice dual wield.\r\n", ch);
+	return;
+	}
+
+        else
+        if( !str_cmp( arg, "hitall" ) )
+	{
+	if( can_use_skill( ch,1, gsn_hitall ) )
+	{
+	send_to_char("You already practiced this.\r\n", ch);
+	return;
+	}
+
+	if( !can_use_skill( ch,1, gsn_dual_wield ) )
+	{
+	send_to_char("You must practice dual wield\r\n", ch);
+	return;
+	}
+	ch->pcdata->learned[153] = 10;
+	ch->practice --;
+	send_to_char("You practice hitall.\r\n", ch);
+	return;
+	}
+
+
+//attack tree
+        else
+        if( !str_cmp( arg, "second attack" ) || !str_cmp( arg, "second"))
+	{
+	if( can_use_skill( ch,1, gsn_second_attack ) )
+	{
+	send_to_char("You already practiced this.\r\n", ch);
+	return;
+	}
+
+	ch->pcdata->learned[249] = 10;
+	ch->practice --;
+	send_to_char("You practice second attack.\r\n", ch);
+	return;
+	}
+
+        else
+        if( !str_cmp( arg, "third attack" ) || !str_cmp(arg, "third") )
+	{
+	if( can_use_skill( ch,1, gsn_third_attack ) )
+	{
+	send_to_char("You already practiced this.\r\n", ch);
+	return;
+	}
+
+	if( !can_use_skill( ch,1, gsn_second_attack ) )
+	{
+	send_to_char("You must practice second attack first\r\n", ch);
+	return;
+	}
+	ch->pcdata->learned[286] = 10;
+	ch->practice --;
+	send_to_char("You practice third attack.\r\n", ch);
+	return;
+	}
+
+        else
+        if( !str_cmp( arg, "fourth attack" ) || !str_cmp(arg, "fourth") )
+	{
+	if( can_use_skill( ch,1, gsn_fourth_attack ) )
+	{
+	send_to_char("You already practiced this.\r\n", ch);
+	return;
+	}
+
+	if( !can_use_skill( ch,1, gsn_third_attack ) )
+	{
+	send_to_char("You must practice third attack first\r\n", ch);
+	return;
+	}
+	ch->pcdata->learned[132] = 10;
+	ch->practice --;
+	send_to_char("You practice fourth attack.\r\n", ch);
+	return;
+	}
+
+
+//cook tree
+        else
+        if( !str_cmp( arg, "cook"))
+	{
+	if( can_use_skill( ch,1, gsn_cook ) )
+	{
+	send_to_char("You already practiced this.\r\n", ch);
+	return;
+	}
+
+	ch->pcdata->learned[56] = 10;
+	ch->practice --;
+	send_to_char("You practice cook.\r\n", ch);
+	return;
+	}
+
+        else
+        if( !str_cmp( arg, "brew") )
+	{
+	if( can_use_skill( ch,1, gsn_brew ) )
+	{
+	send_to_char("You already practiced this.\r\n", ch);
+	return;
+	}
+
+	if( !can_use_skill( ch,1, gsn_cook ) )
+	{
+	send_to_char("You must practice cook first\r\n", ch);
+	return;
+	}
+	ch->pcdata->learned[35] = 10;
+	ch->practice --;
+	send_to_char("You practice brew.\r\n", ch);
+	return;
+	}
+
+        else
+        if( !str_cmp( arg, "scribe" ) )
+	{
+	if( can_use_skill( ch,1, gsn_scribe ) )
+	{
+	send_to_char("You already practiced this.\r\n", ch);
+	return;
+	}
+
+	if( !can_use_skill( ch,1, gsn_brew ) )
+	{
+	send_to_char("You must practice brew\r\n", ch);
+	return;
+	}
+	ch->pcdata->learned[246] = 10;
+	ch->practice --;
+	send_to_char("You practice scribe.\r\n", ch);
+	return;
+	}
+
+//sneak tree
+        else
+        if( !str_cmp( arg, "sneak"))
+	{
+	if( can_use_skill( ch,1, gsn_sneak ) )
+	{
+	send_to_char("You already practiced this.\r\n", ch);
+	return;
+	}
+
+	ch->pcdata->learned[261] = 10;
+	ch->practice --;
+	send_to_char("You practice sneak.\r\n", ch);
+	return;
+	}
+
+        else
+        if( !str_cmp( arg, "hide") )
+	{
+	if( can_use_skill( ch,1, gsn_hide ) )
+	{
+	send_to_char("You already practiced this.\r\n", ch);
+	return;
+	}
+
+	if( !can_use_skill( ch,1, gsn_sneak ) )
+	{
+	send_to_char("You must practice sneak first\r\n", ch);
+	return;
+	}
+	ch->pcdata->learned[152] = 10;
+	ch->practice --;
+	send_to_char("You practice hide.\r\n", ch);
+	return;
+	}
+
+
+//styles
+        else
+
+        if( !str_cmp( arg, "standard"))
+	{
+	if( can_use_skill( ch,1, gsn_style_standard ) )
+	{
+	send_to_char("You already practiced this.\r\n", ch);
+	return;
+	}
+
+	ch->pcdata->learned[271] = 10;
+	ch->practice --;
+	send_to_char("You practice standard style.\r\n", ch);
+	return;
+	}
+
+        else
+        if( !str_cmp( arg, "defensive") )
+	{
+	if( can_use_skill( ch,1, gsn_style_defensive ) )
+	{
+	send_to_char("You already practiced this.\r\n", ch);
+	return;
+	}
+
+	if( !can_use_skill( ch,1, gsn_style_standard ) )
+	{
+	send_to_char("You must practice standard style first\r\n", ch);
+	return;
+	}
+	ch->pcdata->learned[70] = 10;
+	ch->practice --;
+	send_to_char("You practice defensive style.\r\n", ch);
+	return;
+	}
+
+        else
+        if( !str_cmp( arg, "aggressive") )
+	{
+	if( can_use_skill( ch,1, gsn_style_aggressive ) )
+	{
+	send_to_char("You already practiced this.\r\n", ch);
+	return;
+	}
+
+	if( !can_use_skill( ch,1, gsn_style_defensive ) )
+	{
+	send_to_char("You must practice defensive style first\r\n", ch);
+	return;
+	}
+	ch->pcdata->learned[6] = 10;
+	ch->practice --;
+	send_to_char("You practice aggressive style.\r\n", ch);
+	return;
+	}
+
+        else
+        if( !str_cmp( arg, "evasive") )
+	{
+	if( can_use_skill( ch,1, gsn_style_evasive ) )
+	{
+	send_to_char("You already practiced this.\r\n", ch);
+	return;
+	}
+
+	if( !can_use_skill( ch,1, gsn_style_aggressive ) )
+	{
+	send_to_char("You must practice aggressive style first\r\n", ch);
+	return;
+	}
+	ch->pcdata->learned[109] = 10;
+	ch->practice --;
+	send_to_char("You practice evasive style.\r\n", ch);
+	return;
+	}
+
+        else
+        if( !str_cmp( arg, "berserk") )
+	{
+	if( can_use_skill( ch,1, gsn_berserk ) )
+	{
+	send_to_char("You already practiced this.\r\n", ch);
+	return;
+	}
+
+	if( !can_use_skill( ch,1, gsn_style_evasive ) )
+	{
+	send_to_char("You must practice evasive style first\r\n", ch);
+	return;
+	}
+	ch->pcdata->learned[19] = 10;
+	ch->practice --;
+	send_to_char("You practice berserk.\r\n", ch);
+	return;
+	}
+
+// weapon types
+
+        else
+        if( !str_cmp( arg, "pugilism"))
+	{
+	if( can_use_skill( ch,1, gsn_pugilism ) )
+	{
+	send_to_char("You already practiced this.\r\n", ch);
+	return;
+	}
+
+	ch->pcdata->learned[220] = 10;
+	ch->practice --;
+	send_to_char("You practice pugilism.\r\n", ch);
+	return;
+	}
+
+        else
+        if( !str_cmp( arg, "long blades") || !str_cmp( arg, "long"))
+	{
+	if( can_use_skill( ch,1, gsn_long_blades ) )
+	{
+	send_to_char("You already practiced this.\r\n", ch);
+	return;
+	}
+
+	ch->pcdata->learned[177] = 10;
+	ch->practice --;
+	send_to_char("You practice long blades.\r\n", ch);
+	return;
+	}
+
+        else
+        if( !str_cmp( arg, "short blades") || !str_cmp(arg, "short"))
+	{
+	if( can_use_skill( ch,1, gsn_short_blades ) )
+	{
+	send_to_char("You already practiced this.\r\n", ch);
+	return;
+	}
+
+	ch->pcdata->learned[255] = 10;
+	ch->practice --;
+	send_to_char("You practice short blades.\r\n", ch);
+	return;
+	}
+
+        else
+        if( !str_cmp( arg, "flexible arms")  || !str_cmp(arg, "flexible"))
+	{
+	if( can_use_skill( ch,1, gsn_flexible_arms ) )
+	{
+	send_to_char("You already practiced this.\r\n", ch);
+	return;
+	}
+
+	ch->pcdata->learned[128] = 10;
+	ch->practice --;
+	send_to_char("You practice flexible arms.\r\n", ch);
+	return;
+	}
+
+        else
+        if( !str_cmp( arg, "talonous arms")  || !str_cmp( arg, "talonous"))
+	{
+	if( can_use_skill( ch,1, gsn_talonous_arms ) )
+	{
+	send_to_char("You already practiced this.\r\n", ch);
+	return;
+	}
+
+	ch->pcdata->learned[283] = 10;
+	ch->practice --;
+	send_to_char("You practice talonous arms.\r\n", ch);
+	return;
+	}
+
+        else
+        if( !str_cmp( arg, "bludgeons"))
+	{
+	if( can_use_skill( ch,1, gsn_bludgeons ) )
+	{
+	send_to_char("You already practiced this.\r\n", ch);
+	return;
+	}
+
+	ch->pcdata->learned[34] = 10;
+	ch->practice --;
+	send_to_char("You practice bludgeons.\r\n", ch);
+	return;
+	}
+
+        else
+        if( !str_cmp( arg, "missile weapons")  || !str_cmp(arg, "missile"))
+	{
+	if( can_use_skill( ch,1, gsn_missile_weapons ) )
+	{
+	send_to_char("You already practiced this.\r\n", ch);
+	return;
+	}
+
+	ch->pcdata->learned[188] = 10;
+	ch->practice --;
+	send_to_char("You practice missile weapons.\r\n", ch);
+	return;
+	}
+//tongues
+
+        else
+        if( !str_cmp( arg, "common"))
+	{
+	if( can_use_skill( ch,1, gsn_common ) )
+	{
+	send_to_char("You already practiced this.\r\n", ch);
+	return;
+	}
+
+	ch->pcdata->learned[53] = 10;
+	ch->practice --;
+	send_to_char("You practice common.\r\n", ch);
+	return;
+	}
+
+        else
+        if( !str_cmp( arg, "elven"))
+	{
+	if( can_use_skill( ch,1, gsn_elven ) )
+	{
+	send_to_char("You already practiced this.\r\n", ch);
+	return;
+	}
+
+	ch->pcdata->learned[102] = 10;
+	ch->practice --;
+	send_to_char("You practice elven.\r\n", ch);
+	return;
+	}
+
+        else
+        if( !str_cmp( arg, "dwarven"))
+	{
+	if( can_use_skill( ch,1, gsn_dwarven ) )
+	{
+	send_to_char("You already practiced this.\r\n", ch);
+	return;
+	}
+
+	ch->pcdata->learned[97] = 10;
+	ch->practice --;
+	send_to_char("You practice dwarven.\r\n", ch);
+	return;
+	}
+
+        else
+        if( !str_cmp( arg, "pixie"))
+	{
+	if( can_use_skill( ch,1, gsn_pixie ) )
+	{
+	send_to_char("You already practiced this.\r\n", ch);
+	return;
+	}
+
+	ch->pcdata->learned[208] = 10;
+	ch->practice --;
+	send_to_char("You practice pixie.\r\n", ch);
+	return;
+	}
+
+        else
+        if( !str_cmp( arg, "ogre"))
+	{
+	if( can_use_skill( ch,1, gsn_ogre ) )
+	{
+	send_to_char("You already practiced this.\r\n", ch);
+	return;
+	}
+
+	ch->pcdata->learned[198] = 10;
+	ch->practice --;
+	send_to_char("You practice ogre.\r\n", ch);
+	return;
+	}
+
+        else
+        if( !str_cmp( arg, "orcish"))
+	{
+	if( can_use_skill( ch,1, gsn_orcish ) )
+	{
+	send_to_char("You already practiced this.\r\n", ch);
+	return;
+	}
+
+	ch->pcdata->learned[199] = 10;
+	ch->practice --;
+	send_to_char("You practice orcish.\r\n", ch);
+	return;
+	}
+
+        else
+        if( !str_cmp( arg, "trollish"))
+	{
+	if( can_use_skill( ch,1, gsn_trollish ) )
+	{
+	send_to_char("You already practiced this.\r\n", ch);
+	return;
+	}
+
+	ch->pcdata->learned[291] = 10;
+	ch->practice --;
+	send_to_char("You practice trollish.\r\n", ch);
+	return;
+	}
+
+        else
+        if( !str_cmp( arg, "goblin"))
+	{
+	if( can_use_skill( ch,1, gsn_goblin ) )
+	{
+	send_to_char("You already practiced this.\r\n", ch);
+	return;
+	}
+
+	ch->pcdata->learned[139] = 10;
+	ch->practice --;
+	send_to_char("You practice goblin.\r\n", ch);
+	return;
+	}
+        else
+        if( !str_cmp( arg, "halfling"))
+	{
+	if( can_use_skill( ch,1, gsn_halfling ) )
+	{
+	send_to_char("You already practiced this.\r\n", ch);
+	return;
+	}
+
+	ch->pcdata->learned[145] = 10;
+	ch->practice --;
+	send_to_char("You practice halfling.\r\n", ch);
+	return;
+	}
+        else
+        if( !str_cmp( arg, "gnomish"))
+	{
+	if( can_use_skill( ch,1, gsn_gnomish ) )
+	{
+	send_to_char("You already practiced this.\r\n", ch);
+	return;
+	}
+
+	ch->pcdata->learned[138] = 10;
+	ch->practice --;
+	send_to_char("You practice gnomish.\r\n", ch);
+	return;
+	}
+	else
+	{
+	send_to_char("Invalid. Check spelling and make sure this is a skill.\r\n", ch);
+	return;
+	}
+
+
+
+
+
 }
 
 void do_wimpy( CHAR_DATA* ch, const char* argument)
@@ -4449,9 +5277,9 @@ void do_config( CHAR_DATA* ch, const char* argument)
    {
       send_to_char( "\r\n&cConfigurations ", ch );
       send_to_char( "&W(use 'config +/- <keyword>' to toggle, see 'help config')\r\n\r\n", ch );
-	send_to_char( "\r\n&c+===========================================================================+\n\r", ch);
-        send_to_char( "   &OSCORE    SKILLS    INVENTORY    EQUIPMENT    FEATS    &YCONFIG&O   AFFECTS\r\n", ch);
-	send_to_char( "&c+===========================================================================+\n\r", ch);
+send_to_char( "\r\n&c+===========================================================================+\n\r", ch);
+        send_to_char( " &OSCORE   SKILLS   SPELLS   FEATS   INVENTORY   EQUIPMENT   &YCONFIG&O   AFFECTS\r\n", ch);
+send_to_char( "&c+===========================================================================+\n\r", ch);
 
       send_to_char( "&cDisplay:   ", ch );
       set_char_color( AT_GREY, ch );

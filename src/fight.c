@@ -446,7 +446,7 @@ void violence_update( void )
 		{
 			damage(ch, ch, ch->pcdata->condition[COND_BLEEDING], TYPE_UNDEFINED);
 			act( AT_BLOOD, "You're losing blood...", ch, NULL, NULL, TO_CHAR);
-			act( AT_BLOOD, "$N is losing blood...", ch, NULL, NULL, TO_ROOM);
+			act( AT_BLOOD, "$n is losing blood...", ch, NULL, NULL, TO_ROOM);
 		}
 	}
 
@@ -1436,7 +1436,7 @@ ch_ret one_hit( CHAR_DATA * ch, CHAR_DATA * victim, int dt )
 
       for( aff = wield->pIndexData->first_affect; aff; aff = aff->next )
          if( aff->location == APPLY_WEAPONSPELL && IS_VALID_SN( aff->modifier ) && skill_table[aff->modifier]->spell_fun )
-            retcode = ( *skill_table[aff->modifier]->spell_fun ) ( aff->modifier, ( wield->level + 3 ) / 3, ch, victim );
+            retcode = ( *skill_table[aff->modifier]->spell_fun ) ( aff->modifier, (( wield->tier * 10) + 3 ) / 3, ch, victim );
 
       if( retcode == rSPELL_FAILED )
          retcode = rNONE;  // Luc, 6/11/2007
@@ -1445,7 +1445,7 @@ ch_ret one_hit( CHAR_DATA * ch, CHAR_DATA * victim, int dt )
          return retcode;
       for( aff = wield->first_affect; aff; aff = aff->next )
          if( aff->location == APPLY_WEAPONSPELL && IS_VALID_SN( aff->modifier ) && skill_table[aff->modifier]->spell_fun )
-            retcode = ( *skill_table[aff->modifier]->spell_fun ) ( aff->modifier, ( wield->level + 3 ) / 3, ch, victim );
+            retcode = ( *skill_table[aff->modifier]->spell_fun ) ( aff->modifier, ( (wield->tier * 10) + 3 ) / 3, ch, victim );
 
       if( retcode == rSPELL_FAILED )
          retcode = rNONE;  // Luc, 6/11/2007
@@ -1796,7 +1796,7 @@ ch_ret projectile_hit( CHAR_DATA * ch, CHAR_DATA * victim, OBJ_DATA * wield, OBJ
 
       for( aff = wield->pIndexData->first_affect; aff; aff = aff->next )
          if( aff->location == APPLY_WEAPONSPELL && IS_VALID_SN( aff->modifier ) && skill_table[aff->modifier]->spell_fun )
-            retcode = ( *skill_table[aff->modifier]->spell_fun ) ( aff->modifier, ( wield->level + 3 ) / 3, ch, victim );
+            retcode = ( *skill_table[aff->modifier]->spell_fun ) ( aff->modifier, ( (wield->tier * 10) + 3 ) / 3, ch, victim );
       if( retcode != rNONE || char_died( ch ) || char_died( victim ) )
       {
          extract_obj( projectile );
@@ -1804,7 +1804,7 @@ ch_ret projectile_hit( CHAR_DATA * ch, CHAR_DATA * victim, OBJ_DATA * wield, OBJ
       }
       for( aff = wield->first_affect; aff; aff = aff->next )
          if( aff->location == APPLY_WEAPONSPELL && IS_VALID_SN( aff->modifier ) && skill_table[aff->modifier]->spell_fun )
-            retcode = ( *skill_table[aff->modifier]->spell_fun ) ( aff->modifier, ( wield->level + 3 ) / 3, ch, victim );
+            retcode = ( *skill_table[aff->modifier]->spell_fun ) ( aff->modifier, ( (wield->tier * 10) + 3 ) / 3, ch, victim );
       if( retcode != rNONE || char_died( ch ) || char_died( victim ) )
       {
          extract_obj( projectile );
@@ -1993,27 +1993,8 @@ ch_ret damage( CHAR_DATA * ch, CHAR_DATA * victim, int dam, int dt )
       maxdam = ch->level * 80;;
 
 
-	//soul fed weapons bonus
-//Thanks to Nick Gammon for cleaning this up for me
- OBJ_DATA *obj = get_eq_char( ch, WEAR_WIELD );
-
-   if(  obj == NULL || ( obj->value[4] == 0))
-        dam = dam;
-   if(  obj != NULL && ( obj->value[4] == 1))
-        dam = (dam * 1.5);
-   if(  obj != NULL && ( obj->value[4] == 2))
-        dam = (dam * 2);
-   if(  obj != NULL && ( obj->value[4] == 3))
-        dam = (dam * 2.5);
-   if(  obj != NULL && ( obj->value[4] == 4))
-        dam = (dam * 3);
-
    if( dam > maxdam )
-   {
-      bug( "Damage: %d more than %d points!", dam, maxdam );
-      bug( "** %s (lvl %d) -> %s **", ch->name, ch->level, victim->name );
       dam = maxdam;
-   }
 
    if( victim != ch )
    {
@@ -2414,7 +2395,14 @@ ch_ret damage( CHAR_DATA * ch, CHAR_DATA * victim, int dam, int dt )
          {
             act( AT_DANGER, "You wish that your wounds would stop BLEEDING so much!", victim, 0, 0, TO_CHAR );
             if( number_bits( 2 ) == 0 )
+		{
+		if (!IS_NPC(victim))
+		{
+		victim->pcdata->condition[COND_BLEEDING] += 1;
+		}
+
                worsen_mental_state( victim, 1 );
+		}
          }
          break;
    }

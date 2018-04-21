@@ -1855,9 +1855,8 @@ void do_ostat( CHAR_DATA* ch, const char* argument)
       ch_printf_color( ch, "&R%d  ", obj->timer );
    else
       ch_printf_color( ch, "&w%d  ", obj->timer );
-   ch_printf_color( ch, "&cLevel: &P%d    ", obj->level );
 //   ch_printf_color( ch, "&cIndex level: &P%d\r\n", obj->pIndexData->level );
-   ch_printf_color( ch, "&cTier: &P%d    ", obj->tier );
+   ch_printf_color( ch, "&cTier: &P%d    ", obj->pIndexData->tier );
    ch_printf_color( ch, "&cIn room: &w%d  ", obj->in_room == NULL ? 0 : obj->in_room->vnum );
    ch_printf_color( ch, "&cIn object: &w%s  ", obj->in_obj == NULL ? "(none)" : obj->in_obj->short_descr );
    ch_printf_color( ch, "&cCarried by: &C%s\r\n", obj->carried_by == NULL ? "(none)" : obj->carried_by->name );
@@ -3188,7 +3187,7 @@ void do_oinvoke( CHAR_DATA* ch, const char* argument)
    char arg1[MAX_INPUT_LENGTH], arg2[MAX_INPUT_LENGTH], arg3[MAX_INPUT_LENGTH];
    OBJ_INDEX_DATA *pObjIndex;
    OBJ_DATA *obj;
-   int vnum, level, quantity = 1;
+   int vnum, tier, quantity = 1;
 
    set_char_color( AT_IMMORT, ch );
 
@@ -3203,20 +3202,15 @@ void do_oinvoke( CHAR_DATA* ch, const char* argument)
    }
 
    if( arg2[0] == '\0' )
-      level = get_trust( ch );
+      tier = ch->pcdata->tier;
    else
    {
       if( !is_number( arg2 ) )
       {
-         send_to_char( "Syntax: oinvoke <vnum> <level>\r\n", ch );
+         send_to_char( "Syntax: oinvoke <vnum> <tier>\r\n", ch );
          return;
       }
-      level = atoi( arg2 );
-      if( level < 0 || level > get_trust( ch ) )
-      {
-         send_to_char( "Limited to your trust level.\r\n", ch );
-         return;
-      }
+      tier = atoi( arg2 );
    }
 
    if( arg3[0] != '\0' )
@@ -3293,20 +3287,19 @@ void do_oinvoke( CHAR_DATA* ch, const char* argument)
       return;
    }
 
-   if( level == 0 )
+   if( tier == 0 )
    {
       AREA_DATA *temp_area;
 
       if( ( temp_area = get_area_obj( pObjIndex ) ) == NULL )
-         level = ch->level;
+         tier = ch->pcdata->tier;
       else
       {
-         level = generate_itemlevel( temp_area, pObjIndex );
-         level = URANGE( 0, level, LEVEL_AVATAR );
+         tier = pObjIndex->tier ;
       }
    }
 
-   obj = create_object( pObjIndex, level );
+   obj = create_object( pObjIndex, tier );
    obj->count = quantity;
 
    if( CAN_WEAR( obj, ITEM_TAKE ) )
@@ -3320,8 +3313,8 @@ void do_oinvoke( CHAR_DATA* ch, const char* argument)
    /*
     * I invoked what? --Blodkai 
     */
-   ch_printf_color( ch, "&YYou invoke %s (&W#%d &Y- &W%s &Y- &Wlvl %d &Y- &Wqty %d&Y)\r\n",
-                    pObjIndex->short_descr, pObjIndex->vnum, pObjIndex->name, obj->level, quantity );
+   ch_printf_color( ch, "&YYou invoke %s (&W#%d &Y- &W%s &Y- &Wtier %d &Y- &Wqty %d&Y)\r\n",
+                    pObjIndex->short_descr, pObjIndex->vnum, pObjIndex->name, obj->tier,  quantity );
    return;
 }
 
@@ -7436,8 +7429,8 @@ void do_vsearch( CHAR_DATA* ch, const char* argument)
       for( in_obj = obj; in_obj->in_obj != NULL; in_obj = in_obj->in_obj );
 
       if( in_obj->carried_by != NULL )
-         pager_printf( ch, "[%2d] Level %d %s carried by %s.\r\n",
-                       obj_counter, obj->level, obj_short( obj ), PERS( in_obj->carried_by, ch ) );
+         pager_printf( ch, "[%2d] Tier %d %s carried by %s.\r\n",
+                       obj_counter, obj->tier, obj_short( obj ), PERS( in_obj->carried_by, ch ) );
       else
          pager_printf( ch, "[%2d] [%-5d] %s in %s.\r\n", obj_counter,
                        ( ( in_obj->in_room ) ? in_obj->in_room->vnum : 0 ),

@@ -419,7 +419,7 @@ void fwrite_char( CHAR_DATA * ch, FILE * fp )
    fprintf( fp, "MGlory       %d\n", ch->pcdata->quest_accum );
    fprintf( fp, "Ap        %d\n", ch->pcdata->ap );   
    fprintf( fp, "Tier        %d\n", ch->pcdata->tier );   
-   fprintf( fp, "Deftness     %d\n", ch->pcdata->deftness );   
+   fprintf( fp, "Aid     %d\n", ch->pcdata->aid );   
    fprintf( fp, "Might     %d\n", ch->pcdata->might );   
    fprintf( fp, "Omniscience     %d\n", ch->pcdata->omniscience );   
    fprintf( fp, "Ingenuity     %d\n", ch->pcdata->ingenuity );   
@@ -1193,6 +1193,7 @@ void fread_char( CHAR_DATA * ch, FILE * fp, bool preload, bool copyover )
                break;
             }
 
+            KEY( "Aid", ch->pcdata->aid, fread_number( fp ) );
 
             if( !strcmp( word, "AttrMod" ) )
             {
@@ -1330,7 +1331,6 @@ void fread_char( CHAR_DATA * ch, FILE * fp, bool preload, bool copyover )
 
             KEY( "Damroll", ch->damroll, fread_number( fp ) );
             KEY( "Deaf", ch->deaf, fread_number( fp ) );
-            KEY( "Deftness", ch->pcdata->deftness, fread_number( fp ) );
             if( !strcmp( word, "Deity" ) )
             {
                ch->pcdata->deity_name = fread_string( fp );
@@ -2411,6 +2411,7 @@ void fread_obj( CHAR_DATA * ch, FILE * fp, short os_type )
                else
                {
                   fVnum = TRUE;
+                  obj->tier = obj->pIndexData->tier;
                   obj->cost = obj->pIndexData->cost;
                   obj->weight = obj->pIndexData->weight;
                   obj->item_type = obj->pIndexData->item_type;

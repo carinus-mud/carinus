@@ -225,6 +225,22 @@ Log         0
 End
 
 #COMMAND
+Name        abit~
+Code        do_abit
+Position    100
+Level       58
+Log         0
+End
+
+#COMMAND
+Name        affects~
+Code        do_affected
+Position    100
+Level       0
+Log         0
+End
+
+#COMMAND
 Name        buy~
 Code        do_buy
 Position    106
@@ -668,7 +684,7 @@ End
 Name        destro~
 Code        do_destro
 Position    112
-Level       60
+Level       64
 Log         0
 End
 
@@ -1094,7 +1110,7 @@ End
 Name        gold~
 Code        do_gold
 Position    100
-Level       1
+Level       64
 Log         0
 End
 
@@ -2247,6 +2263,30 @@ Log         0
 End
 
 #COMMAND
+Name        mpaset~
+Code        do_mpaset
+Position    100
+Level       0
+Log         0
+End
+
+#COMMAND
+Name        mpqset~
+Code        do_mpqset
+Position    100
+Level       0
+Log         0
+End
+
+#COMMAND
+Name        magic~
+Code        do_spells
+Position    100
+Level       0
+Log         0
+End
+
+#COMMAND
 Name        north~
 Code        do_north
 Position    112
@@ -2566,6 +2606,14 @@ Log         0
 End
 
 #COMMAND
+Name        ooc~
+Code        do_chat
+Position    100
+Level       1
+Log         0
+End
+
+#COMMAND
 Name        put~
 Code        do_put
 Position    106
@@ -2717,6 +2765,14 @@ Name        qpstat~
 Code        do_qpstat
 Position    100
 Level       54
+Log         0
+End
+
+#COMMAND
+Name        qbit~
+Code        do_qbit
+Position    100
+Level       58
 Log         0
 End
 
@@ -3568,6 +3624,14 @@ Log         0
 End
 
 #COMMAND
+Name        score~
+Code        do_score
+Position    100
+Level       0
+Log         0
+End
+
+#COMMAND
 Name        sellhouse~
 Code        do_sellhouse
 Position    100
@@ -3576,7 +3640,6 @@ Log         0
 End
 
 #COMMAND
-
 Name        scatter~
 Code        do_scatter
 Position    100
@@ -3595,9 +3658,56 @@ End
 #COMMAND
 Name        statreport~
 Code        do_statreport
-
 Position    100
 Level       65
+Log         0
+End
+
+#COMMAND
+Name        setabit~
+Code        do_setabit
+Position    100
+Level       58
+Log         0
+End
+
+#COMMAND
+Name        showabit~
+Code        do_showabit
+Position    100
+Level       55
+Log         0
+End
+
+#COMMAND
+Name        showqbit~
+Code        do_showqbit
+Position    100
+Level       55
+Log         0
+End
+
+#COMMAND
+Name        setqbit~
+Code        do_setqbit
+Position    100
+Level       58
+Log         0
+End
+
+#COMMAND
+Name        skin~
+Code        do_skin
+Position    100
+Level       0
+Log         0
+End
+
+#COMMAND
+Name        spells~
+Code        do_spells
+Position    100
+Level       0
 Log         0
 End
 

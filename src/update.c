@@ -73,7 +73,7 @@ void advance_level( CHAR_DATA * ch )
    add_hp = con_app[get_curr_con( ch )].hitp + number_range( class_table[ch->Class]->hp_min, class_table[ch->Class]->hp_max );
    add_mana = class_table[ch->Class]->fMana ? number_range( 2, ( 2 * get_curr_int( ch ) + get_curr_wis( ch ) ) / 8 ) : 0;
    add_move = number_range( 5, ( get_curr_con( ch ) + get_curr_dex( ch ) ) / 4 );
-   add_prac = wis_app[get_curr_wis( ch )].practice;
+   add_prac = 1;
 
    add_hp = UMAX( 1, add_hp ) + ( get_curr_lck (ch) * .3 );
    add_mana = UMAX( 0, add_mana ) + ( ( get_curr_lck( ch) * .4)  );
