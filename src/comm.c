@@ -2301,7 +2301,7 @@ void nanny_get_new_class( DESCRIPTOR_DATA * d, const char *argument )
    ch = d->character;
    ch->pcdata->cpose = str_dup( " is here." );
    ch->Class = 6;
-   ch->pcdata->deftness = 0;
+   ch->pcdata->aid = 0;
    ch->pcdata->might = 0;
    ch->pcdata->combat = 0;
    ch->pcdata->omniscience = 0;

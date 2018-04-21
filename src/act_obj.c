@@ -68,7 +68,7 @@ short get_obj_resistance( OBJ_DATA * obj )
    /*
     * okay... let's add some bonus/penalty for item level... 
     */
-   resist += ( obj->level / 10 ) - 2;
+   resist += ( obj->tier ) - 2;
 
    /*
     * and lasty... take armor or weapon's condition into consideration 
@@ -2637,10 +2637,10 @@ void do_auction( CHAR_DATA* ch, const char* argument)
 
          set_char_color( AT_LBLUE, ch );
          ch_printf( ch,
-                    "Object '%s' is %s, special properties: %s\r\nIts weight is %d, value is %d, and level is %d.\r\n",
+                    "Object '%s' is %s, special properties: %s\r\nIts weight is %d, value is %d, and tier is %d.\r\n",
                     obj->name, aoran( item_type_name( obj ) ), extra_bit_name( &obj->extra_flags ),
 /*		magic_bit_name( obj->magic_flags ), -- currently unused */
-                    obj->weight, obj->cost, obj->level );
+                    obj->weight, obj->cost, obj->tier );
          if( obj->item_type != ITEM_LIGHT && obj->wear_flags - 1 > 0 )
             ch_printf( ch, "Item's wear location: %s\r\n", flag_string( obj->wear_flags - 1, w_flags ) );
 
@@ -2775,11 +2775,6 @@ void do_auction( CHAR_DATA* ch, const char* argument)
       {
          int newbet;
 
-         if( ch->level < auction->item->level )
-         {
-            send_to_char( "This object's level is too high for your use.\r\n", ch );
-            return;
-         }
 
          if( ch == auction->seller )
          {

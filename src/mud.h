@@ -2410,7 +2410,7 @@ struct pc_data
    short tier;
    int balance;
 // Feat Variables
-   short deftness;
+   short aid;
    short might;
    short omniscience;
    short ingenuity;
@@ -2509,7 +2509,7 @@ struct obj_index_data
    const char *action_desc;
    int value[6];
    int vnum;
-   short tier;
+   int  tier;
    int serial;
    int cost;
    int rent;   /* Unused */
@@ -2556,7 +2556,7 @@ struct obj_data
    short wear_loc;
    short weight;
    int cost;
-   short tier;
+   int tier;
    short level;
    short timer;
    int value[6];
@@ -4113,6 +4113,7 @@ DECLARE_DO_FUN( do_south );
 DECLARE_DO_FUN( do_southeast );
 DECLARE_DO_FUN( do_southwest );
 DECLARE_DO_FUN( do_speak );
+DECLARE_DO_FUN( do_spells );
 DECLARE_DO_FUN( do_split );
 DECLARE_DO_FUN( do_sset );
 DECLARE_DO_FUN( do_stand );

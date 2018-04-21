@@ -216,18 +216,356 @@ void do_decapitate( CHAR_DATA* ch, const char* argument)
 }
 
 
-
 void do_skills( CHAR_DATA* ch, const char* )
+{
+
+
+	send_to_char( "\r\n&c+===========================================================================+\n\r", ch);
+        send_to_char( " &OSCORE  &Y SKILLS   &OSPELLS   FEATS   INVENTORY   EQUIPMENT   CONFIG   AFFECTS\r\n", ch);
+	send_to_char( "&c+===========================================================================+\n\r", ch);
+	pager_printf( ch, "                      &YPractice points remaining: &W%d\r\n", ch->practice);
+
+
+	send_to_char( "&WSkills\r\n", ch);
+
+	if( can_use_skill( ch,1, gsn_aid ) )
+	{send_to_char("   &CAid -> ", ch);}
+	else
+	send_to_char("   &zAid -> ", ch);
+
+	if( can_use_skill( ch,1, gsn_rescue ) )
+	{send_to_char("&CRescue -> ", ch);}
+	else
+	send_to_char("&zRescue -> ", ch);
+
+	if( can_use_skill( ch,1, gsn_bandage ) )
+	{send_to_char("&CBandaging      ", ch);}
+	else
+	send_to_char("&zBandaging      ", ch);
+
+
+	if( can_use_skill( ch,1, gsn_climb ) )
+	{send_to_char("  &CClimb -> ", ch);}
+	else
+	send_to_char("  &zClimb -> ", ch);
+
+	if( can_use_skill( ch,1, gsn_mount ) )
+	{send_to_char("&CMount\r\n\r\n ", ch);}
+	else
+	send_to_char("&zMount\r\n\r\n ", ch);
+
+
+	if( can_use_skill( ch,1, gsn_stun ) )
+	{send_to_char("  &CStun -> ", ch);}
+	else
+	send_to_char("  &zStun -> ", ch);
+
+	if( can_use_skill( ch,1, gsn_bash ) )
+	{send_to_char("&CBash -> ", ch);}
+	else
+	send_to_char("&zBash -> ", ch);
+
+	if( can_use_skill( ch,1, gsn_bashdoor ) )
+	{send_to_char("&CDoorbash          ", ch);}
+	else
+	send_to_char("&zDoorbash          ", ch);
+
+
+	if( can_use_skill( ch,1, gsn_poison_weapon ) )
+	{send_to_char("&CPoison Weapon -> ", ch);}
+	else
+	send_to_char("&zPoison Weapon -> ", ch);
+
+	if( can_use_skill( ch,1, gsn_backstab ) )
+	{send_to_char("&CBackstab -> ", ch);}
+	else
+	send_to_char("&zBackstab -> ", ch);
+
+	if( can_use_skill( ch,1, gsn_circle ) )
+	{send_to_char("&CCircle\r\n\r\n ", ch);}
+	else
+	send_to_char("&zCircle\r\n\r\n ", ch);
+
+
+	if( can_use_skill( ch,1, gsn_scan ) )
+	{send_to_char("  &CScan -> ", ch);}
+	else
+	send_to_char("  &zScan -> ", ch);
+
+	if( can_use_skill( ch,1, gsn_search ) )
+	{send_to_char("&CSearch -> ", ch);}
+	else
+	send_to_char("&zSearch -> ", ch);
+
+	if( can_use_skill( ch,1, gsn_track ) )
+	{send_to_char("&CTrack         ", ch);}
+	else
+	send_to_char("&zTrack         ", ch);
+
+
+
+	if( can_use_skill( ch,1, gsn_enhanced_damage ) )
+	{send_to_char("  &CEnhanced Damage -> ", ch);}
+	else
+	send_to_char("  &zEnhanced Damage -> ", ch);
+
+	if( can_use_skill( ch,1, gsn_dual_wield ) )
+	{send_to_char("&CDual Wield -> ", ch);}
+	else
+	send_to_char("&zDual Wield -> ", ch);
+
+	if( can_use_skill( ch,1, gsn_hitall ) )
+	{send_to_char("&CHitall\r\n\r\n ", ch);}
+	else
+	send_to_char("&zHitall\r\n\r\n ", ch);
+
+
+
+	if( can_use_skill( ch,1, gsn_grapple ) )
+	{send_to_char("  &CGrapple -> ", ch);}
+	else
+	send_to_char("  &zGrapple -> ", ch);
+
+	if( can_use_skill( ch,1, gsn_disarm ) )
+	{send_to_char("&CDisarm -> ", ch);}
+	else
+	send_to_char("&zDisarm -> ", ch);
+
+	if( can_use_skill( ch,1, gsn_grip ) )
+	{send_to_char("&CGrip       ", ch);}
+	else
+	send_to_char("&zGrip       ", ch);
+
+
+
+	if( can_use_skill( ch,1, gsn_second_attack ) )
+	{send_to_char("  &CSecond Attack -> ", ch);}
+	else
+	send_to_char("  &zSecond Attack -> ", ch);
+
+	if( can_use_skill( ch,1, gsn_third_attack ) )
+	{send_to_char("&CThird -> ", ch);}
+	else
+	send_to_char("&zThird -> ", ch);
+
+	if( can_use_skill( ch,1, gsn_fourth_attack ) )
+	{send_to_char("&CFourth\r\n\r\n ", ch);}
+	else
+	send_to_char("&zFourth\r\n\r\n ", ch);
+
+
+
+	if( can_use_skill( ch,1, gsn_parry ) )
+	{send_to_char("  &CParry -> ", ch);}
+	else
+	send_to_char("  &zParry -> ", ch);
+
+	if( can_use_skill( ch,1, gsn_dodge ) )
+	{send_to_char("&CDodge -> ", ch);}
+	else
+	send_to_char("&zDodge -> ", ch);
+
+	if( can_use_skill( ch,1, gsn_counter ) )
+	{send_to_char("&CCounter       ", ch);}
+	else
+	send_to_char("&zCounter       ", ch);
+
+
+
+	if( can_use_skill( ch,1, gsn_cook ) )
+	{send_to_char("  &CCook -> ", ch);}
+	else
+	send_to_char("  &zCook -> ", ch);
+
+	if( can_use_skill( ch,1, gsn_brew ) )
+	{send_to_char("&CBrew -> ", ch);}
+	else
+	send_to_char("&zBrew -> ", ch);
+
+	if( can_use_skill( ch,1, gsn_scribe ) )
+	{send_to_char("&CScribe\r\n\r\n ", ch);}
+	else
+	send_to_char("&zScribe\r\n\r\n ", ch);
+
+
+
+	if( can_use_skill( ch,1, gsn_pick_lock ) )
+	{send_to_char("  &CPick lock -> ", ch);}
+	else
+	send_to_char("  &zPick lock -> ", ch);
+
+	if( can_use_skill( ch,1, gsn_steal ) )
+	{send_to_char("&CSteal -> ", ch);}
+	else
+	send_to_char("&zSteal -> ", ch);
+
+	if( can_use_skill( ch,1, gsn_detrap ) )
+	{send_to_char("&CDetrap    ", ch);}
+	else
+	send_to_char("&zDetrap    ", ch);
+
+
+
+	if( can_use_skill( ch,1, gsn_sneak ) )
+	{send_to_char("  &CSneak -> ", ch);}
+	else
+	send_to_char("  &zSneak -> ", ch);
+
+	if( can_use_skill( ch,1, gsn_hide ) )
+	{send_to_char("&CHide\r\n\r\n ", ch);}
+	else
+	send_to_char("&zHide\r\n\r\n ", ch);
+
+
+	if( can_use_skill( ch,1, gsn_meditate ) )
+	{send_to_char("  &CMeditate -> ", ch);}
+	else
+	send_to_char("  &zMeditate -> ", ch);
+
+	if( can_use_skill( ch,1, gsn_trance ) )
+	{send_to_char("&CTrance\r\n\r\n", ch);}
+	else
+	send_to_char("&zTrance\r\n\r\n", ch);
+
+
+	send_to_char("&WStyles\r\n", ch);
+
+
+	if( can_use_skill( ch,1, gsn_style_standard ) )
+	{send_to_char("            &CStandard -> ", ch);}
+	else
+	send_to_char("            &zStandard -> ", ch);
+
+	if( can_use_skill( ch,1, gsn_style_defensive ) )
+	{send_to_char("&CDefensive -> ", ch);}
+	else
+	send_to_char("&zDefensive -> ", ch);
+
+	if( can_use_skill( ch,1, gsn_style_aggressive ) )
+	{send_to_char("&CAggressive-> ", ch);}
+	else
+	send_to_char("&zAggressive -> ", ch);
+
+	if( can_use_skill( ch,1, gsn_style_evasive ) )
+	{send_to_char("&CEvasive -> ", ch);}
+	else
+	send_to_char("&zEvasive -> ", ch);
+
+	if( can_use_skill( ch,1, gsn_berserk ) )
+	{send_to_char("&CBerserk\r\n\r\n", ch);}
+	else
+	send_to_char("&zBerserk\r\n\r\n", ch);
+
+
+	send_to_char("&WWeapon Types\r\n\r\n", ch);
+
+        if( can_use_skill( ch,1, gsn_pugilism ) )
+        {send_to_char("     &CPugilism ", ch);}
+        else
+        send_to_char("     &zPugilism ", ch);
+
+        if( can_use_skill( ch,1, gsn_long_blades ) )
+        {send_to_char("  &CLong Blades ", ch);}
+        else
+        send_to_char("  &zLong Blades ", ch);
+
+        if( can_use_skill( ch,1, gsn_short_blades ) )
+        {send_to_char("  &CShort Blades ", ch);}
+        else
+        send_to_char("  &zShort Blades ", ch);
+
+        if( can_use_skill( ch,1, gsn_flexible_arms ) )
+        {send_to_char("  &CFlexible Arms ", ch);}
+        else
+        send_to_char("  &zFlexible Arms ", ch);
+
+        if( can_use_skill( ch,1, gsn_talonous_arms ) )
+        {send_to_char("  &CTalonous Arms\r\n ", ch);}
+        else
+        send_to_char("  &zTalonous Arms\r\n ", ch);
+
+        if( can_use_skill( ch,1, gsn_bludgeons ) )
+        {send_to_char("                       &CBludgeons ", ch);}
+        else
+        send_to_char("                       &zBludgeons ", ch);
+
+        if( can_use_skill( ch,1, gsn_missile_weapons ) )
+        {send_to_char("  &CMissile Weapons\r\n", ch);}
+        else
+        send_to_char("  &zMissile Weapons\r\n", ch);
+
+	send_to_char("&WLanguages\r\n\r\n", ch);
+
+
+        if( can_use_skill( ch,1, gsn_common ) )
+        {send_to_char("&CCommon ", ch);}
+        else
+        send_to_char("&zCommon ", ch);
+
+        if( can_use_skill( ch,1, gsn_elven ) )
+        {send_to_char(" &CElven ", ch);}
+        else
+        send_to_char(" &zElven ", ch);
+
+        if( can_use_skill( ch,1, gsn_dwarven ) )
+        {send_to_char(" &CDwarven ", ch);}
+        else
+        send_to_char(" &zDwarven ", ch);
+
+        if( can_use_skill( ch,1, gsn_pixie ) )
+        {send_to_char(" &CPixie ", ch);}
+        else
+        send_to_char(" &zPixie ", ch);
+
+        if( can_use_skill( ch,1, gsn_ogre ) )
+        {send_to_char(" &COgre ", ch);}
+        else
+        send_to_char(" &zOgre ", ch);
+
+        if( can_use_skill( ch,1, gsn_orcish ) )
+        {send_to_char(" &COrcish ", ch);}
+        else
+        send_to_char(" &zOrcish ", ch);
+
+        if( can_use_skill( ch,1, gsn_trollish ) )
+        {send_to_char(" &CTrollish ", ch);}
+        else
+        send_to_char(" &zTrollish ", ch);
+
+        if( can_use_skill( ch,1, gsn_goblin ) )
+        {send_to_char(" &CGoblin ", ch);}
+        else
+        send_to_char(" &zGoblin ", ch);
+
+        if( can_use_skill( ch,1, gsn_halfling ) )
+        {send_to_char(" &CHalfling ", ch);}
+        else
+        send_to_char(" &zHalfling ", ch);
+
+        if( can_use_skill( ch,1, gsn_gnomish ) )
+        {send_to_char(" &CGnomish\r\n", ch);}
+        else
+        send_to_char(" &zGnomish\r\n", ch);
+
+
+
+}
+
+void do_spells( CHAR_DATA* ch, const char* )
 {
    int sn;
 
 
 send_to_char( "\r\n&c+===========================================================================+\n\r", ch);
-        send_to_char( "   &OSCORE    &YSKILLS    &OINVENTORY    EQUIPMENT    FEATS    CONFIG   AFFECTS\r\n", ch);
+        send_to_char( " &OSCORE   SKILLS   &YSPELLS   &OFEATS   INVENTORY   EQUIPMENT   CONFIG   AFFECTS\r\n", ch);
 send_to_char( "&c+===========================================================================+\n\r", ch);
+
+   if( IS_NPC( ch ) )
+      return;
+
+
       int col;
       short lasttype, cnt;
-      bool is_ok;
 
       col = cnt = 0;
       lasttype = SKILL_SPELL;
@@ -258,105 +596,43 @@ send_to_char( "&c+==============================================================
 
          if( !skill || !skill->name || skill->name[0] == '\0' )
             continue;
+         if( skill->type != SKILL_SPELL )
+            continue;
 
-		if (IS_IMMORTAL(ch) || !CAN_CAST(ch))
-         if( strcmp( skill->name, "reserved" ) == 0 && ( IS_IMMORTAL( ch ) || !CAN_CAST( ch ) ) )
+         if( strcmp( skill->name, "reserved" ) == 0 && ( IS_IMMORTAL( ch ) || CAN_CAST( ch ) ) )
          {
             if( col % 3 != 0 )
                send_to_pager( "\r\n", ch );
-            send_to_pager_color( "\r\n &R[&WSpells&R]&z\r\n",
-                                 ch );
             col = 0;
+         }
 
-         }
-         if( skill->type != lasttype )
-         {
-            if( !cnt )
-               send_to_pager( "\r\n", ch );
-            else if( col % 3 != 0 )
-               send_to_pager( "\r\n", ch );
-            pager_printf_color( ch,
-                                " &R[&W%ss&R]&z\r\n",
-                                skill_tname[skill->type] );
-            col = cnt = 0;
-         }
          lasttype = skill->type;
 
-      if( !IS_IMMORTAL( ch )
+         if( !IS_IMMORTAL( ch )
              && ( skill->guild != CLASS_NONE && ( !IS_GUILDED( ch ) || ( ch->pcdata->clan->Class != skill->guild ) ) ) )
             continue;
 
-         {
-            is_ok = FALSE;
-
-            if( ch->level >= skill->skill_level[ch->Class] )
-               is_ok = TRUE;
-            if( ch->level >= skill->race_level[ch->race] )
-               is_ok = TRUE;
-
-            if( !is_ok )
-               continue;
-         }
 
          if( ch->pcdata->learned[sn] <= 0 && SPELL_FLAG( skill, SF_SECRETSKILL ) )
             continue;
-// skip spells we haven't learned
-if ( ch->pcdata->learned[normalSn] <= 0 )
-  continue;
-         ++cnt;
-         pager_printf( ch, "%18.18s", skill->name );
-	if (ch->pcdata->learned[normalSn] > 0)  
-       pager_printf( ch, " %3d%% ", ch->pcdata->learned[normalSn] );
+	if ( ch->pcdata->learned[normalSn] <= 0 )
+	    continue;
 
-//         if( ch->pcdata->learned[normalSn] > 99 )
-//        send_to_char( " &W[&GX&W]&z", ch);
-//else
-//         if( ch->pcdata->learned[normalSn] < 99 )
-//        send_to_char( " &W[ ]&z", ch);
+         ++cnt;
+         set_pager_color( AT_MAGIC, ch );
+         pager_printf( ch, "&W%20.20s", skill->name );
+         if( ch->pcdata->learned[normalSn] > 0 )
+            set_pager_color( AT_SCORE, ch );
+         pager_printf( ch, " %3d%% ", ch->pcdata->learned[normalSn] );
          if( ++col % 3 == 0 )
             send_to_pager( "\r\n", ch );
       }
 
       if( col % 3 != 0 )
          send_to_pager( "\r\n", ch );
-
-}
-
-
-
-/*
-void do_soulfeed( CHAR_DATA* ch, const char* )
-{
-   OBJ_DATA *obj;
-
-  if( ( obj = get_eq_char( ch, WEAR_WIELD ) ) == NULL  )
-   {
-      send_to_char( "You must be holding the weapon you wish to feed.\r\n", ch );
-      return;
-   }
-  if( ( obj = get_eq_char( ch, WEAR_WIELD ) ) != NULL && ( obj->value[4] >= 4 ))
-   {
-      send_to_char( "You have fed this weapon as much as you can.\r\n", ch );
-      return;
-   }
-  if( ( obj = get_eq_char( ch, WEAR_WIELD ) ) != NULL && ( obj->value[4] <= 3 ))
-   {
-
-        if ( ch->pcdata->souls <= 1999)
-        {
-                send_to_char( "You do not have the souls\r\n", ch );
-                return;
-        }
-        else
-        obj->value[4] += 1;
-        ch->pcdata->souls -= 2000;
-      send_to_char( "The souls of the vanquished fuse into this weapon.\r\n", ch );
-      return;
    }
 
 
-}
-*/
 void do_cpose( CHAR_DATA* ch, const char* argument)
 {
    if( IS_NPC( ch ) )
@@ -481,9 +757,9 @@ void do_score( CHAR_DATA* ch, const char* argument )
    char buf2[MAX_STRING_LENGTH];
 
 send_to_char( "\r\n&c+===========================================================================+\n\r", ch);
-        send_to_char( "   &YSCORE&O    SKILLS    INVENTORY    EQUIPMENT    FEATS    CONFIG   AFFECTS\r\n", ch);
+        send_to_char( " &YSCORE&O   SKILLS   SPELLS   FEATS   INVENTORY   EQUIPMENT   CONFIG   AFFECTS\r\n", ch);
 send_to_char( "&c+===========================================================================+\n\r", ch);
-pager_printf( ch, "&r&W %s %-30s &cHometown: &W%-13s &cRace: &W%-10s\r\n",
+pager_printf( ch, "&r&W %s %-30s &cHometown: &W%-13s &cRace: &W%-9s\r\n",
         ch->name, ch->pcdata->title, ch->pcdata->hometown,  capitalize( get_race(ch)) );
 	send_to_char( "&c+===========================================================================+\n\r", ch);
 pager_printf( ch, " &CLevel: &W%2d         &CTier: &W%-3d       &CAlign: &W%-6d   &CFavor:&W %-5d \r\n",

@@ -1242,7 +1242,7 @@ void do_mset( CHAR_DATA* ch, const char* argument)
       send_to_char( "  speaking speaks (see LANGUAGES)\r\n", ch );
       send_to_char( "  name short long description title spec clan\r\n", ch );
       send_to_char( "  council quest qp qpa favor deity\r\n", ch );
-      send_to_char( "  deftness, might, karma, combat, ingenuity, omniscience\r\n", ch );
+      send_to_char( "  might, karma, combat, ingenuity, omniscience\r\n", ch );
       send_to_char( "  redmagic, greenmagic, bluemagic, whitemagic, blackmagic\r\n", ch );
       send_to_char( "  arcanamagic, bleeding\r\n", ch );
       send_to_char( "\r\n", ch );
@@ -1699,24 +1699,6 @@ void do_mset( CHAR_DATA* ch, const char* argument)
       victim->pcdata->tier = value;
       return;
    }
-   if( !str_cmp( arg2, "deftness" ) )
-   {
-
-	if( IS_NPC(victim) )
-	{
-	send_to_char( "Not on NPCs.\r\n", ch);
-	return;
-	}
-      if( !can_mmodify( ch, victim ) )
-         return;
-	if (value >= 4)
-	{
-	value = 4;
-	}
-      victim->pcdata->deftness = value;
-	send_to_char( "Deftness Set.\r\n", ch);
-      return;
-   }
    if( !str_cmp( arg2, "might" ) )
    {
 
@@ -1826,7 +1808,7 @@ void do_mset( CHAR_DATA* ch, const char* argument)
 	send_to_char( "Red Magic Set.\r\n", ch);
       return;
    }
-   if( !str_cmp( arg2, "whitemagic" ) )
+   if( !str_cmp( arg2, "aid" ) )
    {
 
 	if( IS_NPC(victim) )
@@ -1840,8 +1822,8 @@ void do_mset( CHAR_DATA* ch, const char* argument)
 	{
 	value = 4;
 	}
-      victim->pcdata->whitemagic = value;
-	send_to_char( "White Magic Set.\r\n", ch);
+      victim->pcdata->aid = value;
+	send_to_char( "Set.\r\n", ch);
       return;
    }
    if( !str_cmp( arg2, "bluemagic" ) )
@@ -3915,16 +3897,6 @@ void do_oset( CHAR_DATA* ch, const char* argument)
       return;
    }
 
-   if( !str_cmp( arg2, "level" ) )
-   {
-      if( !can_omodify( ch, obj ) )
-         return;
-      obj->level = value;
-
-      if( IS_OBJ_STAT( obj, ITEM_PROTOTYPE ) )
-         obj->pIndexData->level = value;
-      return;
-   }
    if( !str_cmp( arg2, "tier" ) )
    {
       if( !can_omodify( ch, obj ) )

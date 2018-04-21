@@ -101,6 +101,7 @@ act_move.c:      if( IS_SET( obj->value[1], CONT_EATKEY ) )
 act_move.c:         obj_next = obj->next_content;
 act_move.c:         obj_next = obj->next_content;
 act_move.c:         switch ( obj->item_type )
+act_obj.c:   resist += ( obj->level / 10 ) - 2;
 act_obj.c:   if( obj->item_type == ITEM_ARMOR || obj->item_type == ITEM_WEAPON )
 act_obj.c:      resist += ( obj->value[0] / 2 ) - 2;
 act_obj.c:   if( IS_SET( obj->magic_flags, ITEM_PKDISARMED ) && !IS_NPC( ch ) )
@@ -215,7 +216,8 @@ act_obj.c:   if( obj->item_type == ITEM_PAPER )
 act_obj.c:   if( obj->item_type != ITEM_PAPER )
 act_obj.c:   if( cur_obj == obj->serial )
 act_obj.c:                    obj->name, aoran( item_type_name( obj ) ), extra_bit_name( &obj->extra_flags ),
-act_obj.c:                    obj->weight, obj->cost );
+act_obj.c:/*		magic_bit_name( obj->magic_flags ), -- currently unused */
+act_obj.c:                    obj->weight, obj->cost, obj->level );
 act_obj.c:         if( obj->item_type != ITEM_LIGHT && obj->wear_flags - 1 > 0 )
 act_obj.c:            ch_printf( ch, "Item's wear location: %s\r\n", flag_string( obj->wear_flags - 1, w_flags ) );
 act_obj.c:         switch ( obj->item_type )
@@ -309,6 +311,8 @@ act_wiz.c:   ch_printf_color( ch, "&cRent: &w%d  ", obj->pIndexData->rent );
 act_wiz.c:   if( obj->timer > 0 )
 act_wiz.c:      ch_printf_color( ch, "&R%d  ", obj->timer );
 act_wiz.c:      ch_printf_color( ch, "&w%d  ", obj->timer );
+act_wiz.c:   ch_printf_color( ch, "&cLevel: &P%d    ", obj->level );
+act_wiz.c://   ch_printf_color( ch, "&cIndex level: &P%d\r\n", obj->pIndexData->level );
 act_wiz.c:   ch_printf_color( ch, "&cTier: &P%d    ", obj->tier );
 act_wiz.c:   ch_printf_color( ch, "&cIn room: &w%d  ", obj->in_room == NULL ? 0 : obj->in_room->vnum );
 act_wiz.c:   ch_printf_color( ch, "&cIn object: &w%s  ", obj->in_obj == NULL ? "(none)" : obj->in_obj->short_descr );
@@ -327,7 +331,7 @@ act_wiz.c:   for( obj = first_object; obj; obj = obj->next )
 act_wiz.c:      if( obj->in_room && obj->pIndexData->vnum == OBJ_VNUM_CORPSE_PC && !str_cmp( buf2, obj->short_descr ) )
 act_wiz.c:                             obj->in_room->area->name,
 act_wiz.c:                             obj->in_room->vnum,
-act_wiz.c:                             obj->timer < 1 ? "&w" : obj->timer < 5 ? "&R" : obj->timer < 10 ? "&Y" : "&w", obj->timer );
+act_wiz.c:                             obj->timer < 1 ? "&w" : obj->timer < 5 ? "" : obj->timer < 10 ? "&Y" : "&w", obj->timer );
 act_wiz.c:            obj->timer = -1;
 act_wiz.c:      for( ; obj->in_obj; obj = obj->in_obj )
 act_wiz.c:                       obj->pIndexData->vnum, obj_short( obj ), obj->in_obj->pIndexData->vnum, obj->in_obj->short_descr );
@@ -360,6 +364,7 @@ act_wiz.c:   if( obj->carried_by )
 act_wiz.c:   else if( obj->in_room )
 act_wiz.c:   else if( obj->in_obj )
 act_wiz.c:   obj->count = quantity;
+act_wiz.c:                    pObjIndex->short_descr, pObjIndex->vnum, pObjIndex->name, obj->level, quantity );
 act_wiz.c:         obj_next = obj->next_content;
 act_wiz.c:      eobj_next = eobj->next;
 act_wiz.c:      if( URANGE( pArea->low_o_vnum, eobj->pIndexData->vnum, pArea->hi_o_vnum ) == eobj->pIndexData->vnum
@@ -368,7 +373,7 @@ act_wiz.c:   for( obj = first_object; obj != NULL; obj = obj->next )
 act_wiz.c:      if( !can_see_obj( ch, obj ) || !( argi == obj->pIndexData->vnum ) )
 act_wiz.c:      for( in_obj = obj; in_obj->in_obj != NULL; in_obj = in_obj->in_obj );
 act_wiz.c:      if( in_obj->carried_by != NULL )
-act_wiz.c:                       obj_counter, obj_short( obj ), PERS( in_obj->carried_by, ch ) );
+act_wiz.c:                       obj_counter, obj->level, obj_short( obj ), PERS( in_obj->carried_by, ch ) );
 act_wiz.c:                       ( ( in_obj->in_room ) ? in_obj->in_room->vnum : 0 ),
 act_wiz.c:                       obj_short( obj ), ( in_obj->in_room == NULL ) ? "somewhere" : in_obj->in_room->name );
 act_wiz.c:      STRFREE( obj->owner );
@@ -381,6 +386,7 @@ agecommand.c:   if( ( obj->value[3] != 1 && obj->value[3] != 2 && obj->value[3] 
 agecommand.c:  if( ( obj = get_eq_char( ch, WEAR_WIELD ) ) != NULL && ( obj->value[4] >= 4 ))
 agecommand.c:  if( ( obj = get_eq_char( ch, WEAR_WIELD ) ) != NULL && ( obj->value[4] <= 3 ))
 agecommand.c:        obj->value[4] += 1;
+agecommand.c:   if( obj->value[3] != 1 && obj->value[3] != 2 && obj->value[3] != 3 && obj->value[3] != 11 )
 att:act_info.c:      if( ch->carry_weight + obj->weight > can_carry_w( ch ) )
 att:act_info.c:   for( cnt = 0, obj = ch->last_carrying; obj; obj = obj->prev_content )
 att:act_info.c:   for( obj = ch->in_room->last_content; obj; obj = obj->prev_content )
@@ -609,6 +615,8 @@ build.c:                  obj->pIndexData->extra_flags = obj->extra_flags;
 build.c:         obj->pIndexData->extra_flags = obj->extra_flags;
 build.c:            TOGGLE_BIT( obj->wear_flags, 1 << value );
 build.c:         obj->pIndexData->wear_flags = obj->wear_flags;
+build.c:      obj->level = value;
+build.c:         obj->pIndexData->level = value;
 build.c:      obj->tier = value;
 build.c:         obj->pIndexData->tier = value;
 build.c:      obj->weight = value;
@@ -673,6 +681,7 @@ comm.c:      for( to_obj = to->in_room->first_content; to_obj; to_obj = to_obj->
 comm.c:         if( HAS_PROG( to_obj->pIndexData, ACT_PROG ) )
 db.c:   obj->pIndexData = pObjIndex;
 db.c:   obj->in_room = NULL;
+db.c:   obj->level = level;
 db.c:   obj->wear_loc = -1;
 db.c:   obj->count = 1;
 db.c:   obj->serial = obj->pIndexData->serial = cur_obj_serial;
@@ -846,8 +855,8 @@ handler.c:   EXT_BV extra_flags = obj->extra_flags;
 handler.c:         obj->carried_by = ch;
 handler.c:         obj->in_room = NULL;
 handler.c:         obj->in_obj = NULL;
-handler.c:            if( obj->tier > otmp->tier )
-handler.c:            else if( obj->tier  == otmp->tier && strcmp( obj->short_descr, otmp->short_descr ) < 0 )
+handler.c:            if( obj->level > otmp->level )
+handler.c:            else if( obj->level == otmp->level && strcmp( obj->short_descr, otmp->short_descr ) < 0 )
 handler.c:         obj->carried_by = ch;
 handler.c:         obj->in_room = NULL;
 handler.c:         obj->in_obj = NULL;
@@ -1062,6 +1071,7 @@ handler.c:   clone->wear_flags = obj->wear_flags;
 handler.c:   clone->wear_loc = obj->wear_loc;
 handler.c:   clone->weight = obj->weight;
 handler.c:   clone->cost = obj->cost;
+handler.c:   clone->level = obj->level;
 handler.c:   clone->timer = obj->timer;
 handler.c:   clone->value[0] = obj->value[0];
 handler.c:   clone->value[1] = obj->value[1];
@@ -1277,7 +1287,7 @@ magic.c:      if( obj->item_type == ITEM_PORTAL )
 magic.c:         obj->item_type = ITEM_TRASH;
 magic.c:   if( obj->item_type == ITEM_STAFF || obj->item_type == ITEM_WAND )
 magic.c:      if( obj->value[2] == obj->value[1] || obj->value[1] > ( obj->pIndexData->value[1] * 4 ) )
-magic.c:         if( damage( ch, ch, (obj->tier * 10) * 2, TYPE_UNDEFINED ) == rCHAR_DIED || char_died( ch ) )
+magic.c:         if( damage( ch, ch, obj->level * 2, TYPE_UNDEFINED ) == rCHAR_DIED || char_died( ch ) )
 magic.c:         obj->value[1] *= 2;
 magic.c:         obj->value[2] = obj->value[1];
 magic.c:         obj->value[2] = obj->value[1];
@@ -1299,10 +1309,10 @@ magic.c:                  obj->value[3] = 1;
 magic.c:             && ( obj->item_type == ITEM_FOOD || obj->item_type == ITEM_DRINK_CON || obj->item_type == ITEM_COOK ) )
 magic.c:            switch ( obj->item_type )
 magic.c:                  obj->value[3] = 0;
-magic.c:               if( ch->level - (obj->tier * 10) < 10 || obj->cost > ch->level * get_curr_int( ch ) * get_curr_wis( ch ) )
-magic.c:               if( ch->level - (obj->tier * 10) < 20 || obj->cost > ch->level * get_curr_int( ch ) / 5 )
-magic.c:               if( ch->level - (obj->tier * 10) < 5 || obj->cost > ch->level * 10 * get_curr_int( ch ) * get_curr_wis( ch ) )
-magic.c:              if( ch->level - (obj->tier * 10) < 0 || obj->cost > ch->level * 50 * get_curr_int( ch ) * get_curr_wis( ch ) )
+magic.c:               if( ch->level - obj->level < 10 || obj->cost > ch->level * get_curr_int( ch ) * get_curr_wis( ch ) )
+magic.c:               if( ch->level - obj->level < 20 || obj->cost > ch->level * get_curr_int( ch ) / 5 )
+magic.c:               if( ch->level - obj->level < 5 || obj->cost > ch->level * 10 * get_curr_int( ch ) * get_curr_wis( ch ) )
+magic.c:              if( ch->level - obj->level < 0 || obj->cost > ch->level * 50 * get_curr_int( ch ) * get_curr_wis( ch ) )
 magic.c:            if( obj->item_type == ITEM_DRINK_CON || obj->item_type == ITEM_FOOD || obj->item_type == ITEM_COOK )
 magic.c:               if( obj->item_type == ITEM_COOK && obj->value[2] == 0 )
 magic.c:               else if( obj->value[3] != 0 )
@@ -1425,6 +1435,7 @@ misc.c:      if( !( pObjIndex = get_obj_index( obj->value[1] ) ) )
 misc.c:         bug( "%s: obj points to invalid object vnum %d", __func__, obj->value[1] );
 misc.c:      if( obj->value[2] > 0 && !( room = get_room_index( obj->value[2] ) ) )
 misc.c:         bug( "%s: obj points to invalid room vnum %d", __func__, obj->value[2] );
+misc.c:      if( !( tobj = create_object( pObjIndex, URANGE( 0, obj->value[3], MAX_LEVEL ) ) ) )
 misc.c:         bug( "%s: obj couldnt create_obj vnum %d at level %d", __func__, obj->value[1], obj->value[3] );
 misc.c:   if( IS_SET( obj->value[0], TRIG_MLOAD ) )
 misc.c:      if( !( pMobIndex = get_mob_index( obj->value[1] ) ) )
@@ -1554,7 +1565,7 @@ mpxset.c:      obj->value[5] = value;
 mpxset.c:      obj->item_type = ( short )value;
 mpxset.c:               xTOGGLE_BIT( obj->extra_flags, value );
 mpxset.c:            TOGGLE_BIT( obj->wear_flags, 1 << value );
-mpxset.c:      obj->tier = value;
+mpxset.c:      obj->level = value;
 mpxset.c:      obj->weight = value;
 mpxset.c:      obj->cost = value;
 mpxset.c:      obj->timer = value;
@@ -1791,21 +1802,28 @@ reset.c:   for( obj = list; obj; obj = obj->next_content )
 reset.c:      if( obj->pIndexData == pObjIndex )
 reset.c:         nMatch += obj->count;
 reset.c:                           xSET_BIT( obj->extra_flags, ITEM_INVENTORY );
+reset.c:                        obj->level = URANGE( 0, obj->level, LEVEL_AVATAR );
 reset.c:                           if( obj->carried_by != mob )
 reset.c:                              bug( "'E' reset: can't give object %d to mob %d.", obj->pIndexData->vnum,
 reset.c:                                    xSET_BIT( lastobj->extra_flags, ITEM_HIDDEN );
 reset.c:                                    if( count_obj_list( pObjIndex, to_obj->first_content ) > 0 )
+reset.c:                                                                      to_obj->level ) ) );
 reset.c:                                    obj->count = gReset->arg2;
+reset.c:                                    obj->level = UMIN( obj->level, LEVEL_AVATAR );
 reset.c:                                    obj->count = gReset->arg2;
 reset.c:                                       gReset->arg3 = to_obj->pIndexData->vnum;
 reset.c:               obj->count = pReset->arg2;
+reset.c:               obj->level = UMIN( obj->level, LEVEL_AVATAR );
 reset.c:               obj->cost = 0;
 reset.c:               obj->extra_flags = pObjIndex->extra_flags;
 reset.c:                  obj->value[x] = pObjIndex->value[x];
 reset.c:                        xSET_BIT( lastobj->extra_flags, ITEM_HIDDEN );
 reset.c:                                  ( to_obj->carried_by && !IS_NPC( to_obj->carried_by ) ) || is_trapped( to_obj ) )
+reset.c:                           pobj = make_trap( tReset->arg2, tReset->arg1, number_fuzzy( to_obj->level ), tReset->extra );
 reset.c:                        if( count_obj_list( pObjIndex, to_obj->first_content ) > 0 )
+reset.c:                                                        ( generate_itemlevel( room->area, pObjIndex ), to_obj->level ) ) );
 reset.c:                        obj->count = tReset->arg2;
+reset.c:                        obj->level = UMIN( obj->level, LEVEL_AVATAR );
 reset.c:                        obj->count = tReset->arg2;
 reset.c:                           tReset->arg3 = to_obj->pIndexData->vnum;
 reset.c:                        else if( lastobj->command != 'P' || lastobj->arg3 > 0 )
@@ -1813,15 +1831,16 @@ reset.c:                           tReset->extra = lastobj->extra + 1;
 reset.c:      if( is_name( arg, pobj->name ) && ++cnt == num )
 save.c:   for( obj = ch->first_carrying; obj; obj = obj->next_content )
 save.c:      if( obj->wear_loc > -1 && obj->wear_loc < MAX_WEAR )
+save.c:         if( get_trust( ch ) >= obj->level )
 save.c:                  if( !mob_save_equipment[obj->wear_loc][x] )
 save.c:                     mob_save_equipment[obj->wear_loc][x] = obj;
 save.c:                  if( !save_equipment[obj->wear_loc][x] )
 save.c:                     save_equipment[obj->wear_loc][x] = obj;
 save.c:                    ch->name, MAX_LAYERS, obj->wear_loc, obj->name );
-save.c:            bug( "%s had on %s:  ch->level = %d  obj->tier = %d", ch->name, obj->name, ch->level, obj->tier );
+save.c:            bug( "%s had on %s:  ch->level = %d  obj->level = %d", ch->name, obj->name, ch->level, obj->level );
 save.c:   if( obj->prev_content && os_type != OS_CORPSE )
 save.c:      fwrite_obj( ch, obj->prev_content, fp, iNest, os_type, hotboot );
-save.c:      if( (ch && ch->level < (obj->tier * 10))
+save.c:      if( (ch && ch->level < obj->level)
 save.c:         || ( obj->item_type == ITEM_KEY && !IS_OBJ_STAT( obj, ITEM_CLANOBJECT ) )
 save.c:         || ( (os_type == OS_VAULT) && (obj->item_type == ITEM_CORPSE_PC) )
 save.c:   if( hotboot && obj->item_type == ITEM_CORPSE_PC )
@@ -1849,6 +1868,8 @@ save.c:   if( obj->item_type != obj->pIndexData->item_type )
 save.c:      fprintf( fp, "ItemType     %d\n", obj->item_type );
 save.c:   if( obj->weight != obj->pIndexData->weight )
 save.c:      fprintf( fp, "Weight       %d\n", obj->weight );
+save.c:   if( obj->level )
+save.c:      fprintf( fp, "Level        %d\n", obj->level );
 save.c:   if( obj->tier )
 save.c:      fprintf( fp, "Tier        %d\n", obj->tier );
 save.c:   if( obj->timer )
@@ -1920,6 +1941,7 @@ save.c:                        obj->timer = 40;
 save.c:                     if( room->vnum == ROOM_VNUM_HALLOFFALLEN && obj->first_content )
 save.c:                        obj->timer = -1;
 save.c:            KEY( "ItemType", obj->item_type, fread_number( fp ) );
+save.c:            KEY( "Level", obj->level, fread_number( fp ) );
 save.c:            KEY( "Name", obj->name, fread_string( fp ) );
 save.c:               STRFREE( obj->owner );
 save.c:               obj->owner = fread_string( fp );
@@ -1936,6 +1958,7 @@ save.c:               obj->value[3] = x4;
 save.c:               obj->value[4] = x5;
 save.c:               obj->value[5] = x6;
 save.c:               if( ( obj->pIndexData = get_obj_index( vnum ) ) == NULL )
+save.c:                  obj->tier = obj->pIndexData->tier;
 save.c:                  obj->cost = obj->pIndexData->cost;
 save.c:                  obj->weight = obj->pIndexData->weight;
 save.c:                  obj->item_type = obj->pIndexData->item_type;
@@ -1973,19 +1996,19 @@ shops.c:            if( INIT_WEAPON_CONDITION == obj->value[0] )
 shops.c:               cost *= ( INIT_WEAPON_CONDITION - obj->value[0] );
 shops.c:            if( obj->value[2] >= obj->value[1] )
 shops.c:               cost *= ( obj->value[1] - obj->value[2] );
+shops.c:      if( obj->level > ch->level )
 shops.c:                   ( obj->short_descr[strlen( obj->short_descr ) - 1] == 's' ? "" : "s" ) );
 shops.c:                   ( obj->short_descr[strlen( obj->short_descr ) - 1] == 's' ? "" : "s" ) );
-shops.c:         buy_obj = create_object( obj->pIndexData);
+shops.c:         buy_obj = create_object( obj->pIndexData, obj->level );
 shops.c:            bag->value[0] = bag->weight + ( buy_obj->weight * noi );
 shops.c:            buy_obj->count = noi;
 shops.c:            obj->pIndexData->count += ( noi - 1 );
 shops.c:      for( obj = keeper->first_carrying; obj; obj = obj->next_content )
 shops.c:         if( obj->wear_loc == WEAR_NONE
 shops.c:             && ( cost = get_cost( ch, keeper, obj, TRUE ) ) > 0 && ( arg[0] == '\0' || nifty_is_name( arg, obj->name ) ) )
-shops.c:            if( (obj->tier * 10) <= upper )
-shops.c:            if( (obj->tier * 10 ) < lower )
-shops.c:            pager_printf( ch, "[%-2d %5d] %s.\r\n", obj->tier, cost, capitalize( obj->short_descr ) );
+shops.c:            pager_printf( ch, "&G%-30s &c%d        &Y%d&W\r\n", capitalize( obj->short_descr), obj->tier, cost  );
 shops.c:   if( obj->timer > 0 )
+shops.c:   cost = obj->cost/10;
 shops.c:   if( obj->item_type == ITEM_TRASH )
 shops.c:      ch_printf( ch, "You can't let go of %s.\r\n", obj->short_descr );
 shops.c:                cost == 1 ? "" : "s", fixstr, obj->short_descr );
@@ -2015,7 +2038,7 @@ skills.c:   xREMOVE_BIT( obj->extra_flags, ITEM_BURIED );
 skills.c:   if( obj->item_type == ITEM_CORPSE_PC || obj->item_type == ITEM_CORPSE_NPC )
 skills.c:      for( obj = startobj; obj; obj = obj->next_content )
 skills.c:            xREMOVE_BIT( obj->extra_flags, ITEM_HIDDEN );
-skills.c:       || IS_OBJ_STAT( obj, ITEM_INVENTORY ) || IS_OBJ_STAT( obj, ITEM_PROTOTYPE ) || (obj->tier * 10 ) > ch->level )
+skills.c:       || IS_OBJ_STAT( obj, ITEM_INVENTORY ) || IS_OBJ_STAT( obj, ITEM_PROTOTYPE ) || obj->level > ch->level )
 skills.c:   if( ch->carry_number + ( get_obj_number( obj ) / obj->count ) > can_carry_n( ch ) )
 skills.c:   if( ch->carry_weight + ( get_obj_weight( obj ) / obj->count ) > can_carry_w( ch ) )
 skills.c:       || ( obj->value[3] != 1
@@ -2046,7 +2069,7 @@ skills.c:   for( wobj = ch->first_carrying; wobj; wobj = wobj->next_content )
 skills.c:      if( wobj->item_type == ITEM_DRINK_CON && wobj->value[1] > 0 && wobj->value[2] == 0 )
 skills.c:   xSET_BIT( obj->extra_flags, ITEM_POISONED );
 skills.c:   obj->cost *= 2;
-skills.c:   obj->timer = UMIN( (obj->tier * 10), ch->level );
+skills.c:   obj->timer = UMIN( obj->level, ch->level );
 skills.c:      obj->timer *= 2;
 skills.c:      obj->timer *= 2;
 skills.c:   if( ( obj = get_eq_char( ch, WEAR_WIELD ) ) == NULL || ( obj->value[3] != 11 && obj->value[3] != 2 ) )
@@ -2061,6 +2084,9 @@ skills.c:    if ( can_see_obj( ch, throw_obj ) && nifty_is_name( arg, throw_obj-
 skills.c:  if ( ( throw_obj->item_type != ITEM_WEAPON)
 skills.c:        act( AT_GREY, "Throw $t at whom?", ch, obj->short_descr, NULL,  
 skills.c:       || ( obj->value[3] != 1 && obj->value[3] != 2 && obj->value[3] != 3 && obj->value[3] != 11 ) )
+skills.c:    if ( obj->item_type != ITEM_TOME )
+skills.c:    if (obj->item_type == ITEM_TOME )
+skills.c:	sn = obj->value[0];
 skills.c.orig:         for( obj = ch->in_room->first_content; obj; obj = obj->next_content )
 skills.c.orig:            if( can_see_obj( ch, obj ) && nifty_is_name( arg, obj->name ) )
 skills.c.orig:         ch->alloc_ptr = str_dup( obj->name );
@@ -2119,7 +2145,10 @@ skills.c.orig:    if ( can_see_obj( ch, throw_obj ) && nifty_is_name( arg, throw
 skills.c.orig:  if ( ( throw_obj->item_type != ITEM_WEAPON)
 skills.c.orig:        act( AT_GREY, "Throw $t at whom?", ch, obj->short_descr, NULL,  
 skills.c.orig:       || ( obj->value[3] != 1 && obj->value[3] != 2 && obj->value[3] != 3 && obj->value[3] != 11 ) )
+Binary file smaug matches
 special.c:         obj_next = obj->next_content;
+type:level:magic.c:   obj->timer = skill->dice ? dice_parse( ch, level, skill->dice ) : 0;
+type:magic.c:   obj->timer = skill->dice ? dice_parse( ch, level, skill->dice ) : 0;
 update.c:         for( obj = ch->in_room->first_content; obj; obj = obj->next_content )
 update.c:            if( CAN_WEAR( obj, ITEM_TAKE ) && obj->cost > max && !IS_OBJ_STAT( obj, ITEM_BURIED ) && !IS_OBJ_STAT( obj, ITEM_HIDDEN ) )
 update.c:               max = obj->cost;

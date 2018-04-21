@@ -2785,10 +2785,9 @@ CHAR_DATA *create_mobile( MOB_INDEX_DATA * pMobIndex )
 /*
  * Create an instance of an object.
  */
-OBJ_DATA *create_object( OBJ_INDEX_DATA * pObjIndex, int level )
+OBJ_DATA *create_object( OBJ_INDEX_DATA * pObjIndex, int tier )
 {
    OBJ_DATA *obj;
-
    if( !pObjIndex )
    {
       bug( "Create_object: NULL pObjIndex." );
@@ -2799,7 +2798,7 @@ OBJ_DATA *create_object( OBJ_INDEX_DATA * pObjIndex, int level )
 
    obj->pIndexData = pObjIndex;
    obj->in_room = NULL;
-   obj->level = level;
+   obj->tier = tier;
    obj->wear_loc = -1;
    obj->count = 1;
    cur_obj_serial = UMAX( ( cur_obj_serial + 1 ) & ( BV30 - 1 ), 1 );
@@ -2923,8 +2922,8 @@ OBJ_DATA *create_object( OBJ_INDEX_DATA * pObjIndex, int level )
             obj->value[2] *= obj->value[1];
          else
          {
-            obj->value[1] = number_fuzzy( number_fuzzy( 1 * level / 4 + 2 ) );
-            obj->value[2] = number_fuzzy( number_fuzzy( 3 * level / 4 + 6 ) );
+            obj->value[1] = number_fuzzy( number_fuzzy( 1 * (tier * 10) / 4 + 2 ) );
+            obj->value[2] = number_fuzzy( number_fuzzy( 3 * ( tier * 10)/ 4 + 6 ) );
          }
          if( obj->value[0] == 0 )
             obj->value[0] = INIT_WEAPON_CONDITION;
@@ -2932,7 +2931,7 @@ OBJ_DATA *create_object( OBJ_INDEX_DATA * pObjIndex, int level )
 
       case ITEM_ARMOR:
          if( obj->value[0] == 0 )
-            obj->value[0] = number_fuzzy( level / 4 + 2 );
+            obj->value[0] = number_fuzzy( (tier*10) / 4 + 2 );
          if( obj->value[1] == 0 )
             obj->value[1] = obj->value[0];
          break;

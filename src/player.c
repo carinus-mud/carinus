@@ -400,7 +400,7 @@ void do_affected( CHAR_DATA* ch, const char* argument)
       return;
 
 send_to_char( "\r\n&c+===========================================================================+\n\r", ch);
-        send_to_char( "   &OSCORE    SKILLS    INVENTORY    EQUIPMENT    FEATS    CONFIG   &YAFFECTS\r\n", ch);
+        send_to_char( " &OSCORE   SKILLS   SPELLS   FEATS   INVENTORY   EQUIPMENT   CONFIG   &YAFFECTS\r\n", ch);
 send_to_char( "&c+===========================================================================+\n\r", ch);
 
    set_char_color( AT_SCORE, ch );
@@ -489,7 +489,7 @@ void do_inventory( CHAR_DATA* ch, const char* argument)
       ch_printf( ch, "&c%s is carrying:\r\n", IS_NPC( victim ) ? victim->short_descr : victim->name );
    else
 send_to_char( "\r\n&c+===========================================================================+\n\r", ch);
-        send_to_char( "   &OSCORE    SKILLS    &YINVENTORY&O    EQUIPMENT    FEATS    CONFIG   AFFECTS\r\n", ch);
+        send_to_char( " &OSCORE   SKILLS   SPELLS   FEATS   &YINVENTORY&O   EQUIPMENT   CONFIG   AFFECTS\r\n", ch);
 send_to_char( "&c+===========================================================================+\n\r", ch);
    show_list_to_char( victim->first_carrying, ch, TRUE, TRUE );
       ch_printf(ch, "\r\n&YGold: %s\r\n", num_punct( ch->gold ) );
@@ -517,9 +517,8 @@ int start, cond;
    if( victim != ch )
       ch_printf( ch, "&R%s is using:\r\n", IS_NPC( victim ) ? victim->short_descr : victim->name );
    else
-
 send_to_char( "\r\n&c+===========================================================================+\n\r", ch);
-        send_to_char( "   &OSCORE    SKILLS    INVENTORY    &YEQUIPMENT&O    FEATS    CONFIG   AFFECTS\r\n", ch);
+        send_to_char( " &OSCORE   SKILLS   SPELLS   FEATS   INVENTORY   &YEQUIPMENT&O   CONFIG   AFFECTS\r\n", ch);
 send_to_char( "&c+===========================================================================+\n\r", ch);
 
    found = FALSE;
