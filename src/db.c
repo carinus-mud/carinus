@@ -1537,7 +1537,7 @@ void load_objects( AREA_DATA * tarea, FILE * fp )
 
          pObjIndex->weight = fread_number( fp );
          pObjIndex->weight = UMAX( 1, pObjIndex->weight );
-//         pObjIndex->cost = fread_number( fp );
+         pObjIndex->cost = fread_number( fp );
          pObjIndex->rent = fread_number( fp );  /* unused */
       }
 
