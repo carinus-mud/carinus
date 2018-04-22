@@ -740,12 +740,12 @@ void do_list( CHAR_DATA* ch, const char* argument)
             if( !found )
             {
                found = TRUE;
-               send_to_pager( "&G[Item]                      &c[Tier]     &Y[Price]\r\n", ch );
+               send_to_pager( "&G[Item]                      &c[Level]     &Y[Price]\r\n", ch );
 	       send_to_pager("&W-------------------------------------------------------------\r\n", ch);
             }
 
 
-            pager_printf( ch, "&G%-30s &c%d        &Y%d&W\r\n", capitalize( obj->short_descr), obj->tier, cost  );
+            pager_printf( ch, "&G%-30s &c%d        &Y%d&W\r\n", capitalize( obj->short_descr), obj->level, cost  );
          }
       }
 

@@ -1956,12 +1956,12 @@ OBJ_DATA *obj_to_char( OBJ_DATA * obj, CHAR_DATA * ch )
           */
          for( otmp = ch->first_carrying; otmp; otmp = otmp->next_content )
          {
-            if( obj->tier > otmp->tier )
+            if( obj->level > otmp->level )
             {
                INSERT( obj, otmp, ch->first_carrying, next_content, prev_content );
                break;
             }
-            else if( obj->tier == otmp->tier && strcmp( obj->short_descr, otmp->short_descr ) < 0 )
+            else if( obj->level == otmp->level && strcmp( obj->short_descr, otmp->short_descr ) < 0 )
             {
                INSERT( obj, otmp, ch->first_carrying, next_content, prev_content );
                break;
@@ -4888,7 +4888,7 @@ OBJ_DATA *clone_object( OBJ_DATA * obj )
    clone->wear_loc = obj->wear_loc;
    clone->weight = obj->weight;
    clone->cost = obj->cost;
-   clone->tier = obj->tier;
+   clone->level = obj->level;
    clone->timer = obj->timer;
    clone->value[0] = obj->value[0];
    clone->value[1] = obj->value[1];
@@ -4934,7 +4934,7 @@ OBJ_DATA *group_object( OBJ_DATA * obj1, OBJ_DATA * obj2 )
       && obj1->wear_loc == obj2->wear_loc
       && obj1->weight == obj2->weight
       && obj1->cost == obj2->cost
-      && obj1->tier == obj2->tier
+      && obj1->level == obj2->level
       && obj1->timer == obj2->timer
       && obj1->value[0] == obj2->value[0]
       && obj1->value[1] == obj2->value[1]

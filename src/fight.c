@@ -1436,7 +1436,7 @@ ch_ret one_hit( CHAR_DATA * ch, CHAR_DATA * victim, int dt )
 
       for( aff = wield->pIndexData->first_affect; aff; aff = aff->next )
          if( aff->location == APPLY_WEAPONSPELL && IS_VALID_SN( aff->modifier ) && skill_table[aff->modifier]->spell_fun )
-            retcode = ( *skill_table[aff->modifier]->spell_fun ) ( aff->modifier, (( wield->tier * 10) + 3 ) / 3, ch, victim );
+            retcode = ( *skill_table[aff->modifier]->spell_fun ) ( aff->modifier, (( wield->level) + 3 ) / 3, ch, victim );
 
       if( retcode == rSPELL_FAILED )
          retcode = rNONE;  // Luc, 6/11/2007
@@ -1445,7 +1445,7 @@ ch_ret one_hit( CHAR_DATA * ch, CHAR_DATA * victim, int dt )
          return retcode;
       for( aff = wield->first_affect; aff; aff = aff->next )
          if( aff->location == APPLY_WEAPONSPELL && IS_VALID_SN( aff->modifier ) && skill_table[aff->modifier]->spell_fun )
-            retcode = ( *skill_table[aff->modifier]->spell_fun ) ( aff->modifier, ( (wield->tier * 10) + 3 ) / 3, ch, victim );
+            retcode = ( *skill_table[aff->modifier]->spell_fun ) ( aff->modifier, ( (wield->level) + 3 ) / 3, ch, victim );
 
       if( retcode == rSPELL_FAILED )
          retcode = rNONE;  // Luc, 6/11/2007
@@ -1796,7 +1796,7 @@ ch_ret projectile_hit( CHAR_DATA * ch, CHAR_DATA * victim, OBJ_DATA * wield, OBJ
 
       for( aff = wield->pIndexData->first_affect; aff; aff = aff->next )
          if( aff->location == APPLY_WEAPONSPELL && IS_VALID_SN( aff->modifier ) && skill_table[aff->modifier]->spell_fun )
-            retcode = ( *skill_table[aff->modifier]->spell_fun ) ( aff->modifier, ( (wield->tier * 10) + 3 ) / 3, ch, victim );
+            retcode = ( *skill_table[aff->modifier]->spell_fun ) ( aff->modifier, ( (wield->level) + 3 ) / 3, ch, victim );
       if( retcode != rNONE || char_died( ch ) || char_died( victim ) )
       {
          extract_obj( projectile );
@@ -1804,7 +1804,7 @@ ch_ret projectile_hit( CHAR_DATA * ch, CHAR_DATA * victim, OBJ_DATA * wield, OBJ
       }
       for( aff = wield->first_affect; aff; aff = aff->next )
          if( aff->location == APPLY_WEAPONSPELL && IS_VALID_SN( aff->modifier ) && skill_table[aff->modifier]->spell_fun )
-            retcode = ( *skill_table[aff->modifier]->spell_fun ) ( aff->modifier, ( (wield->tier * 10) + 3 ) / 3, ch, victim );
+            retcode = ( *skill_table[aff->modifier]->spell_fun ) ( aff->modifier, ( (wield->level) + 3 ) / 3, ch, victim );
       if( retcode != rNONE || char_died( ch ) || char_died( victim ) )
       {
          extract_obj( projectile );

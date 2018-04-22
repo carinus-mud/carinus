@@ -1233,7 +1233,7 @@ void do_mset( CHAR_DATA* ch, const char* argument)
       send_to_char( "Field being one of:\r\n", ch );
       send_to_char( "  str int wis dex con cha lck sex class\r\n", ch );
       send_to_char( "  gold balance hp mana move/stamina practice align race\r\n", ch );
-      send_to_char( "  tier AP hitroll damroll armor affected level\r\n", ch );
+      send_to_char( "  AP hitroll damroll armor affected level\r\n", ch );
       send_to_char( "  thirst drunk full blood flags \r\n", ch );
       send_to_char( "  pos defpos part (see BODYPARTS)\r\n", ch );
       send_to_char( "  sav1 sav2 sav4 sav4 sav5 (see SAVINGTHROWS)\r\n", ch );
@@ -1242,9 +1242,7 @@ void do_mset( CHAR_DATA* ch, const char* argument)
       send_to_char( "  speaking speaks (see LANGUAGES)\r\n", ch );
       send_to_char( "  name short long description title spec clan\r\n", ch );
       send_to_char( "  council quest qp qpa favor deity\r\n", ch );
-      send_to_char( "  might, karma, combat, ingenuity, omniscience\r\n", ch );
-      send_to_char( "  redmagic, greenmagic, bluemagic, whitemagic, blackmagic\r\n", ch );
-      send_to_char( "  arcanamagic, bleeding\r\n", ch );
+      send_to_char( "  bleeding\r\n", ch );
       send_to_char( "\r\n", ch );
       send_to_char( "For editing index/prototype mobiles:\r\n", ch );
       send_to_char( "  hitnumdie hitsizedie hitplus (hit points)\r\n", ch );
@@ -1685,218 +1683,6 @@ void do_mset( CHAR_DATA* ch, const char* argument)
       victim->pcdata->balance = value;
       return;
 
-   }
-   if( !str_cmp( arg2, "tier" ) )
-   {
-
-	if( IS_NPC(victim) )
-	{
-	send_to_char( "NPCs do not have tiers.\r\n", ch);
-	return;
-	}
-      if( !can_mmodify( ch, victim ) )
-         return;
-      victim->pcdata->tier = value;
-      return;
-   }
-   if( !str_cmp( arg2, "might" ) )
-   {
-
-	if( IS_NPC(victim) )
-	{
-	send_to_char( "Not on NPCs.\r\n", ch);
-	return;
-	}
-      if( !can_mmodify( ch, victim ) )
-         return;
-	if (value >= 4)
-	{
-	value = 4;
-	}
-      victim->pcdata->might = value;
-	send_to_char( "Might Set.\r\n", ch);
-      return;
-   }
-
-   if( !str_cmp( arg2, "combat" ) )
-   {
-
-	if( IS_NPC(victim) )
-	{
-	send_to_char( "Not on NPCs.\r\n", ch);
-	return;
-	}
-      if( !can_mmodify( ch, victim ) )
-         return;
-	if (value >= 4)
-	{
-	value = 4;
-	}
-      victim->pcdata->combat = value;
-	send_to_char( "Combat Set.\r\n", ch);
-      return;
-   }
-   if( !str_cmp( arg2, "karma" ) )
-   {
-
-	if( IS_NPC(victim) )
-	{
-	send_to_char( "Not on NPCs.\r\n", ch);
-	return;
-	}
-      if( !can_mmodify( ch, victim ) )
-         return;
-	if (value >= 4)
-	{
-	value = 4;
-	}
-      victim->pcdata->karma = value;
-	send_to_char( "karma Set.\r\n", ch);
-      return;
-   }
-   if( !str_cmp( arg2, "ingenuity" ) )
-   {
-
-	if( IS_NPC(victim) )
-	{
-	send_to_char( "Not on NPCs.\r\n", ch);
-	return;
-	}
-      if( !can_mmodify( ch, victim ) )
-         return;
-	if (value >= 4)
-	{
-	value = 4;
-	}
-      victim->pcdata->ingenuity = value;
-	send_to_char( "Ingenuity Set.\r\n", ch);
-      return;
-   }
-   if( !str_cmp( arg2, "omniscience" ) )
-   {
-
-	if( IS_NPC(victim) )
-	{
-	send_to_char( "Not on NPCs.\r\n", ch);
-	return;
-	}
-      if( !can_mmodify( ch, victim ) )
-         return;
-	if (value >= 4)
-	{
-	value = 4;
-	}
-      victim->pcdata->omniscience = value;
-	send_to_char( "Omniscience Set.\r\n", ch);
-      return;
-   }
-   if( !str_cmp( arg2, "redmagic" ) )
-   {
-
-	if( IS_NPC(victim) )
-	{
-	send_to_char( "Not on NPCs.\r\n", ch);
-	return;
-	}
-      if( !can_mmodify( ch, victim ) )
-         return;
-	if (value >= 4)
-	{
-	value = 4;
-	}
-      victim->pcdata->redmagic = value;
-	send_to_char( "Red Magic Set.\r\n", ch);
-      return;
-   }
-   if( !str_cmp( arg2, "aid" ) )
-   {
-
-	if( IS_NPC(victim) )
-	{
-	send_to_char( "Not on NPCs.\r\n", ch);
-	return;
-	}
-      if( !can_mmodify( ch, victim ) )
-         return;
-	if (value >= 4)
-	{
-	value = 4;
-	}
-      victim->pcdata->aid = value;
-	send_to_char( "Set.\r\n", ch);
-      return;
-   }
-   if( !str_cmp( arg2, "bluemagic" ) )
-   {
-
-	if( IS_NPC(victim) )
-	{
-	send_to_char( "Not on NPCs.\r\n", ch);
-	return;
-	}
-      if( !can_mmodify( ch, victim ) )
-         return;
-	if (value >= 4)
-	{
-	value = 4;
-	}
-      victim->pcdata->bluemagic = value;
-	send_to_char( "Blue Magic Set.\r\n", ch);
-      return;
-   }
-   if( !str_cmp( arg2, "greenmagic" ) )
-   {
-
-	if( IS_NPC(victim) )
-	{
-	send_to_char( "Not on NPCs.\r\n", ch);
-	return;
-	}
-      if( !can_mmodify( ch, victim ) )
-         return;
-	if (value >= 4)
-	{
-	value = 4;
-	}
-      victim->pcdata->greenmagic = value;
-	send_to_char( "Green Magic Set.\r\n", ch);
-      return;
-   }
-   if( !str_cmp( arg2, "blackmagic" ) )
-   {
-
-	if( IS_NPC(victim) )
-	{
-	send_to_char( "Not on NPCs.\r\n", ch);
-	return;
-	}
-      if( !can_mmodify( ch, victim ) )
-         return;
-	if (value >= 4)
-	{
-	value = 4;
-	}
-      victim->pcdata->blackmagic = value;
-	send_to_char( "Black Magic Set.\r\n", ch);
-      return;
-   }
-   if( !str_cmp( arg2, "arcanamagic" ) )
-   {
-
-	if( IS_NPC(victim) )
-	{
-	send_to_char( "Not on NPCs.\r\n", ch);
-	return;
-	}
-      if( !can_mmodify( ch, victim ) )
-         return;
-	if (value >= 4)
-	{
-	value = 4;
-	}
-      victim->pcdata->arcanamagic = value;
-	send_to_char( "Arcana Magic Set.\r\n", ch);
-      return;
    }
 
    if( !str_cmp( arg2, "hitroll" ) )
@@ -3897,14 +3683,14 @@ void do_oset( CHAR_DATA* ch, const char* argument)
       return;
    }
 
-   if( !str_cmp( arg2, "tier" ) )
+   if( !str_cmp( arg2, "level" ) )
    {
       if( !can_omodify( ch, obj ) )
          return;
-      obj->tier = value;
+      obj->level = value;
 
       if( IS_OBJ_STAT( obj, ITEM_PROTOTYPE ) )
-         obj->pIndexData->tier = value;
+         obj->pIndexData->level = value;
       return;
    }
 

@@ -1827,8 +1827,7 @@ void do_ostat( CHAR_DATA* ch, const char* argument)
       return;
    }
    ch_printf_color( ch, "&cName: &C%s\r\n", obj->name );
-    //  ch_printf( ch, "&CSoul Level: &w%d\r\n  ", obj->value[4]);
-	ch_printf_color( ch, "&cVnum: &w%d  ", obj->pIndexData->vnum );
+   ch_printf_color( ch, "&cVnum: &w%d  ", obj->pIndexData->vnum );
    ch_printf_color( ch, "&cType: &w%s  ", item_type_name( obj ) );
    ch_printf_color( ch, "&cCount:  &w%d  ", obj->pIndexData->count );
    ch_printf_color( ch, "&cGcount: &w%d\r\n", obj->count );
@@ -1855,8 +1854,7 @@ void do_ostat( CHAR_DATA* ch, const char* argument)
       ch_printf_color( ch, "&R%d  ", obj->timer );
    else
       ch_printf_color( ch, "&w%d  ", obj->timer );
-//   ch_printf_color( ch, "&cIndex level: &P%d\r\n", obj->pIndexData->level );
-   ch_printf_color( ch, "&cTier: &P%d    ", obj->pIndexData->tier );
+   ch_printf_color( ch, "&cLevel: &P%d\r\n", obj->level );
    ch_printf_color( ch, "&cIn room: &w%d  ", obj->in_room == NULL ? 0 : obj->in_room->vnum );
    ch_printf_color( ch, "&cIn object: &w%s  ", obj->in_obj == NULL ? "(none)" : obj->in_obj->short_descr );
    ch_printf_color( ch, "&cCarried by: &C%s\r\n", obj->carried_by == NULL ? "(none)" : obj->carried_by->name );
@@ -1874,9 +1872,9 @@ void do_ostat( CHAR_DATA* ch, const char* argument)
       {
          send_to_char( ed->keyword, ch );
          if( ed->next )
-            send_to_char( ", ", ch );
+            send_to_char( " ", ch );
       }
-      send_to_char( "'\r\n", ch );
+      send_to_char( "'.\r\n", ch );
    }
    if( obj->first_extradesc )
    {
@@ -1886,9 +1884,9 @@ void do_ostat( CHAR_DATA* ch, const char* argument)
       {
          send_to_char( ed->keyword, ch );
          if( ed->next )
-            send_to_char( ", ", ch );
+            send_to_char( " ", ch );
       }
-      send_to_char( "'\r\n", ch );
+      send_to_char( "'.\r\n", ch );
    }
    for( paf = obj->first_affect; paf; paf = paf->next )
       ch_printf_color( ch, "&cAffects &w%s &cby &w%d. (extra)\r\n", affect_loc_name( paf->location ), paf->modifier );
@@ -1896,6 +1894,7 @@ void do_ostat( CHAR_DATA* ch, const char* argument)
       ch_printf_color( ch, "&cAffects &w%s &cby &w%d.\r\n", affect_loc_name( paf->location ), paf->modifier );
    return;
 }
+
 
 void do_vstat( CHAR_DATA* ch, const char* argument)
 {
@@ -2044,7 +2043,7 @@ void do_mstat( CHAR_DATA* ch, const char* argument)
                        class_table[victim->Class]->who_name[0] != '\0' ?
                        class_table[victim->Class]->who_name : "unknown", victim->wimpy);
 
-	pager_printf_color( ch,"&c|  &cSex   : &W%-7s &c| &cDex: &W%-3d  &c|  &cRace : &W%-12s&c|  &cMst   : &W%-2d            &c|\r\n",
+	pager_printf_color( ch,"&c|  &cSex   : &W%-7s &c| &cDex: &W%-3d  &c|  &cRace : &W%-12s&c|  &cMst   : &W%-4d          &c|\r\n",
 			  victim->sex == SEX_MALE ? "male" :
                        victim->sex == SEX_FEMALE ? "female" : "neutral", get_curr_dex(victim), 
                        race_table[victim->race]->race_name[0] != '\0' ? race_table[victim->race]->race_name : "unknown",
@@ -2052,8 +2051,7 @@ void do_mstat( CHAR_DATA* ch, const char* argument)
 	pager_printf_color( ch,"&c|  &cRoom  : &W%-7d &c| &cCon: &W%-3d  &c|  &cLevel: &W%-2d          &c|  &cEst   : &W%-4d          &c|\r\n",
 			victim->in_room == NULL ? 0 : victim->in_room->vnum,
 			get_curr_con(victim), victim->level, victim->emotional_state );
-	pager_printf_color( ch,"&c|  &cTier  : &W%-7d &c| &cInt: &W%-3d  &c|  &cHitpt: &W%-5d/%-5d &c|  &cItems : &W%-5d/%-6d  &c|\r\n",
-			   victim->pcdata->tier,
+	pager_printf_color( ch,"&c|                  | &cInt: &W%-3d  &c|  &cHitpt: &W%-5d/%-5d &c|  &cItems : &W%-5d/%-6d  &c|\r\n",
 			   get_curr_int(victim), victim->hit, victim->max_hit,
 			   victim->carry_number, can_carry_n(victim));
 	pager_printf_color( ch,"&c|  &cKilled: &W%-7d &c| &cWis: &W%-3d  &c|  &cMana : &W%-5d/%-5d &c|  &cWeight: &W%-4d/%-6d  &c|\r\n",
@@ -3187,14 +3185,13 @@ void do_oinvoke( CHAR_DATA* ch, const char* argument)
    char arg1[MAX_INPUT_LENGTH], arg2[MAX_INPUT_LENGTH], arg3[MAX_INPUT_LENGTH];
    OBJ_INDEX_DATA *pObjIndex;
    OBJ_DATA *obj;
-   int vnum, tier, quantity = 1;
+   int vnum, level, quantity = 1;
 
    set_char_color( AT_IMMORT, ch );
 
    argument = one_argument( argument, arg1 );
    argument = one_argument( argument, arg2 );
    argument = one_argument( argument, arg3 );
-
    if( arg1[0] == '\0' )
    {
       send_to_char( "Syntax: oinvoke <vnum> <level> <quantity>\r\n", ch );
@@ -3202,15 +3199,20 @@ void do_oinvoke( CHAR_DATA* ch, const char* argument)
    }
 
    if( arg2[0] == '\0' )
-      tier = ch->pcdata->tier;
+      level = get_trust( ch );
    else
    {
       if( !is_number( arg2 ) )
       {
-         send_to_char( "Syntax: oinvoke <vnum> <tier>\r\n", ch );
+         send_to_char( "Syntax: oinvoke <vnum> <level>\r\n", ch );
          return;
       }
-      tier = atoi( arg2 );
+      level = atoi( arg2 );
+      if( level < 0 || level > get_trust( ch ) )
+      {
+         send_to_char( "Limited to your trust level.\r\n", ch );
+         return;
+      }
    }
 
    if( arg3[0] != '\0' )
@@ -3280,27 +3282,28 @@ void do_oinvoke( CHAR_DATA* ch, const char* argument)
       return;
    }
 
-   // Fixed memory leak here - The object was being created before the flag check for quantity limits. - Samson 11/08/2014
-   if( quantity > 1 && ( !IS_OBJ_STAT( pObjIndex, ITEM_MULTI_INVOKE ) ) )
-   {
-      send_to_char( "This item can not be invoked in quantities greater than 1.\r\n", ch );
-      return;
-   }
-
-   if( tier == 0 )
+   if( level == 0 )
    {
       AREA_DATA *temp_area;
 
       if( ( temp_area = get_area_obj( pObjIndex ) ) == NULL )
-         tier = ch->pcdata->tier;
+         level = ch->level;
       else
       {
-         tier = pObjIndex->tier ;
+         level = generate_itemlevel( temp_area, pObjIndex );
+         level = URANGE( 0, level, LEVEL_AVATAR );
       }
    }
 
-   obj = create_object( pObjIndex, tier );
-   obj->count = quantity;
+   obj = create_object( pObjIndex, level );
+
+   if( quantity > 1 && ( !IS_OBJ_STAT( obj, ITEM_MULTI_INVOKE ) ) )
+   {
+      send_to_char( "This item can not be invoked in quantities greater than 1.\r\n", ch );
+      return;
+   }
+   else
+      obj->count = quantity;
 
    if( CAN_WEAR( obj, ITEM_TAKE ) )
       obj = obj_to_char( obj, ch );
@@ -3313,10 +3316,11 @@ void do_oinvoke( CHAR_DATA* ch, const char* argument)
    /*
     * I invoked what? --Blodkai 
     */
-   ch_printf_color( ch, "&YYou invoke %s (&W#%d &Y- &W%s &Y- &Wtier %d &Y- &Wqty %d&Y)\r\n",
-                    pObjIndex->short_descr, pObjIndex->vnum, pObjIndex->name, obj->tier,  quantity );
+   ch_printf_color( ch, "&YYou invoke %s (&W#%d &Y- &W%s &Y- &Wlvl %d &Y- &Wqty %d&Y)\r\n",
+                    pObjIndex->short_descr, pObjIndex->vnum, pObjIndex->name, obj->level, quantity );
    return;
 }
+
 
 void do_purge( CHAR_DATA* ch, const char* argument)
 {
@@ -7429,8 +7433,8 @@ void do_vsearch( CHAR_DATA* ch, const char* argument)
       for( in_obj = obj; in_obj->in_obj != NULL; in_obj = in_obj->in_obj );
 
       if( in_obj->carried_by != NULL )
-         pager_printf( ch, "[%2d] Tier %d %s carried by %s.\r\n",
-                       obj_counter, obj->tier, obj_short( obj ), PERS( in_obj->carried_by, ch ) );
+         pager_printf( ch, "[%2d] Level %d %s carried by %s.\r\n",
+                       obj_counter, obj->level, obj_short( obj ), PERS( in_obj->carried_by, ch ) );
       else
          pager_printf( ch, "[%2d] [%-5d] %s in %s.\r\n", obj_counter,
                        ( ( in_obj->in_room ) ? in_obj->in_room->vnum : 0 ),

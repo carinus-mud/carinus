@@ -3229,9 +3229,9 @@ ch_ret spell_identify( int sn, int level, CHAR_DATA * ch, void *vo )
       else
          send_to_char( ".\r\n", ch );
       ch_printf( ch,
-                 "Special properties:  %s\r\nIts weight is %d, value is %d, and tier is %d.\r\n",
+                 "Special properties:  %s\r\nIts weight is %d, value is %d, and Level is %d.\r\n",
                  extra_bit_name( &obj->extra_flags ),
-                 obj->weight, obj->cost, obj->tier );
+                 obj->weight, obj->cost, obj->level );
       if( IS_OBJ_STAT( obj, ITEM_PERSONAL ) && obj->owner[0] != '\0' )
          ch_printf( ch, "&cOwner: &Y%s\r\n", obj->owner );
       set_char_color( AT_MAGIC, ch );

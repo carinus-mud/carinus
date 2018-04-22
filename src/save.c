@@ -418,19 +418,6 @@ void fwrite_char( CHAR_DATA * ch, FILE * fp )
    fprintf( fp, "Glory        %d\n", ch->pcdata->quest_curr );
    fprintf( fp, "MGlory       %d\n", ch->pcdata->quest_accum );
    fprintf( fp, "Ap        %d\n", ch->pcdata->ap );   
-   fprintf( fp, "Tier        %d\n", ch->pcdata->tier );   
-   fprintf( fp, "Aid     %d\n", ch->pcdata->aid );   
-   fprintf( fp, "Might     %d\n", ch->pcdata->might );   
-   fprintf( fp, "Omniscience     %d\n", ch->pcdata->omniscience );   
-   fprintf( fp, "Ingenuity     %d\n", ch->pcdata->ingenuity );   
-   fprintf( fp, "Combat     %d\n", ch->pcdata->combat );   
-   fprintf( fp, "Karma     %d\n", ch->pcdata->karma );   
-   fprintf( fp, "greenmagic     %d\n", ch->pcdata->greenmagic );   
-   fprintf( fp, "Bluemagic     %d\n", ch->pcdata->bluemagic );   
-   fprintf( fp, "Whitemagic     %d\n", ch->pcdata->whitemagic );   
-   fprintf( fp, "Blackmagic     %d\n", ch->pcdata->blackmagic );   
-   fprintf( fp, "Redmagic     %d\n", ch->pcdata->redmagic );   
-   fprintf( fp, "Arcanamagic     %d\n", ch->pcdata->arcanamagic );   
    fprintf( fp, "Hitroll      %d\n", ch->hitroll );
    fprintf( fp, "Damroll      %d\n", ch->damroll );
    fprintf( fp, "Armor        %d\n", ch->armor );
@@ -751,11 +738,10 @@ void fwrite_obj( CHAR_DATA * ch, OBJ_DATA * obj, FILE * fp, int iNest, short os_
       fprintf( fp, "Weight       %d\n", obj->weight );
    if( obj->level )
       fprintf( fp, "Level        %d\n", obj->level );
-   if( obj->tier )
-      fprintf( fp, "Tier        %d\n", obj->tier );
    if( obj->timer )
       fprintf( fp, "Timer        %d\n", obj->timer );
    if( obj->cost != obj->pIndexData->cost )
+	obj->cost = obj->pIndexData->cost;
       fprintf( fp, "Cost         %d\n", obj->cost );
    if( obj->value[0] || obj->value[1] || obj->value[2] || obj->value[3] || obj->value[4] || obj->value[5] )
       fprintf( fp, "Values       %d %d %d %d %d %d\n",
@@ -1112,7 +1098,6 @@ void fread_char( CHAR_DATA * ch, FILE * fp, bool preload, bool copyover )
             KEY( "Act", ch->act, fread_bitvector( fp ) );
             KEY( "AffectedBy", ch->affected_by, fread_bitvector( fp ) );
             KEY( "Alignment", ch->alignment, fread_number( fp ) );
-            KEY( "Arcanamagic", ch->pcdata->arcanamagic, fread_number( fp ) );
             KEY( "Armor", ch->armor, fread_number( fp ) );
 
             if( !str_cmp( word, "Ability" ) )
@@ -1193,7 +1178,6 @@ void fread_char( CHAR_DATA * ch, FILE * fp, bool preload, bool copyover )
                break;
             }
 
-            KEY( "Aid", ch->pcdata->aid, fread_number( fp ) );
 
             if( !strcmp( word, "AttrMod" ) )
             {
@@ -1241,8 +1225,6 @@ void fread_char( CHAR_DATA * ch, FILE * fp, bool preload, bool copyover )
             KEY( "Bamfout", ch->pcdata->bamfout, fread_string_nohash( fp ) );
             KEY( "Bestowments", ch->pcdata->bestowments, fread_string_nohash( fp ) );
             KEY( "Bio", ch->pcdata->bio, fread_string( fp ) );
-            KEY( "Blackmagic", ch->pcdata->blackmagic, fread_number( fp ) );
-            KEY( "Bluemagic", ch->pcdata->bluemagic, fread_number( fp ) );
             break;
 
          case 'C':
@@ -1265,7 +1247,6 @@ void fread_char( CHAR_DATA * ch, FILE * fp, bool preload, bool copyover )
             }
 
             KEY( "Class", ch->Class, fread_number( fp ) );
-            KEY( "Combat", ch->pcdata->combat, fread_number( fp ) );
             KEY( "Customclass", ch->pcdata->customclass, fread_string( fp ) );
 
             /*
@@ -1391,7 +1372,6 @@ void fread_char( CHAR_DATA * ch, FILE * fp, bool preload, bool copyover )
             /*
              * temporary measure 
              */
-            KEY( "Greenmagic", ch->pcdata->greenmagic, fread_number( fp ) );
 
             if( !strcmp( word, "Guild" ) )
             {
@@ -1537,7 +1517,6 @@ void fread_char( CHAR_DATA * ch, FILE * fp, bool preload, bool copyover )
             }
             KEY( "IllegalPK", ch->pcdata->illegal_pk, fread_number( fp ) );
             KEY( "Immune", ch->immune, fread_number( fp ) );
-            KEY( "Ingenuity", ch->pcdata->ingenuity, fread_number( fp ) );
 
 #ifdef IMC
             if( ( fMatch = imc_loadchar( ch, fp, word ) ) )
@@ -1546,7 +1525,6 @@ void fread_char( CHAR_DATA * ch, FILE * fp, bool preload, bool copyover )
             break;
 
          case 'K':
-            KEY( "Karma", ch->pcdata->karma, fread_number( fp ) );
 
             if( !strcmp( word, "Killed" ) )
             {
@@ -1589,7 +1567,6 @@ void fread_char( CHAR_DATA * ch, FILE * fp, bool preload, bool copyover )
             KEY( "MDeaths", ch->pcdata->mdeaths, fread_number( fp ) );
             KEY( "Mentalstate", ch->mental_state, fread_number( fp ) );
             KEY( "MGlory", ch->pcdata->quest_accum, fread_number( fp ) );
-            KEY( "Might", ch->pcdata->might, fread_number( fp ) );
             KEY( "Minsnoop", ch->pcdata->min_snoop, fread_number( fp ) );
             KEY( "MKills", ch->pcdata->mkills, fread_number( fp ) );
             KEY( "Mobinvis", ch->mobinvis, fread_number( fp ) );
@@ -1636,7 +1613,6 @@ void fread_char( CHAR_DATA * ch, FILE * fp, bool preload, bool copyover )
             break;
 
          case 'O':
-            KEY( "Omniscience", ch->pcdata->omniscience, fread_number( fp ) );
             KEY( "Outcast_time", ch->pcdata->outcast_time, fread_number( fp ) );
             if( !strcmp( word, "ObjRange" ) )
             {
@@ -1736,7 +1712,6 @@ void fread_char( CHAR_DATA * ch, FILE * fp, bool preload, bool copyover )
          case 'R':
             KEY( "Race", ch->race, fread_number( fp ) );
             KEY( "Rank", ch->pcdata->rank, fread_string_nohash( fp ) );
-            KEY( "Redmagic", ch->pcdata->redmagic, fread_number( fp ) );
             KEY( "Resistant", ch->resistant, fread_number( fp ) );
             KEY( "Restore_time", ch->pcdata->restore_time, fread_number( fp ) );
 
@@ -1954,7 +1929,6 @@ void fread_char( CHAR_DATA * ch, FILE * fp, bool preload, bool copyover )
             break;
 
          case 'T':
-                     KEY( "Tier", ch->pcdata->tier, fread_number( fp ) );
    if( !strcmp( word, "Tongue" ) )
             {
                int sn, value;
@@ -2038,7 +2012,6 @@ void fread_char( CHAR_DATA * ch, FILE * fp, bool preload, bool copyover )
                }
                break;
             }
-            KEY( "Whitemagic", ch->pcdata->whitemagic, fread_number( fp ) );
 
             KEY( "Wimpy", ch->wimpy, fread_number( fp ) );
             KEY( "WizInvis", ch->pcdata->wizinvis, fread_number( fp ) );
@@ -2371,7 +2344,6 @@ void fread_obj( CHAR_DATA * ch, FILE * fp, short os_type )
             break;
 
          case 'T':
-            KEY( "Tier", obj->tier, fread_number( fp ) );
             KEY( "Timer", obj->timer, fread_number( fp ) );
             break;
 
@@ -2411,7 +2383,6 @@ void fread_obj( CHAR_DATA * ch, FILE * fp, short os_type )
                else
                {
                   fVnum = TRUE;
-                  obj->tier = obj->pIndexData->tier;
                   obj->cost = obj->pIndexData->cost;
                   obj->weight = obj->pIndexData->weight;
                   obj->item_type = obj->pIndexData->item_type;

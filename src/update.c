@@ -85,7 +85,6 @@ void advance_level( CHAR_DATA * ch )
    ch->max_mana += add_mana;
    ch->max_move += add_move;
    ch->practice += add_prac;
-   ch->pcdata->tier = (ch->level/10);
 
 
    if( !IS_NPC( ch ) )
@@ -119,20 +118,6 @@ void advance_level( CHAR_DATA * ch )
      set_char_color( AT_WHITE, ch );
       send_to_char( buf, ch );
 
-   if ( (ch->level == 10))
-	send_to_char("&Yyou gained a tier!\r\n", ch);
-	else
-   if ( (ch->level == 20))
-	send_to_char("&Yyou gained a tier!\r\n", ch);
-	else
-   if ( (ch->level == 30))
-	send_to_char("&Yyou gained a tier!\r\n", ch);
-	else
-   if ( (ch->level == 40))
-	send_to_char("&Yyou gained a tier!\r\n", ch);
-	else
-   if ( (ch->level == 50))
-	send_to_char("&Yyou gained a tier!\r\n", ch);
 
    }
 }

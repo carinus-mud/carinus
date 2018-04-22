@@ -762,8 +762,8 @@ send_to_char( "&c+==============================================================
 pager_printf( ch, "&r&W %s %-30s &cHometown: &W%-13s &cRace: &W%-9s\r\n",
         ch->name, ch->pcdata->title, ch->pcdata->hometown,  capitalize( get_race(ch)) );
 	send_to_char( "&c+===========================================================================+\n\r", ch);
-pager_printf( ch, " &CLevel: &W%2d         &CTier: &W%-3d       &CAlign: &W%-6d   &CFavor:&W %-5d \r\n",
-        ch->level, ch->pcdata->tier, ch->alignment, ch->pcdata->favor);
+pager_printf( ch, " &CLevel: &W%2d         &CPrac: &W%-3d       &CAlign: &W%-6d   &CFavor:&W %-5d \r\n",
+        ch->level, ch->practice, ch->alignment, ch->pcdata->favor);
 
 pager_printf( ch, " &CSTR:&W%2d(%2d)     &CHitroll: &W%-3d    &CBleeding: &W%-6d  &CHunger: &W%d\r\n",
         get_curr_str(ch), ch->perm_str, GET_HITROLL(ch), ch->pcdata->condition[COND_BLEEDING], ch->pcdata->condition[COND_FULL]);
