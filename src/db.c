@@ -2788,6 +2788,7 @@ CHAR_DATA *create_mobile( MOB_INDEX_DATA * pMobIndex )
 OBJ_DATA *create_object( OBJ_INDEX_DATA * pObjIndex, int level )
 {
    OBJ_DATA *obj;
+
    if( !pObjIndex )
    {
       bug( "Create_object: NULL pObjIndex." );
@@ -2798,6 +2799,7 @@ OBJ_DATA *create_object( OBJ_INDEX_DATA * pObjIndex, int level )
 
    obj->pIndexData = pObjIndex;
    obj->in_room = NULL;
+   obj->level = level;
    obj->wear_loc = -1;
    obj->count = 1;
    cur_obj_serial = UMAX( ( cur_obj_serial + 1 ) & ( BV30 - 1 ), 1 );
@@ -2818,9 +2820,7 @@ OBJ_DATA *create_object( OBJ_INDEX_DATA * pObjIndex, int level )
    obj->value[4] = pObjIndex->value[4];
    obj->value[5] = pObjIndex->value[5];
    obj->weight = pObjIndex->weight;
-   obj->tier = pObjIndex->tier;
    obj->cost = pObjIndex->cost;
-   int tier = obj->tier;
    /*
     * obj->cost     = number_fuzzy( 10 )
     * * number_fuzzy( level ) * number_fuzzy( level );
@@ -2842,13 +2842,10 @@ OBJ_DATA *create_object( OBJ_INDEX_DATA * pObjIndex, int level )
       case ITEM_TRASH:
       case ITEM_CONTAINER:
       case ITEM_DRINK_CON:
-      case ITEM_PUDDLE:
       case ITEM_KEY:
-      case ITEM_HOUSEKEY:
       case ITEM_KEYRING:
       case ITEM_ODOR:
       case ITEM_CHANCE:
-      case ITEM_PIECE:
          break;
       case ITEM_COOK:
       case ITEM_FOOD:
@@ -2875,7 +2872,6 @@ OBJ_DATA *create_object( OBJ_INDEX_DATA * pObjIndex, int level )
       case ITEM_INCENSE:
       case ITEM_FIRE:
       case ITEM_BOOK:
-      case ITEM_TOME:
       case ITEM_SWITCH:
       case ITEM_LEVER:
       case ITEM_PULLCHAIN:
@@ -2897,8 +2893,6 @@ OBJ_DATA *create_object( OBJ_INDEX_DATA * pObjIndex, int level )
       case ITEM_FUEL:
       case ITEM_QUIVER:
       case ITEM_SHOVEL:
-      case ITEM_JOURNAL:
-      case ITEM_BANDAGE:
          break;
 
       case ITEM_SALVE:
@@ -2923,8 +2917,8 @@ OBJ_DATA *create_object( OBJ_INDEX_DATA * pObjIndex, int level )
             obj->value[2] *= obj->value[1];
          else
          {
-            obj->value[1] = number_fuzzy( number_fuzzy( 1 * (tier * 10) / 4 + 2 ) );
-            obj->value[2] = number_fuzzy( number_fuzzy( 3 * ( tier * 10)/ 4 + 6 ) );
+            obj->value[1] = number_fuzzy( number_fuzzy( 1 * level / 4 + 2 ) );
+            obj->value[2] = number_fuzzy( number_fuzzy( 3 * level / 4 + 6 ) );
          }
          if( obj->value[0] == 0 )
             obj->value[0] = INIT_WEAPON_CONDITION;
@@ -2932,7 +2926,7 @@ OBJ_DATA *create_object( OBJ_INDEX_DATA * pObjIndex, int level )
 
       case ITEM_ARMOR:
          if( obj->value[0] == 0 )
-            obj->value[0] = number_fuzzy( (tier*10) / 4 + 2 );
+            obj->value[0] = number_fuzzy( level / 4 + 2 );
          if( obj->value[1] == 0 )
             obj->value[1] = obj->value[0];
          break;

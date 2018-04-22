@@ -978,7 +978,7 @@ bool spec_wanderer( CHAR_DATA * ch )
             /*****
              * If object is too high a level throw it away.
              *****/
-            if( ch->pcdata->tier < trash->tier )
+            if( ch->level < trash->level )
             {
                act( AT_ACTION, "$n tries to use $p, but is too inexperienced.", ch, trash, NULL, TO_ROOM );
                thrown = TRUE;

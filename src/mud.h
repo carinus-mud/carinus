@@ -2407,23 +2407,7 @@ struct pc_data
    const char *recent_site;   /* site a player started their most recent session from */
    const char *prev_site;     /* site a player last quit from */
    int ap;
-   short tier;
    int balance;
-// Feat Variables
-   short aid;
-   short might;
-   short omniscience;
-   short ingenuity;
-   short karma;
-   short combat;
-   short redmagic;
-   short greenmagic;
-   short bluemagic;
-   short blackmagic;
-   short whitemagic;
-   short arcanamagic;
-   
-// End of Feat Variables
    long int outcast_time;  /* The time at which the char was outcast */
    long int restore_time;  /* The last time the char did a restore all */
    int flags;  /* Whether the player is deadly and whatever else we add.      */
@@ -2509,7 +2493,6 @@ struct obj_index_data
    const char *action_desc;
    int value[6];
    int vnum;
-   int  tier;
    int serial;
    int cost;
    int rent;   /* Unused */
@@ -2556,7 +2539,6 @@ struct obj_data
    short wear_loc;
    short weight;
    int cost;
-   int tier;
    short level;
    short timer;
    int value[6];

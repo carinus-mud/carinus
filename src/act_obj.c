@@ -68,7 +68,7 @@ short get_obj_resistance( OBJ_DATA * obj )
    /*
     * okay... let's add some bonus/penalty for item level... 
     */
-   resist += ( obj->tier ) - 2;
+   resist += ( obj->level/10 ) - 2;
 
    /*
     * and lasty... take armor or weapon's condition into consideration 
@@ -1545,9 +1545,9 @@ void wear_obj( CHAR_DATA * ch, OBJ_DATA * obj, bool fReplace, short wear_bit )
 
 if (!IS_NPC(ch))
 {
-   if( ch->pcdata->tier < obj->tier )
+   if( ch->level < obj->level )
    {
-      ch_printf( ch, "You must be tier %d to use this object.\r\n", obj->tier );
+      ch_printf( ch, "You must be level %d to use this object.\r\n", obj->level );
       act( AT_ACTION, "$n tries to use $p, but is too inexperienced.", ch, obj, NULL, TO_ROOM );
       return;
    }
@@ -2637,10 +2637,10 @@ void do_auction( CHAR_DATA* ch, const char* argument)
 
          set_char_color( AT_LBLUE, ch );
          ch_printf( ch,
-                    "Object '%s' is %s, special properties: %s\r\nIts weight is %d, value is %d, and tier is %d.\r\n",
+                    "Object '%s' is %s, special properties: %s\r\nIts weight is %d, value is %d, and level is %d.\r\n",
                     obj->name, aoran( item_type_name( obj ) ), extra_bit_name( &obj->extra_flags ),
 /*		magic_bit_name( obj->magic_flags ), -- currently unused */
-                    obj->weight, obj->cost, obj->tier );
+                    obj->weight, obj->cost, obj->level );
          if( obj->item_type != ITEM_LIGHT && obj->wear_flags - 1 > 0 )
             ch_printf( ch, "Item's wear location: %s\r\n", flag_string( obj->wear_flags - 1, w_flags ) );
 
