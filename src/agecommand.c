@@ -565,10 +565,11 @@ send_to_char( "&c+==============================================================
 
 
       int col;
-      short lasttype, cnt;
+      //short lasttype, cnt;
+      short cnt;
 
       col = cnt = 0;
-      lasttype = SKILL_SPELL;
+      //lasttype = SKILL_SPELL;
       set_pager_color( AT_MAGIC, ch );
 
       for( sn = 0; sn < num_skills; ++sn )
@@ -606,7 +607,7 @@ send_to_char( "&c+==============================================================
             col = 0;
          }
 
-         lasttype = skill->type;
+         //lasttype = skill->type;
 
          if( !IS_IMMORTAL( ch )
              && ( skill->guild != CLASS_NONE && ( !IS_GUILDED( ch ) || ( ch->pcdata->clan->Class != skill->guild ) ) ) )
