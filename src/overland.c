@@ -25,6 +25,8 @@
 
 #include <string.h>
 #include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include "mud.h"
 
 /* Gee, I got bored and added a bunch of new comments to things. Interested parties know what to look for. 
@@ -3635,20 +3637,20 @@ void atmob( CHAR_DATA * ch, CHAR_DATA * wch, char *argument )
     * * the "atee" - Samson
     */
 
-   if( IS_ROOM_FLAG( location->room_flags, ROOM_MAP ) && !IS_PLR_FLAG( ch, PLR_ONMAP ) )
+ if( xIS_SET( location->room_flags, ROOM_MAP ) && !IS_PLR_FLAG( ch, PLR_ONMAP ) )
    {
       SET_PLR_FLAG( ch, PLR_ONMAP );
       ch->map = wch->map;
       ch->x = wch->x;
       ch->y = wch->y;
    }
-   else if( IS_ROOM_FLAG( location, ROOM_MAP ) && IS_PLR_FLAG( ch, PLR_ONMAP ) )
+   else  if( xIS_SET( location->room_flags, ROOM_MAP ) && IS_PLR_FLAG( ch, PLR_ONMAP ) )
    {
       ch->map = wch->map;
       ch->x = wch->x;
       ch->y = wch->y;
    }
-   else if( !IS_ROOM_FLAG( location, ROOM_MAP ) && IS_PLR_FLAG( ch, PLR_ONMAP ) )
+   else  if( !(xIS_SET( location->room_flags, ROOM_MAP ) ) && IS_PLR_FLAG( ch, PLR_ONMAP ) )
    {
       REMOVE_PLR_FLAG( ch, PLR_ONMAP );
       ch->map = -1;
@@ -3662,9 +3664,9 @@ void atmob( CHAR_DATA * ch, CHAR_DATA * wch, char *argument )
    char_to_room( ch, location );
    interpret( ch, argument );
 
-   if( IS_PLR_FLAG( ch, PLR_ONMAP ) && !IS_ROOM_FLAG( original, ROOM_MAP ) )
+   if( IS_PLR_FLAG( ch, PLR_ONMAP ) &&  if(!( xIS_SET( location->room_flags, ROOM_MAP ))) )
       REMOVE_PLR_FLAG( ch, PLR_ONMAP );
-   else if( !IS_PLR_FLAG( ch, PLR_ONMAP ) && IS_ROOM_FLAG( original, ROOM_MAP ) )
+   else if( !IS_PLR_FLAG( ch, PLR_ONMAP ) &&  xIS_SET( location->room_flags, ROOM_MAP ) )
       SET_PLR_FLAG( ch, PLR_ONMAP );
 
    ch->map = origmap;
@@ -3707,20 +3709,20 @@ void atobj( CHAR_DATA * ch, OBJ_DATA * obj, char *argument )
    /*
     * Bunch of checks to make sure the imm is on the same grid as the object - Samson 
     */
-   if( IS_ROOM_FLAG( location, ROOM_MAP ) && !IS_PLR_FLAG( ch, PLR_ONMAP ) )
+ if( xIS_SET( location->room_flags, ROOM_MAP ) && !IS_PLR_FLAG( ch, PLR_ONMAP ) )
    {
       SET_PLR_FLAG( ch, PLR_ONMAP );
       ch->map = obj->map;
       ch->x = obj->x;
       ch->y = obj->y;
    }
-   else if( IS_ROOM_FLAG( location, ROOM_MAP ) && IS_PLR_FLAG( ch, PLR_ONMAP ) )
+   else  if( xIS_SET( location->room_flags, ROOM_MAP ) && IS_PLR_FLAG( ch, PLR_ONMAP ) )
    {
       ch->map = obj->map;
       ch->x = obj->x;
       ch->y = obj->y;
    }
-   else if( !IS_ROOM_FLAG( location, ROOM_MAP ) && IS_PLR_FLAG( ch, PLR_ONMAP ) )
+   else  if( !(xIS_SET( location->room_flags, ROOM_MAP ) ) && IS_PLR_FLAG( ch, PLR_ONMAP ) )
    {
       REMOVE_PLR_FLAG( ch, PLR_ONMAP );
       ch->map = -1;
@@ -3734,9 +3736,9 @@ void atobj( CHAR_DATA * ch, OBJ_DATA * obj, char *argument )
    char_to_room( ch, location );
    interpret( ch, argument );
 
-   if( IS_PLR_FLAG( ch, PLR_ONMAP ) && !IS_ROOM_FLAG( original, ROOM_MAP ) )
+   if( IS_PLR_FLAG( ch, PLR_ONMAP ) &&  !(xIS_SET( location->room_flags, ROOM_MAP )) )
       REMOVE_PLR_FLAG( ch, PLR_ONMAP );
-   else if( !IS_PLR_FLAG( ch, PLR_ONMAP ) && IS_ROOM_FLAG( original, ROOM_MAP ) )
+   else if( !IS_PLR_FLAG( ch, PLR_ONMAP ) &&  xIS_SET( location->room_flags, ROOM_MAP )  )
       SET_PLR_FLAG( ch, PLR_ONMAP );
 
    ch->map = origmap;
