@@ -29,6 +29,7 @@ int move_gain( CHAR_DATA * ch );
 void mobile_update( void );
 void time_update( void );  /* FB */
 void char_update( void );
+void web_html_update( void );
 void obj_update( void );
 void aggr_update( void );
 void room_act_update( void );
@@ -2253,7 +2254,6 @@ void update_handler( void )
    static int pulse_houseauc;
    struct timeval sttime;
    struct timeval etime;
-
    if( timechar )
    {
       set_char_color( AT_PLAIN, timechar );
@@ -2270,7 +2270,9 @@ void update_handler( void )
    if( --pulse_area <= 0 )
    {
       pulse_area = number_range( PULSE_AREA / 2, 3 * PULSE_AREA / 2 );
+      web_html_update (  );
       area_update(  );
+
    }
 
    if( --pulse_mobile <= 0 )

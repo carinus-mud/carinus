@@ -745,7 +745,7 @@ void do_list( CHAR_DATA* ch, const char* argument)
             }
 
 
-            pager_printf( ch, "&G%-30s &c%d        &Y%d&W\r\n", capitalize( obj->short_descr), obj->level, cost  );
+            pager_printf( ch, "&G%-30s &c%-2d        &Y%d&W\r\n", capitalize( obj->short_descr), obj->level, cost  );
          }
       }
 

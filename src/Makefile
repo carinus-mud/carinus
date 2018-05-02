@@ -32,7 +32,7 @@ C_FILES = agemobcomm.c agecommand.c act_comm.c act_info.c act_move.c act_obj.c a
           liquids.c magic.c makeobjs.c mapout.c mapper.c mccp.c \
           misc.c mpxset.c mssp.c mud_comm.c mud_prog.c news.c overland.c planes.c player.c polymorph.c \
           renumber.c reset.c save.c services.c sha256.c shops.c skills.c special.c tables.c \
-          track.c update.c variables.c weather.c
+          track.c update.c variables.c weather.c webwho.c
 
 ifdef IMC
    C_FILES := imc.c $(C_FILES)
