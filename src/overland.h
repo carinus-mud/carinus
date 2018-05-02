@@ -86,7 +86,10 @@ struct landmark_data
 {
    LANDMARK_DATA *next;
    LANDMARK_DATA *prev;
-   char *description;   /* Description of the landmark */
+   //
+   // Switched description from char* to const char* to clean up invalid cast from fp_read (const char*) in overland.c KEY macro with fread_landmark - tekmunkey
+   //
+   const char *description;   /* Description of the landmark */
    int distance;  /* Distance the landmark is visible from */
    short map;  /* Map the landmark is on */
    short x; /* X coordinate of landmark */
@@ -98,7 +101,10 @@ struct entrance_data
 {
    ENTRANCE_DATA *next;
    ENTRANCE_DATA *prev;
-   char *area; /* Area name */
+   //
+   // Switched area from char* to const char* to clean up invalid cast from fp_read (const char*) in overland.c KEY macro with fread_entrance - tekmunkey
+   //
+   const char *area; /* Area name */
    int vnum;   /* Target vnum if it goes to a regular zone */
    short herex;   /* Coordinates the entrance is at */
    short herey;
@@ -181,4 +187,5 @@ int get_sectypes( char *sector );
 void atmob( CHAR_DATA * ch, CHAR_DATA * wch, char *argument );
 void atobj( CHAR_DATA * ch, OBJ_DATA * obj, char *argument );
 int get_continent( char *continent );
+
 

@@ -690,7 +690,7 @@ void reset_room( ROOM_INDEX_DATA * room )
                obj->count = pReset->arg2;
                obj->level = UMIN( obj->level, LEVEL_AVATAR );
                obj->cost = 0;
-               obj_to_room( obj, pRoomIndex );
+               obj_to_room( obj, pRoomIndex, NULL );
             }
             else
             {
@@ -841,7 +841,7 @@ void reset_room( ROOM_INDEX_DATA * room )
                    || count_obj_list( get_obj_index( OBJ_VNUM_TRAP ), pRoomIndex->first_content ) > 0 )
                   break;
                to_obj = make_trap( pReset->arg1, pReset->arg1, 10, pReset->extra );
-               obj_to_room( to_obj, pRoomIndex );
+               obj_to_room( to_obj, pRoomIndex, NULL );
             }
             break;
 

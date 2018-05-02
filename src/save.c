@@ -2249,11 +2249,11 @@ void fread_obj( CHAR_DATA * ch, FILE * fp, short os_type )
                         obj->timer = 40;
                      if( room->vnum == ROOM_VNUM_HALLOFFALLEN && obj->first_content )
                         obj->timer = -1;
-                     obj = obj_to_room( obj, room );
+                     obj = obj_to_room( obj, room, ch );
                   }
                   else if( os_type == OS_VAULT && room )
                   {
-                     obj = obj_to_room( obj, room );
+                     obj = obj_to_room( obj, room, ch );
                   }
                   else if( iNest == 0 || rgObjNest[iNest] == NULL )
                   {

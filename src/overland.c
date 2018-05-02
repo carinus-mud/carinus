@@ -2587,7 +2587,10 @@ ch_ret process_exit( CHAR_DATA * ch, short map, short x, short y, int dir )
    char buf[MAX_STRING_LENGTH];
    short sector = get_terrain( map, x, y );
    char *txt;
-   char *dtxt;
+   //
+   // Switched dtxt from char* to const char* to clean up invalid cast from const char* to char* at dtxt=rev_exit(dir)
+   //
+   const char *dtxt;
    bool drunk = FALSE;
    CHAR_DATA *fch;
    CHAR_DATA *nextinroom;
@@ -3750,4 +3753,5 @@ void atobj( CHAR_DATA * ch, OBJ_DATA * obj, char *argument )
    }
    return;
 }
+
 

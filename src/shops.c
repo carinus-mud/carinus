@@ -73,7 +73,7 @@ CHAR_DATA *find_keeper( CHAR_DATA * ch )
 
    if( who_fighting( ch ) )
    {
-      ch_printf( ch, "%s doesn't seem to want to get involved.\r\n", PERS( keeper, ch ) );
+      ch_printf( ch, "%s doesn't seem to want to get involved.\r\n", PERS( keeper, ch, FALSE ) );
       return NULL;
    }
 
@@ -118,7 +118,7 @@ CHAR_DATA *find_keeper( CHAR_DATA * ch )
    /*
     * Invisible or hidden people.
     */
-   if( !can_see( keeper, ch ) )
+   if( !can_see( keeper, ch, FALSE ) )
    {
       do_say( keeper, "I don't trade with folks I can't see." );
       return NULL;
@@ -201,7 +201,7 @@ CHAR_DATA *find_fixer( CHAR_DATA * ch )
     */
    if( !IS_NPC( ch ) && who_fighting( ch ) )
    {
-      ch_printf( ch, "%s doesn't seem to want to get involved.\r\n", PERS( keeper, ch ) );
+       send_to_char("They do not want to get involved.\r\n", ch);
       return NULL;
    }
 
@@ -246,7 +246,7 @@ CHAR_DATA *find_fixer( CHAR_DATA * ch )
    /*
     * Invisible or hidden people.
     */
-   if( !can_see( keeper, ch ) )
+   if( !can_see( keeper, ch, FALSE ) )
    {
       do_say( keeper, "I don't trade with folks I can't see." );
       return NULL;

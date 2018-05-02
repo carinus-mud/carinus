@@ -3017,7 +3017,6 @@ void do_meditate( CHAR_DATA * ch, const char *argument )
    switch ( ch->in_room->sector_type )
    {
       case SECT_INSIDE:
-      case SECT_DUNNO:
       case SECT_UNDERGROUND:
       default:
          break;
@@ -3123,7 +3122,6 @@ void do_trance( CHAR_DATA * ch, const char *argument )
 
    switch ( ch->in_room->sector_type )
    {
-      case SECT_DUNNO:
       case SECT_UNDERGROUND:
       default:
          break;
@@ -3564,7 +3562,7 @@ void do_bloodlet( CHAR_DATA* ch, const char* argument)
       obj = create_object( get_obj_index( OBJ_VNUM_BLOODLET ), 0 );
       obj->timer = 1;
       obj->value[1] = 6;
-      obj_to_room( obj, ch->in_room );
+      obj_to_room( obj, ch->in_room, ch );
       damage( ch, ch, ch->level / 5, gsn_bloodlet );
    }
    else
@@ -3715,7 +3713,7 @@ void disarm( CHAR_DATA * ch, CHAR_DATA * victim )
       obj->action_desc = STRALLOC( "" );
    }
    else
-      obj_to_room( obj, victim->in_room );
+      obj_to_room( obj, victim->in_room, victim );
 
    return;
 }
@@ -5233,7 +5231,7 @@ void do_hitall( CHAR_DATA* ch, const char* argument)
    for( vch = ch->in_room->first_person; vch; vch = vch_next )
    {
       vch_next = vch->next_in_room;
-      if( is_same_group( ch, vch ) || !is_legal_kill( ch, vch ) || !can_see( ch, vch ) || is_safe( ch, vch, TRUE ) )
+      if( is_same_group( ch, vch ) || !is_legal_kill( ch, vch ) || !can_see( ch, vch, FALSE ) || is_safe( ch, vch, TRUE ) )
          continue;
       if( ++nvict > ch->level / 5 )
          break;
@@ -5595,7 +5593,7 @@ ch_ret ranged_got_target( CHAR_DATA * ch, CHAR_DATA * victim, OBJ_DATA * weapon,
                obj_from_obj( projectile );
             if( projectile->carried_by )
                obj_from_char( projectile );
-            obj_to_room( projectile, victim->in_room );
+            obj_to_room( projectile, victim->in_room, ch );
          }
       }
       return damage( ch, victim, 0, dt );
@@ -5626,7 +5624,7 @@ ch_ret ranged_got_target( CHAR_DATA * ch, CHAR_DATA * victim, OBJ_DATA * weapon,
                obj_from_obj( projectile );
             if( projectile->carried_by )
                obj_from_char( projectile );
-            obj_to_room( projectile, victim->in_room );
+            obj_to_room( projectile, victim->in_room, victim );
          }
       }
    }
@@ -5966,7 +5964,7 @@ ch_ret ranged_attack( CHAR_DATA * ch, const char *argument, OBJ_DATA * weapon, O
                obj_from_obj( projectile );
             if( projectile->carried_by )
                obj_from_char( projectile );
-            obj_to_room( projectile, ch->in_room );
+            obj_to_room( projectile, ch->in_room, ch );
          }
          else
          {
@@ -5986,7 +5984,7 @@ ch_ret ranged_attack( CHAR_DATA * ch, const char *argument, OBJ_DATA * weapon, O
                obj_from_obj( projectile );
             if( projectile->carried_by )
                obj_from_char( projectile );
-            obj_to_room( projectile, ch->in_room );
+            obj_to_room( projectile, ch->in_room, ch );
          }
          else
          {
