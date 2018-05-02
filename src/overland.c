@@ -923,7 +923,7 @@ void do_survey( CHAR_DATA * ch, char *argument )
 
          if( IS_IMMORTAL( ch ) )
          {
-            ch_printf( ch, "Distance to landmark: %d\r\n", dist );
+            ch_printf( ch, "Distance to landmark: %lf\r\n", dist );
             ch_printf( ch, "Landmark coordinates: %dX %dY\r\n", landmark->x, landmark->y );
          }
       }
