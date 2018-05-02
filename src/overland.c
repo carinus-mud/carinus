@@ -3664,7 +3664,7 @@ void atmob( CHAR_DATA * ch, CHAR_DATA * wch, char *argument )
    char_to_room( ch, location );
    interpret( ch, argument );
 
-   if( IS_PLR_FLAG( ch, PLR_ONMAP ) &&  if(!( xIS_SET( location->room_flags, ROOM_MAP ))) )
+   if( IS_PLR_FLAG( ch, PLR_ONMAP ) &&  !( xIS_SET( location->room_flags, ROOM_MAP )) )
       REMOVE_PLR_FLAG( ch, PLR_ONMAP );
    else if( !IS_PLR_FLAG( ch, PLR_ONMAP ) &&  xIS_SET( location->room_flags, ROOM_MAP ) )
       SET_PLR_FLAG( ch, PLR_ONMAP );
