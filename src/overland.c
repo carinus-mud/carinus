@@ -1762,6 +1762,7 @@ void do_mapresets( CHAR_DATA * ch, char *argument )
    MAPRESET_DATA *reset;
    MOB_INDEX_DATA *mobindex;
    OBJ_INDEX_DATA *objindex;
+   char log_buf[MAX_STRING_LENGTH];
 
    send_to_pager( "&gType     Vnum   Name                      Map         Coordinates\r\n", ch );
    send_to_pager( "-----------------------------------------------------------------\r\n", ch );
@@ -1966,6 +1967,7 @@ void load_mapfile( char *mapfile, short mapnumber )
    char filename[256];
    short graph1, graph2, graph3, x, y, z;
    short terr = SECT_OCEAN;
+   char log_buf[MAX_STRING_LENGTH];
 
    snprintf( log_buf, MAX_STRING_LENGTH, "Loading continent of %s.....", map_names[mapnumber] );
    log_string( log_buf );
@@ -2236,9 +2238,6 @@ void display_map( CHAR_DATA * ch )
       if( time_info.hour == HOUR_SUNRISE || time_info.hour == HOUR_SUNSET )
          mod = 4;
 
-      if( ( ch->in_room->area->weather->precip + 3 * weath_unit - 1 ) / weath_unit > 1 && mod != 1 )
-         mod -= 1;
-
       if( time_info.hour > HOUR_SUNSET || time_info.hour < HOUR_SUNRISE )
          mod = 2;
 
@@ -2375,6 +2374,7 @@ void check_random_mobs( CHAR_DATA * ch )
    CHAR_DATA *mob = NULL;
    int vnum = -1;
    int terrain = get_terrain( ch->map, ch->x, ch->y );
+   char log_buf[MAX_STRING_LENGTH];
 
    /*
     * This could ( and did ) get VERY messy
@@ -2435,8 +2435,6 @@ void map_scan( CHAR_DATA * ch )
    if( time_info.hour == HOUR_SUNRISE || time_info.hour == HOUR_SUNSET )
       mod = 4;
 
-   if( ( ch->in_room->area->weather->precip + 3 * weath_unit - 1 ) / weath_unit > 1 && mod != 1 )
-      mod -= 1;
 
    if( time_info.hour > HOUR_SUNSET || time_info.hour < HOUR_SUNRISE )
       mod = 1;
