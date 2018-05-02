@@ -878,7 +878,7 @@ void mobile_update( void )
           && !xIS_SET( pexit->to_room->room_flags, ROOM_DEATH )
           && ( !xIS_SET( ch->act, ACT_STAY_AREA ) || pexit->to_room->area == ch->in_room->area ) )
       {
-         retcode = move_char( ch, pexit, 0 );
+         retcode = move_char( ch, pexit, 0, pexit->vdir );
          /*
           * If ch changes position due
           * to it's or someother mob's
@@ -933,7 +933,7 @@ void mobile_update( void )
             }
          }
          if( found )
-            retcode = move_char( ch, pexit, 0 );
+            retcode = move_char( ch, pexit, 0, pexit->vdir );
       }
    }
    trworld_dispose( &lc );
@@ -981,7 +981,7 @@ void char_calendar_update( void )
 	   }
          }
       }
-   }
+   
    trworld_dispose( &lc );
 }
 
@@ -1789,7 +1789,7 @@ void char_check( void )
                 && !xIS_SET( pexit->to_room->room_flags, ROOM_DEATH )
                 && ( !xIS_SET( ch->act, ACT_STAY_AREA ) || pexit->to_room->area == ch->in_room->area ) )
             {
-               retcode = move_char( ch, pexit, 0 );
+               retcode = move_char( ch, pexit, 0, pexit->vdir );
                if( char_died( ch ) )
                   continue;
                if( retcode != rNONE || xIS_SET( ch->act, ACT_SENTINEL ) || ch->position < POS_STANDING )
@@ -1887,7 +1887,7 @@ void char_check( void )
                if( !IS_NPC( wch )
                    || wch->fighting
                    || IS_AFFECTED( wch, AFF_CHARM )
-                   || !IS_AWAKE( wch ) || ( xIS_SET( wch->act, ACT_WIMPY ) && IS_AWAKE( ch ) ) || !can_see( wch, ch ) )
+                   || !IS_AWAKE( wch ) || ( xIS_SET( wch->act, ACT_WIMPY ) && IS_AWAKE( ch ) ) || !can_see( wch, ch, FALSE ) )
                   continue;
 
                if( is_hating( wch, ch ) )
@@ -1977,7 +1977,7 @@ void aggr_update( void )
          if( !IS_NPC( ch )
              || ch->fighting
              || IS_AFFECTED( ch, AFF_CHARM )
-             || !IS_AWAKE( ch ) || ( xIS_SET( ch->act, ACT_WIMPY ) && IS_AWAKE( wch ) ) || !can_see( ch, wch ) )
+             || !IS_AWAKE( ch ) || ( xIS_SET( ch->act, ACT_WIMPY ) && IS_AWAKE( wch ) ) || !can_see( ch, wch, FALSE ) )
             continue;
 
          if( is_hating( ch, wch ) )
@@ -2005,7 +2005,7 @@ void aggr_update( void )
             if( ( !IS_NPC( vch ) || xIS_SET( ch->act, ACT_META_AGGR )
                   || xIS_SET( vch->act, ACT_ANNOYING ) )
                 && vch->level < LEVEL_IMMORTAL
-                && ( !xIS_SET( ch->act, ACT_WIMPY ) || !IS_AWAKE( vch ) ) && can_see( ch, vch ) )
+                && ( !xIS_SET( ch->act, ACT_WIMPY ) || !IS_AWAKE( vch ) ) && can_see( ch, vch, FALSE ) )
             {
                if( number_range( 0, count ) == 0 )
                   victim = vch;
@@ -2511,7 +2511,7 @@ void auction_update( void )
                     NULL, TO_CHAR );
                act( AT_PLAIN, "$n is carrying too much to also carry $p, and $e drops it.", auction->buyer, auction->item,
                     NULL, TO_ROOM );
-               obj_to_room( auction->item, auction->buyer->in_room );
+               obj_to_room( auction->item, auction->buyer->in_room, NULL );
             }
             else
                obj_to_char( auction->item, auction->buyer );
@@ -2540,7 +2540,7 @@ void auction_update( void )
             {
                act( AT_PLAIN, "You drop $p as it is just too much to carry with everything else you're carrying.", auction->seller, auction->item, NULL, TO_CHAR );
                act( AT_PLAIN, "$n drops $p as it is too much extra weight for $m with everything else.", auction->seller, auction->item, NULL, TO_ROOM );
-               obj_to_room( auction->item, auction->seller->in_room );
+               obj_to_room( auction->item, auction->seller->in_room, NULL );
             }
             else
                obj_to_char( auction->item, auction->seller );

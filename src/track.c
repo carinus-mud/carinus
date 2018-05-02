@@ -261,7 +261,7 @@ void found_prey( CHAR_DATA * ch, CHAR_DATA * victim )
 
    mudstrlcpy( victname, IS_NPC( victim ) ? victim->short_descr : victim->name, MAX_STRING_LENGTH );
 
-   if( !can_see( ch, victim ) )
+   if( !can_see( ch, victim, FALSE ) )
    {
       if( number_percent(  ) < 90 )
          return;
@@ -387,7 +387,7 @@ void hunt_victim( CHAR_DATA * ch )
          bug( "%s", "Hunt_victim: lost exit?" );
          return;
       }
-      move_char( ch, pexit, FALSE );
+      move_char( ch, pexit, FALSE, pexit->vdir );
 
       /*
        * Crash bug fix by Shaddai 

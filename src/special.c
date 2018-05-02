@@ -297,7 +297,7 @@ bool spec_cast_adept( CHAR_DATA * ch )
    for( victim = ch->in_room->first_person; victim; victim = v_next )
    {
       v_next = victim->next_in_room;
-      if( victim != ch && can_see( ch, victim ) && number_bits( 1 ) == 0 )
+      if( victim != ch && can_see( ch, victim, FALSE ) && number_bits( 1 ) == 0 )
          break;
    }
 
@@ -680,7 +680,7 @@ bool spec_fido( CHAR_DATA * ch )
       {
          obj_next = obj->next_content;
          obj_from_obj( obj );
-         obj_to_room( obj, ch->in_room );
+         obj_to_room( obj, ch->in_room, ch );
       }
       extract_obj( corpse );
       return TRUE;
@@ -825,7 +825,7 @@ bool spec_mayor( CHAR_DATA * ch )
       case '1':
       case '2':
       case '3':
-         move_char( ch, get_exit( ch->in_room, path[pos] - '0' ), 0 );
+         move_char( ch, get_exit( ch->in_room, path[pos] - '0' ), 0, path[pos] );
          break;
 
       case 'W':
@@ -913,7 +913,7 @@ bool spec_thief( CHAR_DATA * ch )
    {
       v_next = victim->next_in_room;
 
-      if( IS_NPC( victim ) || victim->level >= LEVEL_IMMORTAL || number_bits( 2 ) != 0 || !can_see( ch, victim ) )   /* Thx Glop */
+      if( IS_NPC( victim ) || victim->level >= LEVEL_IMMORTAL || number_bits( 2 ) != 0 || !can_see( ch, victim, FALSE ) )   /* Thx Glop */
          continue;
 
       if( IS_AWAKE( victim ) && number_range( 0, ch->level ) == 0 )
@@ -1061,7 +1061,7 @@ bool spec_wanderer( CHAR_DATA * ch )
                   separate_obj( trash );
                   act( AT_ACTION, "$n growls and throws $p $T.", ch, trash, dir_name[pexit->vdir], TO_ROOM );
                   obj_from_char( trash );
-                  obj_to_room( trash, pexit->to_room );
+                  obj_to_room( trash, pexit->to_room, NULL );
                   char_from_room( ch );
                   char_to_room( ch, pexit->to_room );
                   act( AT_CYAN, "$p thrown by $n lands in the room.", ch, trash, ch, TO_ROOM );
