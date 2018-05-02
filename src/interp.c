@@ -489,7 +489,7 @@ void interpret( CHAR_DATA * ch, char *argument )
                return;
             }
             if( check_pos( ch, POS_STANDING ) )
-               move_char( ch, pexit, 0 );
+               move_char( ch, pexit, 0, pexit->vdir );
             return;
          }
          send_to_char( "Huh?\r\n", ch );
@@ -669,7 +669,7 @@ bool check_social( CHAR_DATA * ch, const char *command, const char *argument )
          else
          {
             set_char_color( AT_IGNORE, victim );
-            ch_printf( victim, "You attempt to ignore %s, but are unable to do so.\r\n", !can_see( victim, ch ) ? "Someone" : ch->name );
+            ch_printf( victim, "You attempt to ignore %s, but are unable to do so.\r\n", !can_see( victim, ch, FALSE ) ? "Someone" : ch->name );
          }
       }
    }

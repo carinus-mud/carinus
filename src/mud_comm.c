@@ -878,7 +878,7 @@ void do_mpoload( CHAR_DATA* ch, const char* argument)
    if( CAN_WEAR( obj, ITEM_TAKE ) && ch != supermob )
       obj_to_char( obj, ch );
    else
-      obj_to_room( obj, ch->in_room );
+      obj_to_room( obj, ch->in_room, ch );
 
    return;
 }
@@ -1092,23 +1092,27 @@ void do_mppurge( CHAR_DATA* ch, const char* argument)
 
    one_argument( argument, arg );
 
-   if( arg[0] == '\0' )
-   {
-      /*
-       * 'purge' 
-       */
-      CHAR_DATA *vnext;
+    if ( arg[0] == '\0' )
+    {
+	/* 'purge' */
+	CHAR_DATA *vnext;
+	OBJ_DATA *obj_next;
 
-      for( victim = ch->in_room->first_person; victim; victim = vnext )
-      {
-         vnext = victim->next_in_room;
-         if( IS_NPC( victim ) && victim != ch )
-            extract_char( victim, TRUE );
-      }
-      while( ch->in_room->first_content )
-         extract_obj( ch->in_room->first_content );
-      return;
-   }
+	for ( victim = ch->in_room->first_person; victim; victim = vnext )
+	{
+	    vnext = victim->next_in_room;
+	    if ( IS_NPC( victim ) && victim != ch && is_same_map( victim, ch ) )
+	      extract_char( victim, TRUE );
+	}
+	for( obj = ch->in_room->first_content; obj; obj = obj_next )
+	{
+	   obj_next = obj->next_content;
+
+	   if( ch->map == obj->map && ch->x == obj->x && ch->y == obj->y )
+	      extract_obj( obj );
+	}
+	return;
+    }
 
    if( ( victim = get_char_room( ch, arg ) ) == NULL )
    {
@@ -1482,7 +1486,7 @@ void do_mptransfer( CHAR_DATA* ch, const char* argument)
       {
          ChNext = victim->prev_in_room;
 
-         if( victim == ch || NOT_AUTHED( victim ) || !can_see( ch, victim ) || !in_hard_range( victim, destination->area ) )
+         if( victim == ch || NOT_AUTHED( victim ) || !can_see( ch, victim, FALSE ) || !in_hard_range( victim, destination->area ) )
             continue;
 
          if( victim->fighting )
@@ -1501,7 +1505,7 @@ void do_mptransfer( CHAR_DATA* ch, const char* argument)
       {
          if( !d->character
              || ( d->connected != CON_PLAYING && d->connected != CON_EDITING )
-             || !can_see( ch, d->character )
+             || !can_see( ch, d->character, FALSE )
              || !d->character->in_room
              || ch->in_room->area != d->character->in_room->area
              || NOT_AUTHED( d->character ) || !in_hard_range( d->character, destination->area ) )
@@ -1599,7 +1603,7 @@ void do_mpforce( CHAR_DATA* ch, const char* argument)
 
       for( vch = ch->in_room->first_person; vch; vch = vch->next_in_room )
       {
-         if( !IS_IMMORTAL( vch ) && can_see( ch, vch ) )
+         if( !IS_IMMORTAL( vch ) && can_see( ch, vch, FALSE ) )
          {
             mst = vch->mental_state;
             vch->mental_state = 0;
@@ -2129,7 +2133,7 @@ void do_mpstrew( CHAR_DATA* ch, const char* argument)
       {
          obj_next = obj_lose->next_content;
          obj_from_char( obj_lose );
-         obj_to_room( obj_lose, pRoomIndex );
+         obj_to_room( obj_lose, pRoomIndex, ch );
          pager_printf_color( ch, "\t&w%s sent to %d\r\n", capitalize( obj_lose->short_descr ), pRoomIndex->vnum );
       }
       return;
@@ -2318,7 +2322,7 @@ void do_mp_damage( CHAR_DATA* ch, const char* argument)
       for( victim = ch->in_room->first_person; victim; victim = nextinroom )
       {
          nextinroom = victim->next_in_room;
-         if( victim != ch && can_see( ch, victim ) )  /* Could go either way */
+         if( victim != ch && can_see( ch, victim, FALSE ) )  /* Could go either way */
          {
             snprintf( buf, MAX_STRING_LENGTH, "'%s' %s", victim->name, arg2 );
             do_mp_damage( ch, buf );

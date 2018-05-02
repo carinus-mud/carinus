@@ -24,7 +24,6 @@
 #ifdef __cplusplus
 #include <typeinfo>
 #endif
-
 #ifdef WIN32
 #include <winsock.h>
 #include <sys/types.h>
@@ -211,7 +210,7 @@ typedef bool SPEC_FUN( CHAR_DATA * ch );
  * String and memory management parameters.
  */
 #define MAX_KEY_HASH		 2048
-#define MAX_STRING_LENGTH	 4096 /* buf */
+#define MAX_STRING_LENGTH	 8192 /* buf */
 #define MAX_INPUT_LENGTH	 1024 /* arg */
 #define MAX_INBUF_SIZE		 1024
 #define MSL                    MAX_STRING_LENGTH 
@@ -277,6 +276,7 @@ extern bool mud_down;
 
 #define LEVEL_LOG		    LEVEL_LESSER
 #define LEVEL_HIGOD		    LEVEL_GOD
+#include "overland.h"
 /* This is to tell if act uses uppercasestring or not --Shaddai */
 extern bool DONT_UPPER;
 
@@ -310,7 +310,7 @@ Version 3: Stock 1.8 areas.
 
 // This value has been reset due to the new KEY/Value based area format.
 // It will not conflict with the above former area file versions.
-#define AREA_VERSION_WRITE 1
+#define AREA_VERSION_WRITE 2
 
 /*
  * Command logging types.
@@ -765,6 +765,7 @@ typedef enum
    SUB_HELP_EDIT, SUB_WRITING_MAP, SUB_PERSONAL_BIO, SUB_REPEATCMD,
    SUB_RESTRICTED, SUB_DEITYDESC, SUB_MORPH_DESC, SUB_MORPH_HELP,
    SUB_PROJ_DESC, SUB_NEWS_POST, SUB_NEWS_EDIT, SUB_JOURNAL_WRITE,
+   SUB_OVERLAND_DESC,
    /*
     * timer types ONLY below this point 
     */
@@ -1367,7 +1368,8 @@ struct smaug_affect
 #define ACT_STATSHIELD     29 /* prevent statting */
 #define ACT_PROTOTYPE      30 /* A prototype mob   */
 #define ACT_BANKER	   31 /*banker mob */
-/* 32 acts */
+#define ACT_ONMAP	   32
+/* 33 acts */
 
 /*
  * Bits for 'affected_by'.
@@ -1710,7 +1712,7 @@ typedef enum
    ITEM_HIDDEN, ITEM_POISONED, ITEM_COVERING, ITEM_DEATHROT, ITEM_BURIED,
    ITEM_PROTOTYPE, ITEM_NOLOCATE, ITEM_GROUNDROT, ITEM_LOOTABLE, ITEM_PERSONAL,
    ITEM_MULTI_INVOKE, ITEM_ENCHANTED, ITEM_PERMANENT, ITEM_NOFILL, ITEM_DEATHDROP,
-   ITEM_DECAPITATED, MAX_ITEM_FLAG
+   ITEM_DECAPITATED, ITEM_ONMAP, MAX_ITEM_FLAG
 } item_extra_flags;
 
 /* Magic flags - extra extra_flags for objects that are used in spells */
@@ -1871,7 +1873,8 @@ typedef enum
    ROOM_NO_RECALL, ROOM_DONATION, ROOM_NODROPALL, ROOM_SILENCE, ROOM_LOGSPEECH, ROOM_NODROP,
    ROOM_CLANSTOREROOM, ROOM_NO_SUMMON, ROOM_NO_ASTRAL, ROOM_TELEPORT, ROOM_TELESHOWDESC,
    ROOM_NOFLOOR, ROOM_NOSUPPLICATE, ROOM_ARENA, ROOM_NOMISSILE, ROOM_NOYELL, ROOM_NOQUIT,
-   ROOM_PROTOTYPE, ROOM_DND, ROOM_TRACK, ROOM_NOWHERE, ROOM_NOTRACK, ROOM_FOG, ROOM_MAX
+   ROOM_PROTOTYPE, ROOM_DND, ROOM_TRACK, ROOM_NOWHERE, ROOM_NOTRACK, ROOM_FOG, ROOM_MAP,
+   ROOM_MAX
 } room_flags;
 
 /*
@@ -1938,7 +1941,8 @@ typedef enum
 #define EX_xLOOK		  BV26
 #define EX_ISBOLT		  BV27
 #define EX_BOLTED		  BV28
-#define MAX_EXFLAG		  28
+#define EX_OVERLAND		  BV29
+#define MAX_EXFLAG		  29
 
 /*
  * Sector types.
@@ -1947,8 +1951,14 @@ typedef enum
 typedef enum
 {
    SECT_INSIDE, SECT_CITY, SECT_FIELD, SECT_FOREST, SECT_HILLS, SECT_MOUNTAIN,
-   SECT_WATER_SWIM, SECT_WATER_NOSWIM, SECT_UNDERWATER, SECT_AIR, SECT_DESERT,
-   SECT_DUNNO, SECT_OCEANFLOOR, SECT_UNDERGROUND, SECT_LAVA, SECT_SWAMP, SECT_ICE,
+   SECT_WATER_SWIM, SECT_WATER_NOSWIM, SECT_AIR, SECT_UNDERWATER, SECT_DESERT,
+   SECT_RIVER, SECT_OCEANFLOOR, SECT_UNDERGROUND, SECT_JUNGLE, SECT_SWAMP,
+   SECT_TUNDRA, SECT_ICE, SECT_OCEAN, SECT_LAVA, SECT_SHORE, SECT_TREE, SECT_STONE,
+   SECT_QUICKSAND, SECT_WALL, SECT_GLACIER, SECT_EXIT, SECT_TRAIL, SECT_BLANDS,
+   SECT_GRASSLAND, SECT_SCRUB, SECT_BARREN, SECT_BRIDGE, SECT_ROAD,
+#ifdef DRAGONFLIGHT
+   SECT_LANDING,
+#endif
    SECT_MAX
 } sector_types;
 
@@ -2010,7 +2020,8 @@ typedef enum
    PLR_TELNET_GA, PLR_HOLYLIGHT, PLR_WIZINVIS, PLR_ROOMVNUM, PLR_SILENCE,
    PLR_NO_EMOTE, PLR_ATTACKER, PLR_NO_TELL, PLR_LOG, PLR_DENY, PLR_FREEZE,
    PLR_THIEF, PLR_KILLER, PLR_LITTERBUG, PLR_ANSI, PLR_RIP, PLR_NICE, PLR_FLEE,
-   PLR_AUTOGOLD, PLR_AUTOMAP, PLR_AFK, PLR_INVISPROMPT, PLR_COMPASS
+   PLR_AUTOGOLD, PLR_AUTOMAP, PLR_AFK, PLR_INVISPROMPT, PLR_COMPASS, PLR_ONMAP,
+   PLR_MAPEDIT
 } player_flags;
 
 /* Bits for pc_data->flags. */
@@ -2291,6 +2302,10 @@ struct char_data
    short max_move;
    short practice;
    short numattacks;
+   short x; /* Coordinates on the overland map - Samson 7-31-99 */
+   short y;
+   short map; /* Which map are they on? - Samson 8-3-99 */
+   short sector; /* Type of terrain to restrict a wandering mob to on overland - Samson 7-27-00 */
    int gold;
    int exp;
    EXT_BV act;
@@ -2450,6 +2465,7 @@ struct pc_data
 #endif
    bool hotboot;  /* hotboot tracker */
    int timezone;
+   short secedit; /* Overland Map OLC - Samson 8-1-99 */
 };
 
 /*
@@ -2545,6 +2561,9 @@ struct obj_data
    short count;   /* support for object grouping */
    int serial; /* serial number         */
    int room_vnum; /* hotboot tracker */
+   short x; /* Object coordinates on overland maps - Samson 8-21-99 */
+   short y;
+   short map; /* Which map is it on? - Samson 8-21-99 */
 };
 
 /*
@@ -2566,6 +2585,10 @@ struct exit_data
    short distance;   /* how far to the next room   */
    short pull; /* pull of direction (current)   */
    short pulltype;   /* type of pull (current, wind)  */
+   short x; /* Coordinates on the overland map - Samson 7-31-99 */
+   short y;
+   short map; /* Which map are they on? - Samson 8-3-99 */
+   short sector; /* Type of terrain to restrict a wandering mob to on overland - Samson 7-27-00 */
 };
 
 /*
@@ -2662,7 +2685,7 @@ struct area_data
    short version;
    short weatherx; /* Weather Cell Assignment for the X-Axis */
    short weathery; /* Weather Cell Assignment for the Y-Axis */
-};
+   short continent; /* Added for Overland support - Samson 9-16-00 */};
 
 /*
  * Load in the gods building data. -- Altrag
@@ -3450,14 +3473,13 @@ do								\
 /*
  * Description macros.
  */
-#define PERS(ch, looker)	( can_see( (looker), (ch) ) ?		\
+#define PERS(ch, looker, from)	( can_see( (looker), (ch), (from) ) ?		\
 				( IS_NPC(ch) ? (ch)->short_descr	\
 				: (ch)->name ) : "someone" )
 
-#define MORPHPERS(ch, looker)   ( can_see( (looker), (ch) ) ?           \
+#define MORPHPERS(ch, looker, from)   ( can_see( (looker), (ch), (from) ) ?           \
                                 (ch)->morph->morph->short_desc       \
                                 : "someone" )
-
 #define log_string(txt)		( log_string_plus( (txt), LOG_NORMAL, LEVEL_LOG ) )
 #define dam_message(ch, victim, dam, dt)	( new_dam_message((ch), (victim), (dam), (dt), NULL) )
 
@@ -3691,6 +3713,8 @@ extern IMMORTAL_HOST *immortal_host_end;
 
 extern AUCTION_DATA *auction;
 extern struct act_prog_data *mob_act_list;
+
+
 
 /*
  * Command functions.
@@ -4043,7 +4067,6 @@ DECLARE_DO_FUN( do_savearea );
 DECLARE_DO_FUN( do_say );
 DECLARE_DO_FUN( do_say_to );
 DECLARE_DO_FUN( do_scan );
-DECLARE_DO_FUN( do_scatter );
 DECLARE_DO_FUN( do_score );
 DECLARE_DO_FUN( do_scribe );
 DECLARE_DO_FUN( do_search );
@@ -4457,7 +4480,7 @@ ED *find_door args( ( CHAR_DATA * ch, const char *arg, bool quiet ) );
 ED *get_exit args( ( ROOM_INDEX_DATA * room, short dir ) );
 ED *get_exit_to args( ( ROOM_INDEX_DATA * room, short dir, int vnum ) );
 ED *get_exit_num args( ( ROOM_INDEX_DATA * room, short count ) );
-ch_ret move_char args( ( CHAR_DATA * ch, EXIT_DATA * pexit, int fall ) );
+ch_ret move_char( CHAR_DATA *ch, EXIT_DATA *pexit, int fall, int direction );
 void teleport( CHAR_DATA * ch, int room, int flags );
 short encumbrance args( ( CHAR_DATA * ch, short move ) );
 bool will_fall args( ( CHAR_DATA * ch, int fall ) );
@@ -4837,7 +4860,7 @@ void affect_strip args( ( CHAR_DATA * ch, int sn ) );
 bool is_affected args( ( CHAR_DATA * ch, int sn ) );
 void affect_join args( ( CHAR_DATA * ch, AFFECT_DATA * paf ) );
 void char_from_room args( ( CHAR_DATA * ch ) );
-void char_to_room args( ( CHAR_DATA * ch, ROOM_INDEX_DATA * pRoomIndex ) );
+bool char_to_room args( ( CHAR_DATA * ch, ROOM_INDEX_DATA * pRoomIndex ) );
 OD *obj_to_char args( ( OBJ_DATA * obj, CHAR_DATA * ch ) );
 void obj_from_char args( ( OBJ_DATA * obj ) );
 int apply_ac args( ( OBJ_DATA * obj, int iWear ) );
@@ -4846,7 +4869,7 @@ void equip_char args( ( CHAR_DATA * ch, OBJ_DATA * obj, int iWear ) );
 void unequip_char args( ( CHAR_DATA * ch, OBJ_DATA * obj ) );
 int count_obj_list( OBJ_INDEX_DATA * pObjIndex, OBJ_DATA * list );
 void obj_from_room args( ( OBJ_DATA * obj ) );
-OD *obj_to_room args( ( OBJ_DATA * obj, ROOM_INDEX_DATA * pRoomIndex ) );
+OD *obj_to_room args( ( OBJ_DATA * obj, ROOM_INDEX_DATA * pRoomIndex, CHAR_DATA *ch ) );
 OD *obj_to_obj args( ( OBJ_DATA * obj, OBJ_DATA * obj_to ) );
 void obj_from_obj args( ( OBJ_DATA * obj ) );
 void extract_obj args( ( OBJ_DATA * obj ) );
@@ -4874,7 +4897,7 @@ bool room_is_dark( ROOM_INDEX_DATA * pRoomIndex );
 bool room_is_fog( ROOM_INDEX_DATA * pRoomIndex );
 bool room_is_private args( ( ROOM_INDEX_DATA * pRoomIndex ) );
 CD *room_is_dnd args( ( CHAR_DATA * ch, ROOM_INDEX_DATA * pRoomIndex ) );
-bool can_see args( ( CHAR_DATA * ch, CHAR_DATA * victim ) );
+bool can_see( CHAR_DATA *ch, CHAR_DATA *victim, bool override );	
 bool can_see_obj args( ( CHAR_DATA * ch, OBJ_DATA * obj ) );
 bool can_drop_obj args( ( CHAR_DATA * ch, OBJ_DATA * obj ) );
 const char *item_type_name args( ( OBJ_DATA * obj ) );

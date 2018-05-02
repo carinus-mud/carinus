@@ -794,7 +794,7 @@ void violence_update( void )
                   number = 0;
                   for( vch = ch->in_room->first_person; vch; vch = vch->next_in_room )
                   {
-                     if( can_see( rch, vch ) && is_same_group( vch, victim ) && number_range( 0, number ) == 0 )
+                     if( can_see( rch, vch, FALSE ) && is_same_group( vch, victim ) && number_range( 0, number ) == 0 )
                      {
                         if( vch->mount && vch->mount == rch )
                            target = NULL;
@@ -944,17 +944,17 @@ ch_ret multi_hit( CHAR_DATA * ch, CHAR_DATA * victim, int dt )
    if( number_percent(  ) < schance )
       retcode = one_hit( ch, victim, dt );
 
-   if( retcode == rNONE )
-   {
-      int move;
-
-      if( !IS_AFFECTED( ch, AFF_FLYING ) && !IS_AFFECTED( ch, AFF_FLOATING ) )
-         move = encumbrance( ch, movement_loss[UMIN( SECT_MAX - 1, ch->in_room->sector_type )] );
-      else
-         move = encumbrance( ch, 1 );
-      if( ch->move )
-         ch->move = UMAX( 0, ch->move - move );
-   }
+    if ( retcode == rNONE && !char_died(ch) )
+    {
+        int move;
+        
+        if ( !IS_AFFECTED(ch, AFF_FLYING) && !IS_AFFECTED(ch, AFF_FLOATING) )
+            move = encumbrance( ch, sect_show[ch->in_room->sector_type].move );
+        else
+            move = encumbrance( ch, 1 );
+        if ( ch->move > 0 )
+            ch->move = UMAX( 0, ch->move - move );
+    }
    return retcode;
 }
 
@@ -1203,7 +1203,7 @@ ch_ret one_hit( CHAR_DATA * ch, CHAR_DATA * victim, int dt )
     */
    if( wield && !can_see_obj( victim, wield ) )
       victim_ac += 1;
-   if( !can_see( ch, victim ) )
+   if( !can_see( ch, victim, FALSE ) )
       victim_ac -= 4;
 
    /*
@@ -1562,7 +1562,7 @@ ch_ret projectile_hit( CHAR_DATA * ch, CHAR_DATA * victim, OBJ_DATA * wield, OBJ
     */
    if( !can_see_obj( victim, projectile ) )
       victim_ac += 1;
-   if( !can_see( ch, victim ) )
+   if( !can_see( ch, victim, FALSE ) )
       victim_ac -= 4;
 
    /*
@@ -1595,7 +1595,7 @@ ch_ret projectile_hit( CHAR_DATA * ch, CHAR_DATA * victim, OBJ_DATA * wield, OBJ
             obj_from_obj( projectile );
          if( projectile->carried_by )
             obj_from_char( projectile );
-         obj_to_room( projectile, victim->in_room );
+         obj_to_room( projectile, victim->in_room, ch );
       }
       damage( ch, victim, 0, dt );
       tail_chain(  );
@@ -1748,7 +1748,7 @@ ch_ret projectile_hit( CHAR_DATA * ch, CHAR_DATA * victim, OBJ_DATA * wield, OBJ
                   obj_from_obj( projectile );
                if( projectile->carried_by )
                   obj_from_char( projectile );
-               obj_to_room( projectile, victim->in_room );
+               obj_to_room( projectile, victim->in_room, ch );
             }
             return rNONE;
          }
@@ -1782,7 +1782,7 @@ ch_ret projectile_hit( CHAR_DATA * ch, CHAR_DATA * victim, OBJ_DATA * wield, OBJ
             obj_from_obj( projectile );
          if( projectile->carried_by )
             obj_from_char( projectile );
-         obj_to_room( projectile, victim->in_room );
+         obj_to_room( projectile, victim->in_room, ch );
       }
       return retcode;
    }
@@ -3414,7 +3414,7 @@ void death_cry( CHAR_DATA * ch )
       STRFREE( obj->description );
       obj->description = STRALLOC( buf );
 
-      obj = obj_to_room( obj, ch->in_room );
+      obj = obj_to_room( obj, ch->in_room, ch );
    }
 
    if( IS_NPC( ch ) )
@@ -3650,7 +3650,7 @@ void group_gain( CHAR_DATA * ch, CHAR_DATA * victim )
             if( in_arena( ch ) )
                obj = obj_to_char( obj, ch );
             else
-               obj = obj_to_room( obj, ch->in_room );
+               obj = obj_to_room( obj, ch->in_room, ch );
             oprog_zap_trigger( gch, obj );   /* mudprogs */
             if( char_died( gch ) )
                break;
@@ -4168,6 +4168,9 @@ bool check_illegal_pk( CHAR_DATA * ch, CHAR_DATA * victim )
 
 void do_flee( CHAR_DATA* ch, const char* argument)
 {
+    int oldmap = ch->map;
+    int oldx = ch->x;
+    int oldy = ch->y;
    ROOM_INDEX_DATA *was_in;
    ROOM_INDEX_DATA *now_in;
    char buf[MAX_STRING_LENGTH];
@@ -4235,15 +4238,26 @@ void do_flee( CHAR_DATA* ch, const char* argument)
          continue;
       affect_strip( ch, gsn_sneak );
       xREMOVE_BIT( ch->affected_by, AFF_SNEAK );
-      if( ch->mount && ch->mount->fighting )
-         stop_fighting( ch->mount, TRUE );
-      move_char( ch, pexit, 0 );
-      if( ( now_in = ch->in_room ) == was_in )
-         continue;
-      ch->in_room = was_in;
-      act( AT_FLEE, "$n flees head over heels!", ch, NULL, NULL, TO_ROOM );
-      ch->in_room = now_in;
-      act( AT_FLEE, "$n glances around for signs of pursuit.", ch, NULL, NULL, TO_ROOM );
+	if ( ch->mount && ch->mount->fighting )
+	    stop_fighting( ch->mount, TRUE );
+
+	move_char( ch, pexit, 0, door );
+	if( IS_PLR_FLAG( ch, PLR_ONMAP ) || IS_ACT_FLAG( ch, ACT_ONMAP ) )
+	{
+	   now_in = ch->in_room;
+	   if( ch->map == oldmap && ch->x == oldx && ch->y == oldy )
+		continue;
+	}
+	else
+	{
+	   if ( ( now_in = ch->in_room ) == was_in )
+	     continue;
+	}
+
+	ch->in_room = was_in;
+	act( AT_FLEE, "$n flees head over heels!", ch, NULL, NULL, TO_ROOM );
+	ch->in_room = now_in;
+	act( AT_FLEE, "$n glances around for signs of pursuit.", ch, NULL, NULL, TO_ROOM );
       if( !IS_NPC( ch ) )
       {
          CHAR_DATA *wf = who_fighting( ch );

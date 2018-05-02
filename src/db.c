@@ -256,6 +256,9 @@ FILE *fpArea;
  * Local booting procedures.
  */
 void init_mm( void );
+void load_maps	 args( ( void ) ); /* Load in Overland Maps - Samson 8-1-99 */
+void load_mapresets args( ( void ) ); /* Load resets for Overland Maps - Samson 1-13-01 */
+void load_continent args( ( AREA_DATA *tarea, FILE *fp ) ); /* Continent support - Samson 9-16-00 */
 
 void boot_log( const char *str, ... );
 AREA_DATA *load_area( FILE * fp, int aversion );
@@ -410,6 +413,8 @@ void boot_db( bool fCopyOver )
       save_sysdata( sysdata );
    }
 
+    log_string("Loading overland maps....");
+    load_maps();
    log_string( "Loading socials" );
    load_socials(  );
 
@@ -733,6 +738,9 @@ void boot_db( bool fCopyOver )
    log_string( "Resetting areas" );
    area_update(  );
 
+	log_string( "Loading overland resets..." );
+	load_mapresets();
+
    log_string( "Loading buildlist" );
    load_buildlist(  );
 
@@ -815,6 +823,7 @@ AREA_DATA *load_area( FILE * fp, int aversion )
    pArea->low_hard_range = 0;
    pArea->hi_hard_range = MAX_LEVEL;
    pArea->spelllimit = 0;
+ pArea->continent	  = 0;
    pArea->weatherx = 0;
    pArea->weathery = 0;
 
@@ -896,6 +905,40 @@ void load_economy( AREA_DATA * tarea, FILE * fp )
    tarea->high_economy = fread_number( fp );
    tarea->low_economy = fread_number( fp );
 }
+
+/* Load a continent - Samson 9-16-00 */
+void load_continent( AREA_DATA *tarea, FILE *fp )
+{
+   char *pointer;
+   int value;
+
+   if( !tarea )
+   {
+      bug( "Load_continent: no #AREA seen yet." );
+      if( fBootDb )
+      {
+         shutdown_mud( "No #AREA" );
+         exit( 1 );
+      }
+      else
+         return;
+   }
+
+   pointer = fread_string_nohash(fp);
+   value = get_continent( pointer );
+   DISPOSE( pointer );
+
+   if( value < 0 || value > ACON_MAX )
+   {
+      tarea->continent = 0;
+      bug( "load_continent: Invalid area continent, set to 'alsherok' by default." );
+   }
+   else
+      tarea->continent = value;
+
+   return;
+}
+
 
 /* Reset Message Load, Rennard */
 void load_resetmsg( AREA_DATA * tarea, FILE * fp )
@@ -2046,7 +2089,7 @@ void load_rooms( AREA_DATA * tarea, FILE * fp )
       int iHash;
       bool tmpBootDb;
       bool oldroom;
-      int x1, x2, x3, x4, x5, x6, x7;
+      int x1, x2, x3, x4, x5, x6, x7, x8;
 
       letter = fread_letter( fp );
       if( letter != '#' )
@@ -2161,34 +2204,54 @@ void load_rooms( AREA_DATA * tarea, FILE * fp )
             }
             else
             {
-               pexit = make_exit( pRoomIndex, NULL, door );
-               pexit->description = fread_string( fp );
-               pexit->keyword = fread_string( fp );
-               pexit->exit_info = 0;
-               ln = fread_line( fp );
-               x1 = x2 = x3 = x4 = x5 = x6 = 0;
-               sscanf( ln, "%d %d %d %d %d %d", &x1, &x2, &x3, &x4, &x5, &x6 );
+		  if( tarea->version < 2 )
+		  {
+		  	pexit = make_exit( pRoomIndex, NULL, door );
+		  	pexit->description	= fread_string( fp );
+		  	pexit->keyword	= fread_string( fp );
+		  	pexit->exit_info	= 0;
+		  	ln = fread_line( fp );
+		  	x1=x2=x3=x4=x5=x6=0;
+		  	sscanf( ln, "%d %d %d %d %d %d",
+		        &x1, &x2, &x3, &x4, &x5, &x6 );
 
-               locks = x1;
-               pexit->key = x2;
-               pexit->vnum = x3;
-               pexit->vdir = door;
-               pexit->distance = x4;
-               pexit->pulltype = x5;
-               pexit->pull = x6;
+		  	locks			= x1;
+		  	pexit->key		= x2;
+		  	pexit->vnum		= x3;
+		  	pexit->vdir		= door;
+			pexit->distance	= x4;
+		  	pexit->pulltype	= x5;
+		  	pexit->pull		= x6;
+		  }
+		  else
+		  {
+		  	pexit = make_exit( pRoomIndex, NULL, door );
+		  	pexit->description	= fread_string( fp );
+		  	pexit->keyword	= fread_string( fp );
+		  	pexit->exit_info	= 0;
+		  	ln = fread_line( fp );
+		  	x1=x2=x3=x4=x5=x6=x7=x8=0;
+		  	sscanf( ln, "%d %d %d %d %d %d %d %d",
+		        &x1, &x2, &x3, &x4, &x5, &x6, &x7, &x8 );
 
-               switch ( locks )
-               {
-                  case 1:
-                     pexit->exit_info = EX_ISDOOR;
-                     break;
-                  case 2:
-                     pexit->exit_info = EX_ISDOOR | EX_PICKPROOF;
-                     break;
-                  default:
-                     pexit->exit_info = locks;
-               }
-            }
+		  	locks			= x1;
+		  	pexit->key		= x2;
+		  	pexit->vnum		= x3;
+		  	pexit->vdir		= door;
+			pexit->distance	= x4;
+			pexit->x		= x5;
+			pexit->y		= x6;
+		  	pexit->pulltype	= x7;
+		  	pexit->pull		= x8;
+		  }
+
+		  switch ( locks )
+		  {
+		    case 1:  pexit->exit_info = EX_ISDOOR;                break;
+		    case 2:  pexit->exit_info = EX_ISDOOR | EX_PICKPROOF; break;
+		    default: pexit->exit_info = locks;
+		  }
+		}
          }
          else if( letter == 'E' )
          {
@@ -2700,6 +2763,7 @@ CHAR_DATA *create_mobile( MOB_INDEX_DATA * pMobIndex )
    mob->mpscriptpos = 0;
    mob->level = number_fuzzy( pMobIndex->level );
    mob->act = pMobIndex->act;
+    mob->sector = -1;   
    mob->home_vnum = -1;
    mob->resetvnum = -1;
    mob->resetnum = -1;
@@ -2821,6 +2885,9 @@ OBJ_DATA *create_object( OBJ_INDEX_DATA * pObjIndex, int level )
    obj->value[5] = pObjIndex->value[5];
    obj->weight = pObjIndex->weight;
    obj->cost = pObjIndex->cost;
+    obj->x = -1;
+    obj->y = -1;
+    obj->map = -1;
    /*
     * obj->cost     = number_fuzzy( 10 )
     * * number_fuzzy( level ) * number_fuzzy( level );
@@ -3022,6 +3089,9 @@ void clear_char( CHAR_DATA * ch )
    ch->mod_cha = 0;
    ch->mod_con = 0;
    ch->mod_lck = 0;
+   ch->x				= -1; /* Overland Map - Samson 7-31-99 */
+    ch->y				= -1;
+    ch->map				= -1; 	
    return;
 }
 
@@ -5736,6 +5806,10 @@ EXIT_DATA *make_exit( ROOM_INDEX_DATA * pRoomIndex, ROOM_INDEX_DATA * to_room, s
    pexit->vdir = door;
    pexit->rvnum = pRoomIndex->vnum;
    pexit->to_room = to_room;
+
+	pexit->x			= 0;
+	pexit->y			= 0;
+
    pexit->distance = 1;
    pexit->key = -1;
    if( to_room )
@@ -8008,6 +8082,7 @@ void load_area_file( AREA_DATA * tarea, const char *filename )
          load_ranges( tarea, fpArea );
       else if( !str_cmp( word, "ECONOMY" ) )
          load_economy( tarea, fpArea );
+	else if ( !str_cmp( word, "CONTINENT"  ) ) load_continent (tarea, fpArea);
       else if( !str_cmp( word, "RESETMSG" ) )
          load_resetmsg( tarea, fpArea );
       /*

@@ -24,10 +24,9 @@
 void make_fire( ROOM_INDEX_DATA * in_room, short timer )
 {
    OBJ_DATA *fire;
-
    fire = create_object( get_obj_index( OBJ_VNUM_FIRE ), 0 );
    fire->timer = number_fuzzy( timer );
-   obj_to_room( fire, in_room );
+   obj_to_room( fire, in_room, NULL );
    return;
 }
 
@@ -60,6 +59,13 @@ void make_scraps( OBJ_DATA * obj )
    scraps = create_object( get_obj_index( OBJ_VNUM_SCRAPS ), 0 );
    scraps->timer = number_range( 5, 15 );
 
+  if( IS_OBJ_STAT( obj, ITEM_ONMAP ) )
+  {
+	SET_OBJ_STAT( scraps, ITEM_ONMAP );
+	scraps->map = obj->map;
+	scraps->x = obj->x;
+	scraps->y = obj->y;
+  }
    /*
     * don't make scraps of scraps of scraps of ... 
     */
@@ -87,7 +93,7 @@ void make_scraps( OBJ_DATA * obj )
           && ( tmpobj = get_eq_char( obj->carried_by, WEAR_DUAL_WIELD ) ) != NULL )
          tmpobj->wear_loc = WEAR_WIELD;
 
-      obj_to_room( scraps, obj->carried_by->in_room );
+      obj_to_room( scraps, obj->carried_by->in_room, ch );
    }
    else if( obj->in_room )
    {
@@ -96,7 +102,7 @@ void make_scraps( OBJ_DATA * obj )
          act( AT_OBJECT, "$p is reduced to little more than scraps.", ch, obj, NULL, TO_ROOM );
          act( AT_OBJECT, "$p is reduced to little more than scraps.", ch, obj, NULL, TO_CHAR );
       }
-      obj_to_room( scraps, obj->in_room );
+      obj_to_room( scraps, obj->in_room, ch );
    }
    if( ( obj->item_type == ITEM_CONTAINER || obj->item_type == ITEM_KEYRING
          || obj->item_type == ITEM_QUIVER || obj->item_type == ITEM_CORPSE_PC ) && obj->first_content )
@@ -198,13 +204,13 @@ OBJ_DATA *make_corpse( CHAR_DATA * ch, CHAR_DATA * killer )
          extract_obj( obj );
       else if( IS_OBJ_STAT( obj, ITEM_DEATHDROP ) )
       {
-         obj_to_room( obj, ch->in_room );
+         obj_to_room( obj, ch->in_room, ch );
          oprog_drop_trigger( ch, obj );   /* mudprogs */
       }
       else
          obj_to_obj( obj, corpse );
    }
-   return obj_to_room( corpse, ch->in_room );
+   return obj_to_room( corpse, ch->in_room, ch );
 }
 
 void make_puddle( CHAR_DATA * ch, OBJ_DATA * cont )
@@ -237,7 +243,7 @@ void make_puddle( CHAR_DATA * ch, OBJ_DATA * cont )
       obj->value[1] += cont->value[1];
       obj->value[2] = cont->value[2];
       obj->value[3] = cont->value[3];
-      obj_to_room( obj, ch->in_room );
+      obj_to_room( obj, ch->in_room, ch );
    }
 
    liq = get_liq_vnum( obj->value[2] );
@@ -275,7 +281,7 @@ void make_blood( CHAR_DATA * ch )
    obj = create_object( get_obj_index( OBJ_VNUM_BLOOD ), 0 );
    obj->timer = number_range( 2, 4 );
    obj->value[1] = number_range( 3, UMIN( 5, ch->level ) );
-   obj_to_room( obj, ch->in_room );
+   obj_to_room( obj, ch->in_room, ch );
 }
 
 void make_bloodstain( CHAR_DATA * ch )
@@ -284,7 +290,7 @@ void make_bloodstain( CHAR_DATA * ch )
 
    obj = create_object( get_obj_index( OBJ_VNUM_BLOODSTAIN ), 0 );
    obj->timer = number_range( 1, 2 );
-   obj_to_room( obj, ch->in_room );
+   obj_to_room( obj, ch->in_room, ch );
 }
 
 /*

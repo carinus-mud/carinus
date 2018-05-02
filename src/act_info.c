@@ -731,7 +731,7 @@ void show_visible_affects_to_char( CHAR_DATA * victim, CHAR_DATA * ch )
    if( !IS_NPC( victim ) && !victim->desc && victim->switched && IS_AFFECTED( victim->switched, AFF_POSSESS ) )
    {
       set_char_color( AT_MAGIC, ch );
-      mudstrlcpy( buf, PERS( victim, ch ), MAX_STRING_LENGTH );
+      mudstrlcpy( buf, PERS( victim, ch, FALSE ), MAX_STRING_LENGTH );
       mudstrlcat( buf, " appears to be in a deep trance...\r\n", MAX_STRING_LENGTH );
    }
 }
@@ -845,7 +845,7 @@ if (!IS_NPC(victim))
          }
          else
          {
-            mudstrlcat( buf, PERS( victim, ch ), MAX_STRING_LENGTH );
+            mudstrlcat( buf, PERS( victim, ch, FALSE ), MAX_STRING_LENGTH );
             if( !IS_NPC( victim ) && !xIS_SET( ch->act, PLR_BRIEF ) )
                mudstrlcat( buf, victim->pcdata->title, MAX_STRING_LENGTH );
             mudstrlcat( buf, ".\r\n", MAX_STRING_LENGTH );
@@ -860,9 +860,9 @@ if (!IS_NPC(victim))
    else
    {
       if( victim->morph != NULL && victim->morph->morph != NULL && !IS_IMMORTAL( ch ) )
-         mudstrlcat( buf, MORPHPERS( victim, ch ), MAX_STRING_LENGTH );
+         mudstrlcat( buf, MORPHPERS( victim, ch, FALSE ), MAX_STRING_LENGTH );
       else
-         mudstrlcat( buf, PERS( victim, ch ), MAX_STRING_LENGTH );
+         mudstrlcat( buf, PERS( victim, ch, FALSE ), MAX_STRING_LENGTH );
    }
 
    if( !IS_NPC( victim ) && !xIS_SET( ch->act, PLR_BRIEF ) )
@@ -955,7 +955,7 @@ void show_char_to_char_1( CHAR_DATA * victim, CHAR_DATA * ch )
    int iWear;
    bool found;
 
-   if( can_see( victim, ch ) && !IS_NPC( ch ) && !xIS_SET( ch->act, PLR_WIZINVIS ) )
+   if( can_see( victim, ch, FALSE ) && !IS_NPC( ch ) && !xIS_SET( ch->act, PLR_WIZINVIS ) )
    {
       act( AT_ACTION, "$n looks at you.", ch, NULL, victim, TO_VICT );
       if( victim != ch )
@@ -1055,7 +1055,7 @@ void show_char_to_char( CHAR_DATA * list, CHAR_DATA * ch )
       if( rch == ch )
          continue;
 
-      if( can_see( ch, rch ) )
+      if( can_see( ch, rch, FALSE ) )
       {
          show_char_to_char_0( rch, ch );
       }
@@ -1221,6 +1221,21 @@ void do_look( CHAR_DATA * ch, const char *argument )
 
    if( arg1[0] == '\0' || !str_cmp( arg1, "auto" ) )
    {
+      if( IS_PLR_FLAG( ch, PLR_ONMAP ) || IS_ACT_FLAG( ch, ACT_ONMAP ) )
+	{
+	    display_map( ch );
+#ifdef DRAGONFLIGHT
+	    if( !ch->inflight )
+	    {
+#endif
+ 	       show_list_to_char( ch->in_room->first_content, ch, FALSE, FALSE );
+       	 show_char_to_char( ch->in_room->first_person,  ch );
+#ifdef DRAGONFLIGHT
+	    }
+#endif
+	    return;
+	}
+
       /*
        * 'look' or 'look auto' 
        */
@@ -1390,18 +1405,29 @@ void do_look( CHAR_DATA * ch, const char *argument )
             {
                if( pexit->vdir == DIR_PORTAL && IS_SET( pexit->exit_info, EX_PORTAL ) )
                {
-                  if( room_is_private( pexit->to_room ) && get_trust( ch ) < sysdata.level_override_private )
-                  {
-                     set_char_color( AT_WHITE, ch );
-                     send_to_char( "That room is private buster!\r\n", ch );
-                     return;
-                  }
-                  original = ch->in_room;
-                  char_from_room( ch );
-                  char_to_room( ch, pexit->to_room );
-                  do_look( ch, "auto" );
-                  char_from_room( ch );
-                  char_to_room( ch, original );
+	    if ( room_is_private( pexit->to_room ) && ch->level < sysdata.level_override_private )
+	    {
+		set_char_color( AT_WHITE, ch );
+		send_to_char( "The room ahead is private!\r\n", ch );
+		return;
+	    }
+
+	    if( IS_EXIT_FLAG( pexit, EX_OVERLAND ) )
+	    {
+		original = ch->in_room;
+		enter_map( ch, pexit->x, pexit->y, -1 );
+		leave_map( ch, NULL, original );
+	    }
+	    else
+	    {
+	      original = ch->in_room;
+	      char_from_room( ch );
+	      char_to_room( ch, pexit->to_room );
+	      do_look( ch, "auto" );
+	      char_from_room( ch );
+	      char_to_room( ch, original );
+	    }
+
                   return;
                }
             }
@@ -1517,19 +1543,28 @@ void do_look( CHAR_DATA * ch, const char *argument )
    }
 
 
-         if( room_is_private( pexit->to_room ) && get_trust( ch ) < sysdata.level_override_private )
-         {
-            set_char_color( AT_WHITE, ch );
-            send_to_char( "That room is private buster!\r\n", ch );
-            return;
-         }
-         original = ch->in_room;
-         char_from_room( ch );
-         char_to_room( ch, pexit->to_room );
-         do_look( ch, "auto" );
-         char_from_room( ch );
-         char_to_room( ch, original );
-      }
+	    if ( room_is_private( pexit->to_room ) && ch->level < sysdata.level_override_private )
+	    {
+		set_char_color( AT_WHITE, ch );
+		send_to_char( "The room ahead is private!\r\n", ch );
+		return;
+	    }
+
+	    if( IS_EXIT_FLAG( pexit, EX_OVERLAND ) )
+	    {
+		original = ch->in_room;
+		enter_map( ch, pexit->x, pexit->y, -1 );
+		leave_map( ch, NULL, original );
+	    }
+	    else
+	    {
+	      original = ch->in_room;
+	      char_from_room( ch );
+	      char_to_room( ch, pexit->to_room );
+	      do_look( ch, "auto" );
+	      char_from_room( ch );
+	      char_to_room( ch, original );
+	    }
       return;
    }
    else if( door != -1 )
@@ -1644,7 +1679,7 @@ void do_look( CHAR_DATA * ch, const char *argument )
 
    send_to_char( "You do not see that here.\r\n", ch );
 }
-
+}
 void show_race_line( CHAR_DATA * ch, CHAR_DATA * victim )
 {
    int feet, inches;
@@ -1653,7 +1688,7 @@ void show_race_line( CHAR_DATA * ch, CHAR_DATA * victim )
    {
       feet = victim->height / 12;
       inches = victim->height % 12;
-      ch_printf( ch, "%s is %d'%d\" and weighs %d pounds.\r\n", PERS( victim, ch ), feet, inches, victim->weight );
+      ch_printf( ch, "%s is %d'%d\" and weighs %d pounds.\r\n", PERS( victim, ch, FALSE ), feet, inches, victim->weight );
       return;
    }
    if( !IS_NPC( victim ) && ( victim == ch ) )
@@ -1677,7 +1712,7 @@ void show_condition( CHAR_DATA * ch, CHAR_DATA * victim )
 
    if( victim != ch )
    {
-      mudstrlcpy( buf, PERS( victim, ch ), MAX_STRING_LENGTH );
+      mudstrlcpy( buf, PERS( victim, ch, FALSE ), MAX_STRING_LENGTH );
       if( percent >= 100 )
          mudstrlcat( buf, " is in perfect health.\r\n", MAX_STRING_LENGTH );
       else if( percent >= 90 )
@@ -1784,7 +1819,7 @@ void do_glance( CHAR_DATA * ch, const char *argument )
    }
    else
    {
-      if( can_see( victim, ch ) )
+      if( can_see( victim, ch, FALSE ) )
       {
          act( AT_ACTION, "$n glances at you.", ch, NULL, victim, TO_VICT );
          act( AT_ACTION, "$n glances at $N.", ch, NULL, victim, TO_NOTVICT );
@@ -2642,7 +2677,7 @@ void indent_whogr( CHAR_DATA * looker, struct whogr_s *whogr, int ilev )
          int nlev = ilev;
          CHAR_DATA *wch = ( whogr->d->original ? whogr->d->original : whogr->d->character );
 
-         if( can_see( looker, wch ) && !IS_IMMORTAL( wch ) )
+         if( can_see( looker, wch, TRUE ) && !IS_IMMORTAL( wch ) )
             nlev += 3;
          indent_whogr( looker, whogr->follower, nlev );
       }
@@ -2956,7 +2991,7 @@ void do_who( CHAR_DATA* ch, const char* argument)
       CHAR_DATA *wch;
   //    char const *Class;
 
-      if( ( d->connected != CON_PLAYING && d->connected != CON_EDITING ) || !can_see( ch, d->character ) || d->original )
+      if( ( d->connected != CON_PLAYING && d->connected != CON_EDITING ) || !can_see( ch, d->character, TRUE ) || d->original )
          continue;
       wch = d->original ? d->original : d->character;
       if( wch->level < iLevelLower || wch->level > iLevelUpper || ( fPkill && !CAN_PKILL( wch ) ) || ( fImmortalOnly && wch->level < LEVEL_IMMORTAL ) || ( fClassRestrict && !rgfClass[wch->Class] ) || ( fRaceRestrict && !rgfRace[wch->race] ) || ( fClanMatch && ( pClan != wch->pcdata->clan ) )  /* SB */
@@ -3389,7 +3424,7 @@ void do_where( CHAR_DATA* ch, const char* argument)
              && ( ( victim->in_room->area == ch->in_room->area )
                   && ( !xIS_SET( victim->in_room->room_flags, ROOM_HOUSE )
                        || in_same_house( victim, ch ) ) )
-             && can_see( ch, victim )
+             && can_see( ch, victim, TRUE )
              && ( victim->in_room == ch->in_room
                   || IS_IMMORTAL( ch )
                   || ( !IS_SET( ch->in_room->area->flags, AFLAG_NOWHERE )
@@ -3422,10 +3457,10 @@ void do_where( CHAR_DATA* ch, const char* argument)
          if( victim->in_room
              && victim->in_room->area == ch->in_room->area
              && !IS_AFFECTED( victim, AFF_HIDE )
-             && !IS_AFFECTED( victim, AFF_SNEAK ) && can_see( ch, victim ) && is_name( arg, victim->name ) )
+             && !IS_AFFECTED( victim, AFF_SNEAK ) && can_see( ch, victim, TRUE ) && is_name( arg, victim->name ) )
          {
             found = TRUE;
-            pager_printf( ch, "%-28s %s\r\n", PERS( victim, ch ), victim->in_room->name );
+            pager_printf( ch, "%-28s %s\r\n", PERS( victim, ch, TRUE ), victim->in_room->name );
             break;
          }
       if( !found )

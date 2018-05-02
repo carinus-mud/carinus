@@ -1779,7 +1779,7 @@ void char_from_room( CHAR_DATA * ch )
 /*
  * Move a char into a room.
  */
-void char_to_room( CHAR_DATA * ch, ROOM_INDEX_DATA * pRoomIndex )
+bool char_to_room( CHAR_DATA * ch, ROOM_INDEX_DATA * pRoomIndex )
 {
    OBJ_DATA *obj;
    AFFECT_DATA *paf;
@@ -1787,7 +1787,7 @@ void char_to_room( CHAR_DATA * ch, ROOM_INDEX_DATA * pRoomIndex )
    if( !ch )
    {
       bug( "%s: NULL ch!", __func__ );
-      return;
+      return FALSE;
    }
 
    if( !pRoomIndex || !get_room_index( pRoomIndex->vnum ) )
@@ -1856,7 +1856,7 @@ void char_to_room( CHAR_DATA * ch, ROOM_INDEX_DATA * pRoomIndex )
 
       for( tele = first_teleport; tele; tele = tele->next )
          if( tele->room == pRoomIndex )
-            return;
+            return TRUE;
 
       CREATE( tele, TELEPORT_DATA, 1 );
       LINK( tele, first_teleport, last_teleport, next, prev );
@@ -1865,7 +1865,7 @@ void char_to_room( CHAR_DATA * ch, ROOM_INDEX_DATA * pRoomIndex )
    }
    if( !ch->was_in_room )
       ch->was_in_room = ch->in_room;
-   return;
+   return TRUE;
 }
 
 void free_teleports( void )
@@ -1884,108 +1884,96 @@ void free_teleports( void )
 /*
  * Give an obj to a char.
  */
-OBJ_DATA *obj_to_char( OBJ_DATA * obj, CHAR_DATA * ch )
+OBJ_DATA *obj_to_char( OBJ_DATA *obj, CHAR_DATA *ch )
 {
-   OBJ_DATA *otmp;
-   OBJ_DATA *oret = obj;
-   bool skipgroup, grouped;
-   int oweight = get_obj_weight( obj );
-   int onum = get_obj_number( obj );
-   int wear_loc = obj->wear_loc;
-   EXT_BV extra_flags = obj->extra_flags;
+    OBJ_DATA *otmp;
+    OBJ_DATA *oret = obj;
+    bool skipgroup, grouped;
+    int oweight = get_obj_weight(obj);
+    int onum = get_obj_number(obj);
+    int wear_loc = obj->wear_loc;
+    EXT_BV extra_flags = obj->extra_flags;
 
-   skipgroup = FALSE;
-   grouped = FALSE;
+    skipgroup = FALSE;
+    grouped = FALSE;
 
-   if( IS_OBJ_STAT( obj, ITEM_PROTOTYPE ) )
-   {
-      if( !IS_IMMORTAL( ch ) && ( !IS_NPC( ch ) || !xIS_SET( ch->act, ACT_PROTOTYPE ) ) )
-         return obj_to_room( obj, ch->in_room );
-   }
+    if (IS_OBJ_STAT( obj, ITEM_PROTOTYPE ) )
+    {
+	if (!IS_IMMORTAL( ch ) && !IS_ACT_FLAG(ch, ACT_PROTOTYPE) )
+	  return obj_to_room( obj, ch->in_room, ch );
+    }
 
-   if( loading_char == ch )
-   {
-      int x, y;
-      for( x = 0; x < MAX_WEAR; x++ )
-      {
-         for( y = 0; y < MAX_LAYERS; y++ )
-         {
-            if( IS_NPC( ch ) )
-            {
-               if( mob_save_equipment[x][y] == obj )
-               {
-                  skipgroup = TRUE;
-                  break;
-               }
-            }
-            else
-            {
-               if( save_equipment[x][y] == obj )
-               {
-                  skipgroup = TRUE;
-                  break;
-               }
-            }
-         }
-      }
-   }
+    /* Should handle all cases of picking stuff up from maps - Samson */
+    REMOVE_OBJ_STAT( obj, ITEM_ONMAP );
+    obj->x = -1;
+    obj->y = -1;
+    obj->map = -1;
 
-   if( IS_NPC( ch ) && ch->pIndexData->pShop )
-      skipgroup = TRUE;
+    if ( loading_char == ch )
+    {
+	int x,y;
+	for ( x = 0; x < MAX_WEAR; x++ )
+	    for ( y = 0; y < MAX_LAYERS; y++ )
+		if ( save_equipment[x][y] == obj )
+		{
+		    skipgroup = TRUE;
+		    break;
+		}
+    }
 
-   if( !skipgroup )
-      for( otmp = ch->first_carrying; otmp; otmp = otmp->next_content )
-         if( ( oret = group_object( otmp, obj ) ) == otmp )
-         {
-            grouped = TRUE;
-            break;
-         }
-   if( !grouped )
-   {
-      if( !IS_NPC( ch ) || !ch->pIndexData->pShop )
-      {
-         LINK( obj, ch->first_carrying, ch->last_carrying, next_content, prev_content );
-         obj->carried_by = ch;
-         obj->in_room = NULL;
-         obj->in_obj = NULL;
-      }
-      else
-      {
-         /*
-          * If ch is a shopkeeper, add the obj using an insert sort 
-          */
-         for( otmp = ch->first_carrying; otmp; otmp = otmp->next_content )
-         {
-            if( obj->level > otmp->level )
-            {
-               INSERT( obj, otmp, ch->first_carrying, next_content, prev_content );
-               break;
-            }
-            else if( obj->level == otmp->level && strcmp( obj->short_descr, otmp->short_descr ) < 0 )
-            {
-               INSERT( obj, otmp, ch->first_carrying, next_content, prev_content );
-               break;
-            }
-         }
-
-         if( !otmp )
-         {
-            LINK( obj, ch->first_carrying, ch->last_carrying, next_content, prev_content );
-         }
-
-         obj->carried_by = ch;
-         obj->in_room = NULL;
-         obj->in_obj = NULL;
-      }
-   }
-   if( wear_loc == WEAR_NONE )
-   {
-      ch->carry_number += onum;
-      ch->carry_weight += oweight;
-   }
-   else if( !xIS_SET( extra_flags, ITEM_MAGIC ) )
-      ch->carry_weight += oweight;
-   return ( oret ? oret : obj );
+    if ( !skipgroup )
+	for ( otmp = ch->first_carrying; otmp; otmp = otmp->next_content )
+	    if ( (oret=group_object( otmp, obj )) == otmp )
+	    {
+		grouped = TRUE;
+		break;
+	    }
+    if ( !grouped )
+    {
+	if (!IS_NPC(ch) || !ch->pIndexData->pShop)
+	{
+	    LINK( obj, ch->first_carrying, ch->last_carrying,	next_content, prev_content );
+	    obj->carried_by                 = ch;
+	    obj->in_room                    = NULL;
+	    obj->in_obj                     = NULL;
+        }
+        else
+        {
+	    /* If ch is a shopkeeper, add the obj using an insert sort */
+	    for ( otmp = ch->first_carrying; otmp; otmp = otmp->next_content)
+	    {
+		if ( obj->level > otmp->level )
+		{
+		    INSERT(obj, otmp, ch->first_carrying,	next_content, prev_content);
+		    break;
+		}
+		else
+		if ( obj->level == otmp->level && strcmp(obj->short_descr,otmp->short_descr) < 0 )
+		{
+		    INSERT(obj, otmp, ch->first_carrying,	next_content, prev_content);
+		    break;
+		}
+	    }
+                
+	    if ( !otmp )
+	    {
+		LINK(obj, ch->first_carrying, ch->last_carrying, next_content, prev_content);
+	    }
+                
+	    obj->carried_by = ch;
+	    obj->in_room = NULL;
+	    obj->in_obj = NULL;
+	}
+    }
+    if (wear_loc == WEAR_NONE)
+    {
+	ch->carry_number	+= onum;
+	ch->carry_weight	+= oweight;
+    }
+    else
+    if ( !xIS_SET(extra_flags, ITEM_MAGIC) )
+	ch->carry_weight	+= oweight;
+    return (oret ? oret : obj);
 }
 
 /*
@@ -2136,7 +2124,7 @@ void equip_char( CHAR_DATA * ch, OBJ_DATA * obj, int iWear )
       }
       if( obj->carried_by )
          obj_from_char( obj );
-      obj = obj_to_room( obj, ch->in_room );
+      obj = obj_to_room( obj, ch->in_room, ch );
       oprog_zap_trigger( ch, obj );
       if( IS_SET( sysdata.save_flags, SV_ZAPDROP ) && !char_died( ch ) )
          save_char_obj( ch );
@@ -2257,44 +2245,61 @@ void obj_from_room( OBJ_DATA * obj )
 /*
  * Move an obj into a room.
  */
-OBJ_DATA *obj_to_room( OBJ_DATA * obj, ROOM_INDEX_DATA * pRoomIndex )
+OBJ_DATA *obj_to_room( OBJ_DATA *obj, ROOM_INDEX_DATA *pRoomIndex, CHAR_DATA *ch )
 {
-   OBJ_DATA *otmp, *oret;
-   short count = obj->count;
-   short item_type = obj->item_type;
-   AFFECT_DATA *paf;
+    OBJ_DATA *otmp, *oret;
+    short count = obj->count;
+    short item_type = obj->item_type;
+    AFFECT_DATA *paf;
 
-   for( paf = obj->first_affect; paf; paf = paf->next )
-      room_affect( pRoomIndex, paf, TRUE );
+    for ( paf = obj->first_affect; paf; paf = paf->next )
+	room_affect(pRoomIndex, paf, TRUE);
 
-   for( paf = obj->pIndexData->first_affect; paf; paf = paf->next )
-      room_affect( pRoomIndex, paf, TRUE );
+    for ( paf = obj->pIndexData->first_affect; paf; paf = paf->next )
+	room_affect(pRoomIndex, paf, TRUE);
 
-   pRoomIndex->weight += get_obj_weight( obj );
+    for ( otmp = pRoomIndex->first_content; otmp; otmp = otmp->next_content )
+	if ( (oret=group_object( otmp, obj )) == otmp )
+	{
+	    if ( item_type == ITEM_FIRE )
+		pRoomIndex->light += count;
+	    return oret;
+	}
 
-   for( otmp = pRoomIndex->first_content; otmp; otmp = otmp->next_content )
-      if( ( oret = group_object( otmp, obj ) ) == otmp )
+    LINK( obj, pRoomIndex->first_content, pRoomIndex->last_content, next_content, prev_content );
+    obj->in_room				= pRoomIndex;
+    obj->carried_by				= NULL;
+    obj->in_obj					= NULL;
+    if ( item_type == ITEM_FIRE )
+	pRoomIndex->light += count;
+    falling++;
+    obj_fall( obj, FALSE );
+    falling--;
+
+/* Hoping that this will cover all instances of objects from character to room - Samson 8-22-99 */
+    if( ch != NULL )
+    {
+	if( IS_ACT_FLAG( ch, ACT_ONMAP ) || IS_PLR_FLAG( ch, PLR_ONMAP ) )
       {
-         if( item_type == ITEM_FIRE )
-            pRoomIndex->light += count;
-         return oret;
-      }
+	   SET_OBJ_STAT( obj, ITEM_ONMAP );
+	   obj->map = ch->map;
+	   obj->x = ch->x;
+	   obj->y = ch->y;
+	}
+	else
+      {
+	   REMOVE_OBJ_STAT( obj, ITEM_ONMAP );
+	   obj->map = -1;
+	   obj->x = -1;
+	   obj->y = -1;
+	}
+    }
+ 
+    if ( obj->pIndexData->vnum == OBJ_VNUM_CORPSE_PC && falling < 1 )
+	write_corpses( NULL, obj->short_descr+14, NULL );
 
-   LINK( obj, pRoomIndex->first_content, pRoomIndex->last_content, next_content, prev_content );
-   obj->in_room = pRoomIndex;
-   obj->carried_by = NULL;
-   obj->in_obj = NULL;
-   obj->room_vnum = pRoomIndex->vnum;  /* hotboot tracker */
-   if( item_type == ITEM_FIRE )
-      pRoomIndex->light += count;
-   falling++;
-   obj_fall( obj, FALSE );
-   falling--;
-   if( obj->pIndexData->vnum == OBJ_VNUM_CORPSE_PC && falling < 1 )
-      write_corpses( NULL, obj->short_descr + 14, NULL );
-   return obj;
+    return obj;
 }
-
 /*
  * Who's carrying an item -- recursive for nested objects	-Thoric
  */
@@ -2342,41 +2347,45 @@ OBJ_DATA *obj_to_obj( OBJ_DATA * obj, OBJ_DATA * obj_to )
 /*
  * Move an object out of an object.
  */
-void obj_from_obj( OBJ_DATA * obj )
+void obj_from_obj( OBJ_DATA *obj )
 {
-   OBJ_DATA *obj_from;
-   bool magic;
+    OBJ_DATA *obj_from;
+    bool magic;
 
-   if( ( obj_from = obj->in_obj ) == NULL )
-   {
-      bug( "%s: null obj_from.", __func__ );
-      return;
-   }
+    if ( (obj_from = obj->in_obj) == NULL )
+    {
+	bug( "Obj_from_obj: null obj_from." );
+	return;
+    }
 
-   magic = in_magic_container( obj_from );
+    magic = in_magic_container(obj_from);
 
-   UNLINK( obj, obj_from->first_content, obj_from->last_content, next_content, prev_content );
+    UNLINK( obj, obj_from->first_content, obj_from->last_content,	next_content, prev_content );
 
-   /*
-    * uncover contents 
-    */
-   if( IS_OBJ_STAT( obj, ITEM_COVERING ) && obj->first_content )
-      empty_obj( obj, obj->in_obj, NULL );
+    /* uncover contents */
+    if ( IS_OBJ_STAT(obj, ITEM_COVERING) && obj->first_content )
+	empty_obj(obj, obj->in_obj, NULL);
 
-   obj->in_obj = NULL;
-   obj->in_room = NULL;
-   obj->carried_by = NULL;
-   if( obj_from->in_room )
-      obj_from->in_room->weight -= get_obj_weight( obj );
+    obj->in_obj       = NULL;
+    obj->in_room      = NULL;
+    obj->carried_by   = NULL;
 
-   if( !magic )
-      for( ; obj_from; obj_from = obj_from->in_obj )
-         if( obj_from->carried_by )
-            obj_from->carried_by->carry_weight -= get_obj_weight( obj );
+/* This will hopefully cover all objs coming from containers going to the maps - Samson 8-22-99 */
+    if( IS_OBJ_STAT( obj_from, ITEM_ONMAP ) )
+    {
+	SET_OBJ_STAT( obj, ITEM_ONMAP );
+	obj->map = obj_from->map;
+	obj->x = obj_from->x;
+	obj->y = obj_from->y;
+    }
 
-   return;
+    if ( !magic )
+	for ( ; obj_from; obj_from = obj_from->in_obj )
+	    if ( obj_from->carried_by )
+		obj_from->carried_by->carry_weight -= get_obj_weight( obj );
+
+    return;
 }
-
 /*
  * Extract an obj from the world.
  */
@@ -2619,6 +2628,17 @@ void extract_char( CHAR_DATA * ch, bool fPull )
          location = get_room_index( 1 );
 
       char_to_room( ch, location );
+
+	if( IS_PLR_FLAG( ch, PLR_ONMAP ) )
+	{
+    	   REMOVE_PLR_FLAG( ch, PLR_ONMAP );
+	   REMOVE_PLR_FLAG( ch, PLR_MAPEDIT ); /* Just in case they were editing */
+
+         ch->x = -1;
+    	   ch->y = -1;
+    	   ch->map = -1;
+	}
+
       /*
        * Make things a little fancier           -Thoric
        */
@@ -2692,7 +2712,7 @@ CHAR_DATA *get_char_room( CHAR_DATA * ch, const char *argument )
    count = 0;
 
    for( rch = ch->in_room->first_person; rch; rch = rch->next_in_room )
-      if( can_see( ch, rch ) && ( nifty_is_name( arg, rch->name ) || ( IS_NPC( rch ) && vnum == rch->pIndexData->vnum ) ) )
+      if( can_see( ch, rch, FALSE ) && ( nifty_is_name( arg, rch->name ) || ( IS_NPC( rch ) && vnum == rch->pIndexData->vnum ) ) )
       {
          if( number == 0 && !IS_NPC( rch ) )
             return rch;
@@ -2711,7 +2731,7 @@ CHAR_DATA *get_char_room( CHAR_DATA * ch, const char *argument )
    count = 0;
    for( rch = ch->in_room->first_person; rch; rch = rch->next_in_room )
    {
-      if( !can_see( ch, rch ) || !nifty_is_name_prefix( arg, rch->name ) )
+      if( !can_see( ch, rch, FALSE ) || !nifty_is_name_prefix( arg, rch->name ) )
          continue;
       if( number == 0 && !IS_NPC( rch ) )
          return rch;
@@ -2751,7 +2771,7 @@ CHAR_DATA *get_char_world( CHAR_DATA * ch, const char *argument )
     * check the room for an exact match 
     */
    for( wch = ch->in_room->first_person; wch; wch = wch->next_in_room )
-      if( can_see( ch, wch ) && ( nifty_is_name( arg, wch->name ) || ( IS_NPC( wch ) && vnum == wch->pIndexData->vnum ) ) )
+      if( can_see( ch, wch, TRUE ) && ( nifty_is_name( arg, wch->name ) || ( IS_NPC( wch ) && vnum == wch->pIndexData->vnum ) ) )
       {
          if( number == 0 && !IS_NPC( wch ) )
             return wch;
@@ -2767,7 +2787,7 @@ CHAR_DATA *get_char_world( CHAR_DATA * ch, const char *argument )
     * check the world for an exact match 
     */
    for( wch = first_char; wch; wch = wch->next )
-      if( can_see( ch, wch ) && ( nifty_is_name( arg, wch->name ) || ( IS_NPC( wch ) && vnum == wch->pIndexData->vnum ) ) )
+      if( can_see( ch, wch, TRUE ) && ( nifty_is_name( arg, wch->name ) || ( IS_NPC( wch ) && vnum == wch->pIndexData->vnum ) ) )
       {
          if( number == 0 && !IS_NPC( wch ) )
             return wch;
@@ -2789,7 +2809,7 @@ CHAR_DATA *get_char_world( CHAR_DATA * ch, const char *argument )
    count = 0;
    for( wch = ch->in_room->first_person; wch; wch = wch->next_in_room )
    {
-      if( !can_see( ch, wch ) || !nifty_is_name_prefix( arg, wch->name ) )
+      if( !can_see( ch, wch, TRUE ) || !nifty_is_name_prefix( arg, wch->name ) )
          continue;
       if( number == 0 && !IS_NPC( wch ) )
          return wch;
@@ -2805,7 +2825,7 @@ CHAR_DATA *get_char_world( CHAR_DATA * ch, const char *argument )
    count = 0;
    for( wch = first_char; wch; wch = wch->next )
    {
-      if( !can_see( ch, wch ) || !nifty_is_name_prefix( arg, wch->name ) )
+      if( !can_see( ch, wch, TRUE ) || !nifty_is_name_prefix( arg, wch->name ) )
          continue;
       if( number == 0 && !IS_NPC( wch ) )
          return wch;
@@ -2979,23 +2999,22 @@ OBJ_DATA *get_obj_wear( CHAR_DATA * ch, const char *argument )
 /*
  * Find an obj in the room or in inventory.
  */
-OBJ_DATA *get_obj_here( CHAR_DATA * ch, const char *argument )
+OBJ_DATA *get_obj_here( CHAR_DATA *ch, char *argument )
 {
-   OBJ_DATA *obj;
+    OBJ_DATA *obj;
 
-   obj = get_obj_list_rev( ch, argument, ch->in_room->last_content );
-   if( obj )
-      return obj;
+    obj = get_obj_list_rev( ch, argument, ch->in_room->last_content );
+    if ( obj && ch->map == obj->map && ch->x == obj->x && ch->y == obj->y )
+	return obj;
 
-   if( ( obj = get_obj_carry( ch, argument ) ) != NULL )
-      return obj;
+    if ( ( obj = get_obj_carry( ch, argument ) ) != NULL )
+	return obj;
 
-   if( ( obj = get_obj_wear( ch, argument ) ) != NULL )
-      return obj;
+    if ( ( obj = get_obj_wear( ch, argument ) ) != NULL )
+	return obj;
 
-   return NULL;
+    return NULL;
 }
-
 
 
 /*
@@ -3336,7 +3355,7 @@ CHAR_DATA *room_is_dnd( CHAR_DATA * ch, ROOM_INDEX_DATA * pRoomIndex )
    for( rch = pRoomIndex->first_person; rch; rch = rch->next_in_room )
    {
       if( !IS_NPC( rch ) && rch->pcdata && IS_IMMORTAL( rch )
-          && IS_SET( rch->pcdata->flags, PCFLAG_DND ) && get_trust( ch ) < get_trust( rch ) && can_see( ch, rch ) )
+          && IS_SET( rch->pcdata->flags, PCFLAG_DND ) && get_trust( ch ) < get_trust( rch ) && can_see( ch, rch, FALSE ) )
          return rch;
    }
    return NULL;
@@ -3373,83 +3392,80 @@ bool room_is_private( ROOM_INDEX_DATA * pRoomIndex )
 /*
  * True if char can see victim.
  */
-bool can_see( CHAR_DATA * ch, CHAR_DATA * victim )
+bool can_see( CHAR_DATA *ch, CHAR_DATA *victim, bool override )
 {
-   if( !victim )  /* Gorog - panicked attempt to stop crashes */
-      return FALSE;
-   if( !ch )
-   {
-      if( IS_AFFECTED( victim, AFF_INVISIBLE ) || IS_AFFECTED( victim, AFF_HIDE ) || xIS_SET( victim->act, PLR_WIZINVIS ) )
-         return FALSE;
+    if ( !victim )            /* Gorog - panicked attempt to stop crashes */
+       return FALSE;
+
+    if ( !ch )
+    {
+      if ( IS_AFFECTED(victim, AFF_INVISIBLE) || IS_AFFECTED(victim, AFF_HIDE) || xIS_SET(victim->act, PLR_WIZINVIS) ) 
+	return FALSE;
       else
-         return TRUE;
-   }
+	return TRUE;
+    }
 
-   if( ch == victim )
-      return TRUE;
+    if ( ch == victim )
+	return TRUE;
 
-   if( !IS_NPC( victim ) && xIS_SET( victim->act, PLR_WIZINVIS ) && get_trust( ch ) < victim->pcdata->wizinvis )
-      return FALSE;
+    if ( IS_PLR_FLAG( victim, PLR_WIZINVIS ) && ch->level < victim->pcdata->wizinvis )
+	return FALSE;
 
-   /*
-    * SB 
-    */
-   if( IS_NPC( victim ) && xIS_SET( victim->act, ACT_MOBINVIS ) && get_trust( ch ) < victim->mobinvis )
-      return FALSE;
+    /* SB */
+    if ( IS_ACT_FLAG( victim, ACT_MOBINVIS ) && ch->level < victim->mobinvis )
+        return FALSE;
 
 /* Deadlies link-dead over 2 ticks aren't seen by mortals -- Blodkai */
-   if( !IS_IMMORTAL( ch ) && !IS_NPC( ch ) && !IS_NPC( victim ) && IS_PKILL( victim ) && victim->timer > 1 && !victim->desc )
-      return FALSE;
+    if ( !IS_IMMORTAL( ch ) && !IS_NPC( ch ) && !IS_NPC( victim ) && IS_PKILL( victim ) && victim->timer > 1 && !victim->desc )
+	return FALSE;
 
-   if( !IS_NPC( ch ) && xIS_SET( ch->act, PLR_HOLYLIGHT ) )
-      return TRUE;
+    if ( ( IS_PLR_FLAG( ch, PLR_ONMAP ) || IS_ACT_FLAG( ch, ACT_ONMAP ) ) && override == FALSE )
+    {
+	if( !is_same_map( ch, victim ) )
+	   return FALSE;
+    }
 
-   /*
-    * The miracle cure for blindness? -- Altrag 
-    */
-   if( !IS_AFFECTED( ch, AFF_TRUESIGHT ) )
-   {
-      if( IS_AFFECTED( ch, AFF_BLIND ) )
-         return FALSE;
+    if ( IS_PLR_FLAG( ch, PLR_HOLYLIGHT ) )
+	return TRUE;
 
-      if( room_is_dark( ch->in_room ) && !IS_AFFECTED( ch, AFF_INFRARED ) )
-         return FALSE;
+    /* The miracle cure for blindness? -- Altrag */
+    if ( !IS_AFFECTED(ch, AFF_TRUESIGHT) )
+    {
+	if ( IS_AFFECTED(ch, AFF_BLIND) )
+	  return FALSE;
 
-      if( IS_AFFECTED( victim, AFF_INVISIBLE ) && !IS_AFFECTED( ch, AFF_DETECT_INVIS ) )
-         return FALSE;
+	if ( room_is_dark( ch->in_room ) && !IS_AFFECTED(ch, AFF_INFRARED) )
+	  return FALSE;
 
-      if( IS_AFFECTED( victim, AFF_HIDE )
-          && !IS_AFFECTED( ch, AFF_DETECT_HIDDEN )
-          && !victim->fighting && ( IS_NPC( ch ) ? !IS_NPC( victim ) : IS_NPC( victim ) ) )
-         return FALSE;
-   }
+	if ( IS_AFFECTED(victim, AFF_INVISIBLE) && !IS_AFFECTED(ch, AFF_DETECT_INVIS) )
+	  return FALSE;
 
-   /*
-    * Redone by Narn to let newbie council members see pre-auths. 
-    */
-   if( NOT_AUTHED( victim ) )
-   {
-      if( NOT_AUTHED( ch ) || IS_IMMORTAL( ch ) || IS_NPC( ch ) )
-         return TRUE;
+	if ( IS_AFFECTED(victim, AFF_HIDE)
+	&&   !IS_AFFECTED(ch, AFF_DETECT_HIDDEN)
+	&&   !victim->fighting
+	&&   ( IS_NPC(ch) ? !IS_NPC(victim) : IS_NPC(victim) ) )
+	  return FALSE;
+    }
 
-      if( ch->pcdata->council && !str_cmp( ch->pcdata->council->name, "Newbie Council" ) )
-         return TRUE;
-
-      return FALSE;
-   }
-
-/* Commented out for who list purposes 
-    if (!NOT_AUTHED(victim) && NOT_AUTHED(ch) && !IS_IMMORTAL(victim) 
-    && !IS_NPC(victim))
-   	return FALSE;*/
-   return TRUE;
+    return TRUE;
 }
-
 /*
  * True if char can see obj.
  */
 bool can_see_obj( CHAR_DATA * ch, OBJ_DATA * obj )
 {
+    if ( IS_OBJ_STAT( obj, ITEM_ONMAP ) )
+    {
+	if( !IS_NPC( ch ) && !IS_PLR_FLAG( ch, PLR_ONMAP ) )
+	    return FALSE;
+
+	if( IS_NPC( ch ) && !IS_ACT_FLAG( ch, ACT_ONMAP ) )
+	    return FALSE;
+
+	if( ch->map != obj->map || ch->x != obj->x || ch->y != obj->y )
+	    return FALSE;
+    }
+
    if( !IS_NPC( ch ) && xIS_SET( ch->act, PLR_HOLYLIGHT ) )
       return TRUE;
 
@@ -4890,6 +4906,9 @@ OBJ_DATA *clone_object( OBJ_DATA * obj )
    clone->cost = obj->cost;
    clone->level = obj->level;
    clone->timer = obj->timer;
+    clone->map = obj->map;
+    clone->x = obj->x;
+    clone->y = obj->y;
    clone->value[0] = obj->value[0];
    clone->value[1] = obj->value[1];
    clone->value[2] = obj->value[2];
@@ -4943,6 +4962,7 @@ OBJ_DATA *group_object( OBJ_DATA * obj1, OBJ_DATA * obj2 )
       && obj1->value[4] == obj2->value[4]
       && obj1->value[5] == obj2->value[5]
       && !obj1->first_extradesc && !obj2->first_extradesc
+    && obj1->map == obj2->map && obj1->x == obj2->x && obj1->y == obj2->y
       && !obj1->first_affect && !obj2->first_affect
       && !obj1->first_content && !obj2->first_content
       && obj1->count + obj2->count <= SHRT_MAX ) /* prevent count overflow */
@@ -5063,7 +5083,7 @@ bool empty_obj( OBJ_DATA * obj, OBJ_DATA * destobj, ROOM_INDEX_DATA * destroom )
          }
          else
             obj_from_obj( otmp );
-         otmp = obj_to_room( otmp, destroom );
+         otmp = obj_to_room( otmp, destroom, ch );
          if( ch )
          {
             oprog_drop_trigger( ch, otmp );  /* mudprogs */

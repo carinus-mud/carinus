@@ -397,7 +397,7 @@ int add_new_room_to_map( CHAR_DATA * ch, char code )
          else if( code == 'W' )
             location->sector_type = SECT_SWAMP;
          else
-            location->sector_type = SECT_DUNNO;
+            location->sector_type = SECT_OCEANFLOOR;
          return i;
       }
    }

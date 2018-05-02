@@ -669,6 +669,12 @@ bool spec_fido( CHAR_DATA * ch )
       if( corpse->item_type != ITEM_CORPSE_NPC )
          continue;
 
+      if( IS_ACT_FLAG( ch, ACT_ONMAP ) )
+	{
+	   if( ch->map != corpse->map || ch->x != corpse->x || ch->y != corpse->y )
+	    	continue;
+	}
+
       act( AT_ACTION, "$n savagely devours a corpse.", ch, NULL, NULL, TO_ROOM );
       for( obj = corpse->first_content; obj; obj = obj_next )
       {
@@ -760,6 +766,12 @@ bool spec_janitor( CHAR_DATA * ch )
       trash_next = trash->next_content;
       if( !IS_SET( trash->wear_flags, ITEM_TAKE ) || IS_OBJ_STAT( trash, ITEM_BURIED ) )
          continue;
+      if( IS_ACT_FLAG( ch, ACT_ONMAP ) )
+	{
+	   if( ch->map != trash->map || ch->x != trash->x || ch->y != trash->y )
+	    	continue;
+	}
+
       if( IS_OBJ_STAT( trash, ITEM_PROTOTYPE ) && !xIS_SET( ch->act, ACT_PROTOTYPE ) )
          continue;
       if( trash->item_type == ITEM_DRINK_CON

@@ -2242,27 +2242,33 @@ void do_dig( CHAR_DATA* ch, const char* argument)
                }
             }
          }
-         else
-         {
-            switch ( ch->in_room->sector_type )
-            {
-               case SECT_CITY:
-               case SECT_INSIDE:
-                  send_to_char( "The floor is too hard to dig through.\r\n", ch );
-                  return;
+	  else
+	  {
+	      int sector;
 
-               case SECT_WATER_SWIM:
-               case SECT_WATER_NOSWIM:
-               case SECT_UNDERWATER:
-                  send_to_char( "You cannot dig here.\r\n", ch );
-                  return;
-
-               case SECT_AIR:
-                  send_to_char( "What?  In the air?!\r\n", ch );
-                  return;
-            }
-         }
-
+		if( IS_PLR_FLAG(ch, PLR_ONMAP) || IS_ACT_FLAG(ch, ACT_ONMAP) )
+		    sector = map_sector[ch->map][ch->x][ch->y];
+		else
+		    sector = ch->in_room->sector_type;
+		
+	      switch( sector )
+	      {
+		  case SECT_CITY:
+		    send_to_char( "The road is too hard to dig through.\r\n", ch );
+		    return;
+		  case SECT_INSIDE:
+		    send_to_char( "The floor is too hard to dig through.\r\n", ch );
+		    return;
+		  case SECT_WATER_SWIM:
+		  case SECT_WATER_NOSWIM:
+		  case SECT_UNDERWATER:
+		    send_to_char( "You cannot dig here.\r\n", ch );
+		    return;
+		  case SECT_AIR:
+		    send_to_char( "What?  In the air?!\r\n", ch );
+		    return;
+	      }
+	  }
          add_timer( ch, TIMER_DO_FUN, UMIN( skill_table[gsn_dig]->beats / 10, 3 ), do_dig, 1 );
          ch->alloc_ptr = str_dup( arg );
          send_to_char( "You begin digging...\r\n", ch );

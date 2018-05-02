@@ -3081,8 +3081,8 @@ char *act_string( const char *format, CHAR_DATA * to, CHAR_DATA * ch, const void
                }
                else
                   i = should_upper ?
-                   !can_see( to, ch ) ? "It" : capitalize( he_she[URANGE( 0, ch->sex, 2 )] ) :
-                   !can_see( to, ch ) ? "it" : he_she[URANGE( 0, ch->sex, 2 )];
+                   !can_see( to, ch, FALSE ) ? "It" : capitalize( he_she[URANGE( 0, ch->sex, 2 )] ) :
+                   !can_see( to, ch, FALSE ) ? "it" : he_she[URANGE( 0, ch->sex, 2 )];
                break;
 
             case 'E':
@@ -3093,8 +3093,8 @@ char *act_string( const char *format, CHAR_DATA * to, CHAR_DATA * ch, const void
                }
                else
                   i = should_upper ?
-                   !can_see( to, vch ) ? "It" : capitalize( he_she[URANGE( 0, vch->sex, 2 )] ) :
-                   !can_see( to, vch ) ? "it" : he_she[URANGE( 0, vch->sex, 2 )];
+                   !can_see( to, vch, FALSE ) ? "It" : capitalize( he_she[URANGE( 0, vch->sex, 2 )] ) :
+                   !can_see( to, vch, FALSE ) ? "it" : he_she[URANGE( 0, vch->sex, 2 )];
                break;
 
             case 'm':
@@ -3105,8 +3105,8 @@ char *act_string( const char *format, CHAR_DATA * to, CHAR_DATA * ch, const void
                }
                else
                   i = should_upper ?
-                   !can_see( to, ch ) ? "It" : capitalize( him_her[URANGE( 0, ch->sex, 2 )] ) :
-                   !can_see( to, ch ) ? "it" : him_her[URANGE( 0, ch->sex, 2 )];
+                   !can_see( to, ch, FALSE ) ? "It" : capitalize( him_her[URANGE( 0, ch->sex, 2 )] ) :
+                   !can_see( to, ch, FALSE ) ? "it" : him_her[URANGE( 0, ch->sex, 2 )];
                break;
 
             case 'M':
@@ -3117,26 +3117,26 @@ char *act_string( const char *format, CHAR_DATA * to, CHAR_DATA * ch, const void
                }
                else
                   i = should_upper ?
-                   !can_see( to, vch ) ? "It" : capitalize( him_her[URANGE( 0, vch->sex, 2 )] ) :
-                   !can_see( to, vch ) ? "it" : him_her[URANGE( 0, vch->sex, 2 )];
+                   !can_see( to, vch, FALSE ) ? "It" : capitalize( him_her[URANGE( 0, vch->sex, 2 )] ) :
+                   !can_see( to, vch, FALSE ) ? "it" : him_her[URANGE( 0, vch->sex, 2 )];
                break;
 
             case 'n':
-               if( !can_see( to, ch ) )
+               if( !can_see( to, ch, FALSE ) )
                   i = "Someone";
                else
                {
-                  snprintf( temp, sizeof( temp ), "%s", ( to ? PERS( ch, to ) : NAME( ch ) ) );
+                  snprintf( temp, sizeof( temp ), "%s", ( to ? PERS( ch, to, FALSE ) : NAME( ch ) ) );
                   i = temp;
                }
                break;
 
             case 'N':
-               if( !can_see( to, vch ) )
+               if( !can_see( to, vch, FALSE ) )
                   i = "Someone";
                else
                {
-                  snprintf( temp, sizeof( temp ), "%s", ( to ? PERS( vch, to ) : NAME( vch ) ) );
+                  snprintf( temp, sizeof( temp ), "%s", ( to ? PERS( vch, to, FALSE ) : NAME( vch ) ) );
                   i = temp;
                }
                break;
@@ -3187,8 +3187,8 @@ char *act_string( const char *format, CHAR_DATA * to, CHAR_DATA * ch, const void
                }
                else
                   i = should_upper ? 
-                   !can_see( to, ch ) ? "It" : capitalize( his_her[URANGE( 0, ch->sex, 2 )] ) :
-                   !can_see( to, ch ) ? "it" : his_her[URANGE( 0, ch->sex, 2 )];
+                   !can_see( to, ch, FALSE ) ? "It" : capitalize( his_her[URANGE( 0, ch->sex, 2 )] ) :
+                   !can_see( to, ch, FALSE ) ? "it" : his_her[URANGE( 0, ch->sex, 2 )];
                break;
 
             case 'S':
@@ -3199,8 +3199,8 @@ char *act_string( const char *format, CHAR_DATA * to, CHAR_DATA * ch, const void
                }
                else
                   i = should_upper ? 
-                   !can_see( to, vch ) ? "It" : capitalize( his_her[URANGE( 0, vch->sex, 2 )] ) :
-                   !can_see( to, vch ) ? "it" : his_her[URANGE( 0, vch->sex, 2 )];
+                   !can_see( to, vch, FALSE ) ? "It" : capitalize( his_her[URANGE( 0, vch->sex, 2 )] ) :
+                   !can_see( to, vch, FALSE ) ? "it" : his_her[URANGE( 0, vch->sex, 2 )];
                break;
 
             case 't':
@@ -3407,19 +3407,46 @@ void act( short AType, const char *format, CHAR_DATA * ch, const void *arg1, con
       if( ( !to->desc && ( IS_NPC( to ) && !HAS_PROG( to->pIndexData, ACT_PROG ) ) ) || !IS_AWAKE( to ) )
          continue;
 
-      if( type == TO_CHAR && to != ch )
-         continue;
+	if( type == TO_CHAR )
+	{
+	   if( to != ch )
+	      continue;
+
+	   if( !is_same_map( ch, to ) )
+	      continue;
+	}
       if( type == TO_VICT && ( to != vch || to == ch ) )
          continue;
-      if( type == TO_ROOM && to == ch )
-         continue;
-      if( type == TO_NOTVICT && ( to == ch || to == vch ) )
-         continue;
-      if( type == TO_CANSEE && ( to == ch
-         || ( !IS_NPC(ch) && (xIS_SET(ch->act, PLR_WIZINVIS)
-         && ( get_trust(to) < ( ch->pcdata ? ch->pcdata->wizinvis : 0 ) ) ) ) ) )
-         continue;
+	if( type == TO_ROOM )
+	{
+	   if( to == ch )
+	      continue;
 
+	   if( !is_same_map( ch, to ) )
+	      continue;
+        }
+	if( type == TO_NOTVICT )
+	{
+	   if( to == ch || to == vch )
+	      continue;
+
+	   if( !is_same_map( ch, to ) )
+	      continue;
+	}
+	if( type == TO_CANSEE )
+	{
+ 	   if( to == ch )
+		continue;
+
+	   if( IS_IMMORTAL(ch) && IS_PLR_FLAG( ch, PLR_WIZINVIS ) )
+	   {
+ 		if( to->level < ch->pcdata->wizinvis )
+		continue;
+	   }
+
+	   if( !is_same_map( ch, to ) )
+	      continue;
+	}
       if( IS_IMMORTAL( to ) )
          txt = act_string( format, to, ch, arg1, arg2, STRING_IMM );
       else

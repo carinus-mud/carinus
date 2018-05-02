@@ -53,7 +53,8 @@ const char *const ex_flags[] = {
    "isdoor", "closed", "locked", "secret", "swim", "pickproof", "fly", "climb",
    "dig", "eatkey", "nopassdoor", "hidden", "passage", "portal", "r1", "r2",
    "can_climb", "can_enter", "can_leave", "auto", "noflee", "searchable",
-   "bashed", "bashproof", "nomob", "window", "can_look", "isbolt", "bolted"
+   "bashed", "bashproof", "nomob", "window", "can_look", "isbolt", "bolted",
+   "overland"
 };
 
 const char *const sec_flags[] = {
@@ -69,8 +70,8 @@ const char *const r_flags[] = {
    "donation", "nodropall", "silence", "logspeech", "nodrop", "clanstoreroom",
    "nosummon", "noastral", "teleport", "teleshowdesc", "nofloor",
    "nosupplicate", "arena", "nomissile", "noyell", "noquit", "prototype", "dnd",
-   "_track_", "nowhere", "notrack", "fog"
-};
+   "_track_", "nowhere", "notrack", "fog", "map"
+	};
 
 const char *const o_flags[] = {
    "glow", "hum", "dark", "loyal", "evil", "invis", "magic", "nodrop", "bless",
@@ -79,7 +80,7 @@ const char *const o_flags[] = {
    "donation", "clanobject", "clancorpse", "antivampire", "antidruid",
    "hidden", "poisoned", "covering", "deathrot", "buried", "prototype",
    "nolocate", "groundrot", "lootable", "personal", "multi_invoke", "enchanted",
-   "permanent", "nofill", "deathdrop", "skinned"
+   "permanent", "nofill", "deathdrop", "decapitated", "onmap"
 };
 
 /* Compiler says these aren't in use, so for now they'll be blocked out.
@@ -153,7 +154,8 @@ const char *const act_flags[] = {
    "wimpy", "pet", "train", "practice", "immortal", "deadly", "polyself",
    "meta_aggr", "guardian", "running", "nowander", "mountable", "mounted",
    "scholar", "secretive", "hardhat", "mobinvis", "noassist", "autonomous",
-   "pacifist", "noattack", "annoying", "statshield", "prototype", "banker"
+   "pacifist", "noattack", "annoying", "statshield", "prototype", "banker",
+   "onmap"
 
 };
 
@@ -170,7 +172,7 @@ const char *const plr_flags[] = {
    "outcast", "brief", "combine", "prompt", "telnet_ga", "holylight",
    "wizinvis", "roomvnum", "silence", "noemote", "attacker", "notell", "log",
    "deny", "freeze", "thief", "killer", "litterbug", "ansi", "rip", "nice",
-   "flee", "autogold", "automap", "afk", "invisprompt", "compass"
+   "flee", "autogold", "automap", "afk", "invisprompt", "compass", "onmap", "mapedit"
 };
 
 const char *const trap_flags[] = {
@@ -180,8 +182,7 @@ const char *const trap_flags[] = {
    "r9", "r10", "r11", "r12", "r13", "r14", "r15"
 };
 
-const char *const cmd_flags[] = {
-   "possessed", "polymorphed", "watch", "retired", "noabort", "r5", "r6", "r7", "r8",
+const char *const cmd_flags[] = {   "possessed", "polymorphed", "watch", "retired", "noabort", "r5", "r6", "r7", "r8",
    "r9", "r10", "r11", "r12", "r13", "r14", "r15", "r16", "r17", "r18", "r19",
    "r20", "r21", "r22", "r23", "r24", "r25", "r26", "r27", "r28", "r29", "r30"
    "r31"
@@ -311,6 +312,12 @@ bool can_rmodify( CHAR_DATA * ch, ROOM_INDEX_DATA * room )
 
    if( IS_NPC( ch ) )
       return FALSE;
+	if( IS_PLR_FLAG( ch, PLR_ONMAP ) )
+	{
+	    send_to_char( "You cannot use redit from the overland maps.\r\n", ch );
+	    return FALSE;
+	}
+
    if( get_trust( ch ) >= sysdata.level_modify_proto )
       return TRUE;
    if( !xIS_SET( room->room_flags, ROOM_PROTOTYPE ) )
@@ -969,13 +976,112 @@ void stop_editing( CHAR_DATA * ch )
    ch->desc->connected = CON_PLAYING;
 }
 
+void goto_char( CHAR_DATA *ch, CHAR_DATA *wch, char *argument )
+{
+    ROOM_INDEX_DATA *location, *in_room;
+
+    set_char_color( AT_IMMORT, ch );
+    location = wch->in_room;
+
+    if( is_ignoring( wch, ch ) )
+    {
+	send_to_char( "No such location.\r\n", ch );
+	return;
+    }
+
+    if ( room_is_private( location ) )
+    {
+      if ( get_trust( ch ) < LEVEL_GREATER )
+      {
+	   send_to_char( "That room is private right now.\r\n", ch );
+	   return;
+      }
+      else
+      {
+	   send_to_char( "Overriding private flag!\r\n", ch );
+      }
+    }
+
+    in_room = ch->in_room;
+    if ( ch->fighting )
+	stop_fighting( ch, TRUE );
+
+    /* Modified bamfout processing by Altrag, installed by Samson 12-10-97 */
+       if (ch->pcdata && ch->pcdata->bamfout[0])
+         act(AT_IMMORT, "$T", ch, NULL,
+         (ch->pcdata && ch->pcdata->bamfin[0] != '\0')
+       ? ch->pcdata->bamfout : "disappears in a swirling mist.", TO_ROOM);
+       else
+         act(AT_IMMORT, "$n vanishes suddenly into thin air.", ch, NULL, NULL, TO_ROOM);
+
+    ch->regoto = ch->in_room->vnum;
+    leave_map( ch, wch, location );
+
+    /* Modified bamfin processing by Altrag, installed by Samson 12-10-97 */
+       if (ch->pcdata && ch->pcdata->bamfin[0])
+          act(AT_IMMORT, "$T", ch, NULL,
+         (ch->pcdata && ch->pcdata->bamfin[0] != '\0')
+         ? ch->pcdata->bamfin : "appears in a swirling mist.", TO_ROOM);
+       else
+          act(AT_IMMORT, "$n appears suddenly out of thin air.", ch, NULL, NULL, TO_ROOM);
+
+    return;
+}
+
+void goto_obj( CHAR_DATA *ch, OBJ_DATA *obj, const char *argument )
+{
+    ROOM_INDEX_DATA *location;
+
+    set_char_color( AT_IMMORT, ch );
+    location = obj->in_room;
+
+    if ( room_is_private( location ) )
+    {
+      if ( get_trust( ch ) < LEVEL_GREATER )
+      {
+	   send_to_char( "That room is private right now.\r\n", ch );
+	   return;
+      }
+      else
+      {
+	   send_to_char( "Overriding private flag!\r\n", ch );
+      }
+    }
+
+    if ( ch->fighting )
+	stop_fighting( ch, TRUE );
+
+    /* Modified bamfout processing by Altrag, installed by Samson 12-10-97 */
+       if (ch->pcdata && ch->pcdata->bamfout[0])
+         act(AT_IMMORT, "$T", ch, NULL,
+         (ch->pcdata && ch->pcdata->bamfin[0] != '\0')
+         ? ch->pcdata->bamfout : "disappears in a swirling mist.", TO_ROOM);
+
+       else
+         act(AT_IMMORT, "$n vanishes suddenly into thin air.", ch, NULL, NULL, TO_ROOM);
+
+    ch->regoto = ch->in_room->vnum;
+    leave_map( ch, NULL, location );
+
+    /* Modified bamfin processing by Altrag, installed by Samson 12-10-97 */
+       if (ch->pcdata && ch->pcdata->bamfin[0])
+          act(AT_IMMORT, "$T", ch, NULL,
+         (ch->pcdata && ch->pcdata->bamfin[0] != '\0')
+         ? ch->pcdata->bamfin : "appears in a swirling mist.", TO_ROOM);
+       else
+          act(AT_IMMORT, "$n appears suddenly out of thin air.", ch, NULL, NULL, TO_ROOM);
+
+    return;
+}
+
 void do_goto( CHAR_DATA* ch, const char* argument)
 {
    char arg[MAX_INPUT_LENGTH];
    ROOM_INDEX_DATA *location, *in_room;
-   CHAR_DATA *fch, *fch_next, *victim;
+   CHAR_DATA *fch, *fch_next, *victim, *wch;
    AREA_DATA *pArea;
    int vnum;
+   OBJ_DATA *obj;
 
    one_argument( argument, arg );
    if( arg[0] == '\0' )
@@ -983,6 +1089,85 @@ void do_goto( CHAR_DATA* ch, const char* argument)
       send_to_char( "Goto where?\r\n", ch );
       return;
    }
+   /* Begin Overland Map additions */
+    if ( !str_cmp( arg, "map" ) )
+    {
+	char arg1[MAX_INPUT_LENGTH];
+	char arg2[MAX_INPUT_LENGTH];
+	int x, y;
+	int map = -1;
+
+      argument = one_argument( argument, arg1 );
+      argument = one_argument( argument, arg2 );
+
+	if( arg1[0] == '\0' )
+      {
+	   send_to_char( "Goto which map??\r\n", ch );
+	   return;
+	}
+      
+      if( !str_cmp( arg1, "map1" ) )
+	   map = ACON_C1;
+
+      if( !str_cmp( arg1, "map2" ) )
+	   map = ACON_C2;
+
+	if( !str_cmp( arg1, "map3" ) )
+	   map = ACON_C3;
+
+      if( map == -1 )
+	{
+        ch_printf( ch, "There isn't a map for '%s'.\r\n", arg1 );
+        return;
+	}
+
+	if( arg2[0] == '\0' && argument[0] == '\0' )
+	{
+	   enter_map( ch, 499, 499, map );
+	   return;
+	}
+
+	if( arg2[0] == '\0' || argument[0] == '\0' )
+	{
+	   send_to_char( "Usage: goto map <mapname> <X> <Y>\r\n", ch );
+	   return;
+	}
+
+      x = atoi( arg2 );
+	y = atoi( argument );
+
+      if( x < 0 || x >= MAX_X )
+      {
+	   ch_printf( ch, "Valid x coordinates are 0 to %d.\r\n", MAX_X - 1 );
+	   return;
+      }
+
+      if( y < 0 || y >= MAX_Y )
+      {
+	   ch_printf( ch, "Valid y coordinates are 0 to %d.\r\n", MAX_Y - 1 );
+	   return;
+      }
+
+	enter_map( ch, x, y, map );
+	return;
+    }
+
+    if( !is_number( arg ) )
+    {
+      if ( ( wch = get_char_world( ch, arg ) ) != NULL && wch->in_room != NULL )
+      {
+	  goto_char( ch, wch, arg );
+	  return;
+      }
+
+      if ( ( obj = get_obj_world( ch, arg ) ) != NULL )
+      {
+	  goto_obj( ch, obj, arg );
+	  return;
+      }
+    }
+    /* End of Overland Map additions */
+
 
    if( !is_number( arg ) && ( fch = get_char_world( ch, arg ) ) )
    {
@@ -1060,15 +1245,9 @@ void do_goto( CHAR_DATA* ch, const char* argument)
          ? ch->pcdata->bamfout : "leaves in a swirling mist.", TO_ROOM);
                 }
 
-   ch->regoto = ch->in_room->vnum;
-   char_from_room( ch );
-   if( ch->mount )
-   {
-      char_from_room( ch->mount );
-      char_to_room( ch->mount, location );
-   }
-   char_to_room( ch, location );
-
+    /* It's assumed that if you've come this far, it's a room vnum you entered */
+    ch->regoto = ch->in_room->vnum;
+    leave_map( ch, NULL, location );
     if ( !IS_SET( ch->pcdata->flags, PCFLAG_BUILDWALK ) && !IS_NPC( ch ) )
     {
   if (!xIS_SET (ch->act, PLR_WIZINVIS))
@@ -4892,7 +5071,7 @@ void do_redit( CHAR_DATA* ch, const char* argument)
       send_to_char( "\r\n", ch );
       send_to_char( "Field being one of:\r\n", ch );
       send_to_char( "  name desc ed rmed affect rmaffect permaffect rmpermaffect\r\n", ch );
-      send_to_char( "  exit bexit exdesc exflags exname exkey\r\n", ch );
+      send_to_char( "  exit bexit exdesc exflags exname exkey excoord\r\n", ch );
       send_to_char( "  flags sector teledelay televnum tunnel\r\n", ch );
       send_to_char( "  rlist exdistance pulltype pull push\r\n", ch );
       return;
@@ -5139,6 +5318,54 @@ void do_redit( CHAR_DATA* ch, const char* argument)
       send_to_char( "Done.\r\n", ch );
       return;
    }
+
+   if ( !str_cmp( arg, "excoord" ) )
+    {
+	int x, y;
+
+	argument = one_argument( argument, arg2 );
+	argument = one_argument( argument, arg3 );
+	if ( arg2[0] == '\0' || arg3[0] == '\0' || argument[0] == '\0' )
+	{
+	    send_to_char( "Usage: redit excoord <dir> <X> <Y>\r\n", ch );
+	    return;
+	}
+	if ( arg2[0] == '#' )
+	{
+	    edir = atoi( arg2+1 );
+	    xit = get_exit_num( location, edir );
+	}
+	else
+	{
+	    edir = get_dir( arg2 );
+	    xit = get_exit( location, edir );
+	}
+
+	x = atoi( arg3 );
+      y = atoi( argument );
+
+      if( x < 0 || x >= MAX_X )
+	{
+	    ch_printf( ch, "Valid X coordinates are 0 to %d.\r\n", MAX_X - 1 );
+	    return;
+	}
+
+	if( y < 0 || y >= MAX_Y )
+	{
+	    ch_printf( ch, "Valid Y coordinates are 0 to %d.\r\n", MAX_Y - 1 );
+	    return;
+	}
+
+	if ( !xit )
+	{
+	    send_to_char( "No exit in that direction.  Use 'redit exit ...' first.\r\n", ch );
+	    return;
+	}
+	xit->x = x;
+	xit->y = y;
+	send_to_char( "Exit coordinates set.\r\n", ch );
+	return;
+    }
 
    if( !str_cmp( arg, "exname" ) )
    {
@@ -5742,6 +5969,8 @@ void do_mcreate( CHAR_DATA* ch, const char* argument)
    }
    mob = create_mobile( pMobIndex );
    char_to_room( mob, ch->in_room );
+    /* If you create one on the map, make sure it gets placed properly - Samson 8-21-99 */
+    fix_maps( ch, mob );
    act( AT_IMMORT, "$n waves $s arms about, and $N appears at $s command!", ch, NULL, mob, TO_ROOM );
    ch_printf_color( ch,
                     "&YYou wave your arms about, and %s appears at your command!\r\nMobVnum:  &W%d   &YKeywords:  &W%s\r\n",
@@ -6845,7 +7074,7 @@ void old_fold_area( AREA_DATA * tarea, char *filename, bool install )
       fprintf( fpout, "#FLAGS\n%d\n\n", tarea->flags );
 
    fprintf( fpout, "#ECONOMY %d %d\n\n", tarea->high_economy, tarea->low_economy );
-
+    fprintf( fpout, "#CONTINENT %s~\n\n", continents[tarea->continent] );
    /*
     * save mobiles 
     */
@@ -7125,11 +7354,22 @@ void old_fold_area( AREA_DATA * tarea, char *filename, bool install )
          fprintf( fpout, "D%d\n", xit->vdir );
          fprintf( fpout, "%s~\n", strip_cr( xit->description ) );
          fprintf( fpout, "%s~\n", strip_cr( xit->keyword ) );
-         if( xit->distance > 1 || xit->pull )
-            fprintf( fpout, "%d %d %d %d %d %d\n",
-                     xit->exit_info & ~EX_BASHED, xit->key, xit->vnum, xit->distance, xit->pulltype, xit->pull );
-         else
-            fprintf( fpout, "%d %d %d\n", xit->exit_info & ~EX_BASHED, xit->key, xit->vnum );
+	   if ( xit->distance > 1 || xit->pull )
+	     fprintf( fpout, "%d %d %d %d %d %d %d %d\n",
+	     					xit->exit_info & ~EX_BASHED,
+	   					xit->key,
+	   					xit->vnum,
+						xit->distance,
+						xit->x, xit->y,
+	   					xit->pulltype,
+	   					xit->pull );
+
+	   else
+	     fprintf( fpout, "%d %d %d %d %d\n",
+						xit->exit_info & ~EX_BASHED,
+	   					xit->key,
+	   					xit->vnum,
+						xit->x, xit->y );
       }
 
       for( pReset = room->first_reset; pReset; pReset = pReset->next )
@@ -7711,6 +7951,8 @@ void do_astat( CHAR_DATA* ch, const char* argument)
    ch_printf_color( ch, "&wArea flags: &W%s\r\n", flag_string( tarea->flags, area_flags ) );
    ch_printf_color( ch, "&wResetmsg: &W%s\r\n", tarea->resetmsg ? tarea->resetmsg : "(default)" ); /* Rennard */
    ch_printf_color( ch, "&wReset frequency: &W%d &wminutes.\r\n", tarea->reset_frequency ? tarea->reset_frequency : 15 );
+    ch_printf_color( ch, "&wContinent or Plane: &W%s\r\n", continents[tarea->continent] );
+
 }
 
 /* check other areas for a conflict while ignoring the current area */
@@ -7832,6 +8074,31 @@ void do_aset( CHAR_DATA* ch, const char* argument)
       send_to_char( "Done.\r\n", ch );
       return;
    }
+
+    if ( !str_cmp( arg2, "continent" ) )
+    {
+      /* Area continent editing - Samson 8-8-98 */
+    	if ( !argument || argument[0] == '\0' )
+	{
+	    send_to_char( "Set the area's continent.\r\n", ch );
+	    send_to_char( "Usage: aset continent <name>\r\n", ch );
+	    return;
+	}
+	argument = one_argument( argument, arg2 );
+	value = get_continent( arg2 );
+	if ( value < 0 || value > ACON_MAX )
+	{
+	   tarea->continent = 0;
+	   send_to_char( "Invalid area continent, set to 'alsherok' by default.\r\n", ch );
+	}
+	else
+	{
+	   tarea->continent = value;
+	   ch_printf ( ch, "Area continent set to %s.\r\n", arg2 );
+	}
+	return;
+    }
+
 
    if( !str_cmp( arg2, "low_economy" ) )
    {

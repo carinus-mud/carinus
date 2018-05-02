@@ -1281,7 +1281,8 @@ ROOM_INDEX_DATA *find_location( CHAR_DATA * ch, const char *arg )
    return NULL;
 }
 
-/* This function shared by do_transfer and do_mptransfer
+/* This function shared by 
+do_transfer and do_mptransfer
  *
  * Immortals bypass most restrictions on where to transfer victims.
  * NPCs cannot transfer victims who are:
@@ -1303,7 +1304,7 @@ void transfer_char( CHAR_DATA * ch, CHAR_DATA * victim, ROOM_INDEX_DATA * locati
       return;
    }
 
-   if( !can_see( ch, victim ) )
+   if( !can_see( ch, victim, FALSE ) )
       return;
 
    if( IS_NPC( ch ) && NOT_AUTHED( victim ) && location->area != victim->in_room->area )
@@ -1344,68 +1345,91 @@ void transfer_char( CHAR_DATA * ch, CHAR_DATA * victim, ROOM_INDEX_DATA * locati
 
 void do_transfer( CHAR_DATA* ch, const char* argument)
 {
-   char arg1[MAX_INPUT_LENGTH];
-   char arg2[MAX_INPUT_LENGTH];
-   ROOM_INDEX_DATA *location;
+
+   char arg1[MIL];
+   ROOM_INDEX_DATA *location, *original;
    DESCRIPTOR_DATA *d;
    CHAR_DATA *victim;
 
    set_char_color( AT_IMMORT, ch );
 
    argument = one_argument( argument, arg1 );
-   argument = one_argument( argument, arg2 );
-
-   if( arg1[0] == '\0' )
+   if(  arg1[0] == '\0' )
    {
-      send_to_char( "Transfer whom (and where)?\r\n", ch );
-      return;
+        send_to_char( "Transfer whom (and where)?\n\r", ch );
+        return;
+   }
+   if( !str_cmp( arg1, "all" ) )
+   {
+        for( d = first_descriptor; d; d = d->next )
+   {
+           if( d->connected == CON_PLAYING && d->character != ch && d->character->in_room
+              && d->newstate != 2 && can_see( ch, d->character, TRUE ) )
+   {
+                char buf[MIL];
+                snprintf( buf, MIL, "%s %s", d->character->name, argument );
+                do_transfer( ch, buf );
+           }
+   }
+   return;
    }
 
-   if( arg2[0] != '\0' )
-   {
-      if( !( location = find_location( ch, arg2 ) ) )
-      {
-         send_to_char( "That location does not exist.\r\n", ch );
-         return;
-      }
-   }
+   /*
+    * Thanks to Grodyn for the optional location parameter.
+    */
+
+   if( !argument || argument[0] == '\0' )
+        location = ch->in_room;
    else
-      location = ch->in_room;
-
-   if( !str_cmp( arg1, "all" ) && get_trust( ch ) >= LEVEL_GREATER )
    {
-      for( d = first_descriptor; d; d = d->next )
-      {
-         if( d->connected == CON_PLAYING && d->character && d->character != ch && d->character->in_room )
-            transfer_char( ch, d->character, location );
-      }
-      return;
+        send_to_char( "You can only transfer to your occupied room.\n\r", ch );
+        send_to_char( "If you need to transfer someone to a remote location, use the at command there.\r\n", ch);
+        return;
    }
 
-   if( !( victim = get_char_world( ch, arg1 ) ) )
+   if( ( victim = get_char_world( ch, arg1 ) ) == NULL )
    {
-      send_to_char( "They aren't here.\r\n", ch );
-      return;
+        send_to_char( "They aren't here.\n\r", ch );
+        return;
    }
 
-   /*
-    * modification to prevent a low level imm from transferring a 
-    * higher level imm with the DND flag on.  - Gorog             
-    */
-   if( !IS_NPC( victim ) && get_trust( ch ) < get_trust( victim )
-       && victim->desc
-       && ( victim->desc->connected == CON_PLAYING
-            || victim->desc->connected == CON_EDITING ) && IS_SET( victim->pcdata->flags, PCFLAG_DND ) )
+   if( victim == ch )
    {
-      ch_printf( ch, "Sorry. %s does not wish to be disturbed.\r\n", victim->name );
-      ch_printf( victim, "Your DND flag just foiled %s's transfer command.\r\n", ch->name );
-      return;
+      ch_printf( ch, "Are you feeling alright today %s?\n\r", ch->name );
+        return;
    }
-   /*
-    * end of modification
-    */
 
-   transfer_char( ch, victim, location );
+   if( ch->level < victim->level )
+   {
+        send_to_char( "A mystical force prevents your actions.\n\r", ch );
+        return;
+   }
+
+   if( !victim->in_room )
+        {
+        send_to_char( "They have no physical location!\n\r", ch );
+           return;
+        }
+
+   if( victim->fighting )
+        stop_fighting( victim, TRUE );
+
+   act( AT_MAGIC, "A swirling vortex arrives to pick up $n!", victim, NULL, NULL, TO_ROOM );
+   original = victim->in_room;
+
+   leave_map( victim, ch, location );
+
+   act( AT_MAGIC, "A swirling vortex arrives, carrying $n!", victim, NULL, NULL, TO_ROOM );
+   if( ch != victim )
+      act( AT_IMMORT, "$n has sent a swirling vortex to transport you.", ch, NULL, victim, TO_VICT );
+   send_to_char( "Ok.\n\r", ch );
+
+   if( !IS_IMMORTAL(victim) && !IS_NPC(victim) && !in_hard_range( victim, location->area ) )
+      send_to_char( "Warning: the player's level is not within the area's level range.\n\r", ch );
+
+   return;
+
+
 }
 
 void do_retran( CHAR_DATA* ch, const char* argument)
@@ -1441,141 +1465,275 @@ void do_regoto( CHAR_DATA* ch, const char* argument)
    return;
 }
 
-/*  Added do_at and do_atobj to reduce lag associated with at
+/*  Added atmob and atobj to reduce lag associated with at
  *  --Shaddai
  */
-void do_at( CHAR_DATA* ch, const char* argument)
+void atmob( CHAR_DATA *ch, CHAR_DATA *wch, const char *argument )
 {
-   char arg[MAX_INPUT_LENGTH];
-   ROOM_INDEX_DATA *location = NULL;
-   ROOM_INDEX_DATA *original;
-   CHAR_DATA *wch = NULL, *victim;
+   ROOM_INDEX_DATA *location, *original;
+   int origmap, origx, origy;
 
    set_char_color( AT_IMMORT, ch );
+   location = wch->in_room;
 
-   argument = one_argument( argument, arg );
-   if( arg[0] == '\0' || argument[0] == '\0' )
+   if( is_ignoring( wch, ch ) )
    {
-      send_to_char( "At where what?\r\n", ch );
-      return;
+        send_to_char( "No such location.\n\r", ch );
+        return;
    }
-   if( is_number( arg ) )
-      location = get_room_index( atoi( arg ) );
-   else if( !str_cmp( arg, "pk" ) )
-      location = get_room_index( last_pkroom );
-   else if( ( wch = get_char_world( ch, arg ) ) == NULL || wch->in_room == NULL )
-   {
-      send_to_char( "No such mobile or player in existance.\r\n", ch );
-      return;
-   }
-   if( !location && wch )
-      location = wch->in_room;
-
-   if( !location )
-   {
-      send_to_char( "No such location exists.\r\n", ch );
-      return;
-   }
-
-   /*
-    * The following mod is used to prevent players from using the 
-    * at command on a higher level immortal who has a DND flag    
-    */
-   if( wch && !IS_NPC( wch ) && IS_SET( wch->pcdata->flags, PCFLAG_DND ) && get_trust( ch ) < get_trust( wch ) )
-   {
-      ch_printf( ch, "Sorry. %s does not wish to be disturbed.\r\n", wch->name );
-      ch_printf( wch, "Your DND flag just foiled %s's at command.\r\n", ch->name );
-      return;
-   }
-   /*
-    * End of modification  -- Gorog 
-    */
-
-   if( room_is_private( location ) )
-   {
-      if( get_trust( ch ) < LEVEL_GREATER )
-      {
-         send_to_char( "That room is private right now.\r\n", ch );
-         return;
-      }
+   if ( room_is_private( location ) )
+        {
+      if ( ch->level < sysdata.level_override_private )
+           {
+           send_to_char( "That room is private right now.\n\r", ch );
+                return;
+           }
       else
-         send_to_char( "Overriding private flag!\r\n", ch );
+      {
+           send_to_char( "Overriding private flag!\n\r", ch );
+        }
    }
 
-   if( ( victim = room_is_dnd( ch, location ) ) )
+   if( xIS_SET( location->room_flags, ROOM_PRIVATE )  && ch->level < LEVEL_SUPREME )
    {
-      ch_printf( ch, "That room is \"do not disturb\" right now.\r\n" );
-      ch_printf( victim, "Your DND flag just foiled %s's atmob command\r\n", ch->name );
-      return;
+        send_to_char( "Go away! That room has been sealed for privacy!\n\r", ch );
+   return;
+   }
+
+   origmap = ch->map;
+   origx = ch->x;
+   origy = ch->y;
+
+   /* Bunch of checks to make sure the "ator" is temporarily on the same grid as
+    * the "atee" - Samson
+    */
+
+   if( xIS_SET( location->room_flags, ROOM_MAP ) && (!IS_PLR_FLAG( ch, PLR_ONMAP) ) )
+   {
+        SET_PLR_FLAG( ch, PLR_ONMAP );
+        ch->map = wch->map;
+        ch->x = wch->x;
+        ch->y = wch->y;
+   }
+   else    if( xIS_SET( location->room_flags, ROOM_MAP ) && IS_PLR_FLAG( ch, PLR_ONMAP ) )
+      {
+        ch->map = wch->map;
+        ch->x = wch->x;
+        ch->y = wch->y;
+   }
+   else    if(!( xIS_SET( location->room_flags, ROOM_MAP )) && IS_PLR_FLAG( ch, PLR_ONMAP ) )
+   {
+        REMOVE_PLR_FLAG( ch, PLR_ONMAP );
+        ch->map = -1;
+        ch->x = -1;
+        ch->y = -1;
    }
 
    set_char_color( AT_PLAIN, ch );
    original = ch->in_room;
    char_from_room( ch );
-   char_to_room( ch, location );
+   if( !(char_to_room( ch, location )) )
+        log_printf( "char_to_room: %s:%s, line %d.", __FILE__, __FUNCTION__, __LINE__ );
    interpret( ch, argument );
+   if( IS_PLR_FLAG( ch, PLR_ONMAP ) &&   xIS_SET( location->room_flags, ROOM_MAP ) )
+  {   
+     REMOVE_PLR_FLAG( ch, PLR_ONMAP );
+  } 
+  else 
+  if( !IS_PLR_FLAG( ch, PLR_ONMAP ) &&    xIS_SET( location->room_flags, ROOM_MAP ) )
+  {
+        SET_PLR_FLAG( ch, PLR_ONMAP );
+  }
+   ch->map = origmap;
+   ch->x = origx;
+   ch->y = origy;
 
-   if( !char_died( ch ) )
+   if ( !char_died(ch) )
    {
       char_from_room( ch );
-      char_to_room( ch, original );
+      if( !char_to_room( ch, location ) )
+           log_printf( "char_to_room: %s:%s, line %d.", __FILE__, __FUNCTION__, __LINE__ );
    }
    return;
 }
 
-void do_atobj( CHAR_DATA* ch, const char* argument)
+void atobj( CHAR_DATA *ch, OBJ_DATA *obj, const char *argument )
 {
-   char arg[MAX_INPUT_LENGTH];
-   ROOM_INDEX_DATA *location;
-   ROOM_INDEX_DATA *original;
-   OBJ_DATA *obj;
-   CHAR_DATA *victim;
+   ROOM_INDEX_DATA *location, *original;
+   int origmap, origx, origy;
 
    set_char_color( AT_IMMORT, ch );
-
-   argument = one_argument( argument, arg );
-   if( arg[0] == '\0' || argument[0] == '\0' )
-   {
-      send_to_char( "At where what?\r\n", ch );
-      return;
-   }
-
-   if( ( obj = get_obj_world( ch, arg ) ) == NULL || !obj->in_room )
-   {
-      send_to_char( "No such object in existance.\r\n", ch );
-      return;
-   }
    location = obj->in_room;
-   if( room_is_private( location ) )
+
+   if ( room_is_private( location ) )
    {
-      if( get_trust( ch ) < LEVEL_GREATER )
-      {
-         send_to_char( "That room is private right now.\r\n", ch );
-         return;
+      if ( ch->level < sysdata.level_override_private )
+   {
+           send_to_char( "That room is private right now.\n\r", ch );
+        return;
+   }
+   else
+   {
+           send_to_char( "Overriding private flag!\n\r", ch );
       }
-      else
-         send_to_char( "Overriding private flag!\r\n", ch );
    }
 
-   if( ( victim = room_is_dnd( ch, location ) ) )
+      if( xIS_SET( location->room_flags, ROOM_PRIVATE ) && ch->level < LEVEL_SUPREME )
    {
-      ch_printf( ch, "That room is \"do not disturb\" right now.\r\n" );
-      ch_printf( victim, "Your DND flag just foiled %s's atobj command\r\n", ch->name );
-      return;
+        send_to_char( "Go away! That room has been sealed for privacy!\n\r", ch );
+        return;
+   }
+
+   origmap = ch->map;
+   origx = ch->x;
+   origy = ch->y;
+
+   /* Bunch of checks to make sure the imm is on the same grid as the object - Samson */
+   if( xIS_SET( location->room_flags, ROOM_MAP ) && !IS_PLR_FLAG( ch, PLR_ONMAP ) )
+   {
+        SET_PLR_FLAG( ch, PLR_ONMAP );
+        ch->map = obj->map;
+        ch->x = obj->x;
+        ch->y = obj->y;
+   }
+   if( xIS_SET( location->room_flags, ROOM_MAP ) && IS_PLR_FLAG( ch, PLR_ONMAP ) )
+   {
+        ch->map = obj->map;
+        ch->x = obj->x;
+        ch->y = obj->y;
+   }
+   else    if( !(xIS_SET( location->room_flags, ROOM_MAP )) && IS_PLR_FLAG( ch, PLR_ONMAP ) )
+   {
+        REMOVE_PLR_FLAG( ch, PLR_ONMAP );
+        ch->map = -1;
+        ch->x = -1;
+        ch->y = -1;
    }
 
    set_char_color( AT_PLAIN, ch );
    original = ch->in_room;
    char_from_room( ch );
-   char_to_room( ch, location );
+   if( !char_to_room( ch, location ) )
+        log_printf( "char_to_room: %s:%s, line %d.", __FILE__, __FUNCTION__, __LINE__ );
    interpret( ch, argument );
+    if( IS_PLR_FLAG( ch, PLR_ONMAP ) &&  !(xIS_SET( location->room_flags, ROOM_MAP ) ))
+        REMOVE_PLR_FLAG( ch, PLR_ONMAP );
+   else if( !IS_PLR_FLAG( ch, PLR_ONMAP ) &&  xIS_SET( location->room_flags, ROOM_MAP )  )
+        SET_PLR_FLAG( ch, PLR_ONMAP );
 
-   if( !char_died( ch ) )
+   ch->map = origmap;
+   ch->x = origx;
+   ch->y = origy;
+
+   if ( !char_died(ch) )
    {
       char_from_room( ch );
-      char_to_room( ch, original );
+      if( !char_to_room( ch, original ) )
+           log_printf( "char_to_room: %s:%s, line %d.", __FILE__, __FUNCTION__, __LINE__ );
    }
    return;
+}
+
+
+
+void do_at( CHAR_DATA *ch, const char *argument )
+{
+    char arg[MAX_INPUT_LENGTH];
+    ROOM_INDEX_DATA *location;
+    ROOM_INDEX_DATA *original;
+    CHAR_DATA *wch;
+    OBJ_DATA *obj;
+    short origmap, origx, origy;
+
+    argument = one_argument( argument, arg );
+
+    if ( arg[0] == '\0' ||  argument[0] == '\0' )
+    {
+	send_to_char( "At where what?\r\n", ch );
+	return;
+    }
+
+    if( !is_number( arg ) )
+    {
+      if ( ( wch = get_char_world( ch, arg ) ) != NULL && wch->in_room != NULL )
+      {
+	  atmob( ch, wch, argument );
+	  return;
+      }
+
+      if ( ( obj = get_obj_world( ch, arg ) ) != NULL && obj->in_room != NULL )
+      {
+	  atobj( ch, obj, argument );
+	  return;
+      }
+
+	send_to_char( "No such mob or object.\r\n", ch );
+	return;
+    }
+
+    if ( ( location = find_location( ch, arg ) ) == NULL )
+    {
+	send_to_char( "No such location.\r\n", ch );
+	return;
+    }
+
+    if ( room_is_private( location ) )
+    {
+      if ( get_trust( ch ) < LEVEL_GREATER )
+      {
+	   send_to_char( "That room is private right now.\r\n", ch );
+	   return;
+      }
+      else
+      {
+	   send_to_char( "Overriding private flag!\r\n", ch );
+      }
+      
+    }
+
+    origmap = ch->map;
+    origx = ch->x;
+    origy = ch->y;
+
+    /* Since we're this far down, it's a given that the location isn't on a map since
+	 a vnum had to be specified to get here. Therefore you want to be off map, and
+	 at coords of -1, -1 to avoid problems - Samson */
+    REMOVE_PLR_FLAG( ch, PLR_ONMAP );
+    ch->map = -1;
+    ch->x = -1;
+    ch->y = -1;
+    
+    original = ch->in_room;
+    char_from_room( ch );
+    char_to_room( ch, location );
+
+    interpret( ch, argument );
+
+    /* And even if you weren't on a map to begin with, this will still work fine */
+   if( IS_PLR_FLAG( ch, PLR_ONMAP ) && !( xIS_SET( location->room_flags, ROOM_MAP ) ) )
+        REMOVE_PLR_FLAG( ch, PLR_ONMAP );
+   else if( !IS_PLR_FLAG( ch, PLR_ONMAP ) &&  xIS_SET( location->room_flags, ROOM_MAP )  )
+        SET_PLR_FLAG( ch, PLR_ONMAP );
+
+    ch->map = origmap;
+    ch->x = origx;
+    ch->y = origy;
+
+    /*
+     * See if 'ch' still exists before continuing!
+     * Handles 'at XXXX quit' case.
+     */
+    for ( wch = first_char; wch; wch = wch->next )
+    {
+	if ( wch == ch )
+	{
+	    char_from_room( ch );
+	    char_to_room( ch, original );
+	    break;
+	}
+    }
+
+    return;
 }
 
 void do_rat( CHAR_DATA* ch, const char* argument)
@@ -1774,7 +1932,7 @@ void do_rstat( CHAR_DATA* ch, const char* argument)
    send_to_char_color( "&cCharacters: &w", ch );
    for( rch = location->first_person; rch; rch = rch->next_in_room )
    {
-      if( can_see( ch, rch ) )
+      if( can_see( ch, rch, FALSE ) )
       {
          send_to_char( " ", ch );
          one_argument( rch->name, buf );
@@ -1849,6 +2007,10 @@ void do_ostat( CHAR_DATA* ch, const char* argument)
    ch_printf_color( ch, "&cWear_loc: &w%d\r\n", obj->wear_loc );
    ch_printf_color( ch, "&cCost: &Y%d  ", obj->cost );
    ch_printf_color( ch, "&cRent: &w%d  ", obj->pIndexData->rent );
+    ch_printf_color( ch, "\r\n&cOn map: &w%s ",
+	IS_OBJ_STAT( obj, ITEM_ONMAP ) ? map_names[obj->map] : "(none)" );
+
+    ch_printf_color( ch, "&cCoords: &w%d %d\r\n", obj->x, obj->y );
    send_to_char_color( "&cTimer: ", ch );
    if( obj->timer > 0 )
       ch_printf_color( ch, "&R%d  ", obj->timer );
@@ -2212,8 +2374,13 @@ void do_mstat( CHAR_DATA* ch, const char* argument)
 
 
 
-}
-}
+		}
+
+	pager_printf_color( ch, "&RMap   : &c%s &w &cCoords: &w%d %d\r\n",
+		IS_PLR_FLAG( victim, PLR_ONMAP ) ? map_names[victim->map] : "none",
+		victim->x, victim->y );
+
+	}
 void do_mfind( CHAR_DATA* ch, const char* argument)
 {
    char arg[MAX_INPUT_LENGTH];
@@ -2374,7 +2541,7 @@ void do_gwhere( CHAR_DATA* ch, const char* argument)
       for( d = first_descriptor; d; d = d->next )
          if( ( d->connected == CON_PLAYING || d->connected == CON_EDITING )
              && ( victim = d->character ) != NULL && !IS_NPC( victim ) && victim->in_room
-             && can_see( ch, victim ) && victim->level >= low && victim->level <= high )
+             && can_see( ch, victim, TRUE ) && victim->level >= low && victim->level <= high )
          {
             pager_printf_color( ch, "&c(&C%2d&c) &w%-12.12s   [%-5d - %-19.19s]   &c%-25.25s\r\n",
                                 victim->level, victim->name, victim->in_room->vnum, victim->in_room->area->name,
@@ -2385,7 +2552,7 @@ void do_gwhere( CHAR_DATA* ch, const char* argument)
    else
    {
       for( victim = first_char; victim; victim = victim->next )
-         if( IS_NPC( victim ) && victim->in_room && can_see( ch, victim ) && victim->level >= low && victim->level <= high )
+         if( IS_NPC( victim ) && victim->in_room && can_see( ch, victim, TRUE ) && victim->level >= low && victim->level <= high )
          {
             pager_printf_color( ch, "&c(&C%2d&c) &w%-12.12s   [%-5d - %-19.19s]   &c%-25.25s\r\n",
                                 victim->level, victim->name, victim->in_room->vnum, victim->in_room->area->name,
@@ -2438,7 +2605,7 @@ void do_gfighting( CHAR_DATA* ch, const char* argument)
       for( d = first_descriptor; d; d = d->next )
          if( ( d->connected == CON_PLAYING || d->connected == CON_EDITING )
              && ( victim = d->character ) != NULL && !IS_NPC( victim ) && victim->in_room
-             && can_see( ch, victim ) && victim->fighting && victim->level >= low && victim->level <= high )
+             && can_see( ch, victim, TRUE ) && victim->fighting && victim->level >= low && victim->level <= high )
          {
             pager_printf_color( ch, "&w%-12.12s &C|%2d &wvs &C%2d| &w%-16.16s [%5d]  &c%-20.20s [%5d]\r\n",
                                 victim->name, victim->level, victim->fighting->who->level,
@@ -2452,7 +2619,7 @@ void do_gfighting( CHAR_DATA* ch, const char* argument)
    {
       for( victim = first_char; victim; victim = victim->next )
          if( IS_NPC( victim )
-             && victim->in_room && can_see( ch, victim )
+             && victim->in_room && can_see( ch, victim, TRUE )
              && victim->fighting && victim->level >= low && victim->level <= high )
          {
             pager_printf_color( ch, "&w%-12.12s &C|%2d &wvs &C%2d| &w%-16.16s [%5d]  &c%-20.20s [%5d]\r\n",
@@ -2467,7 +2634,7 @@ void do_gfighting( CHAR_DATA* ch, const char* argument)
    {
       for( victim = first_char; victim; victim = victim->next )
          if( IS_NPC( victim )
-             && victim->in_room && can_see( ch, victim ) && victim->hating && victim->level >= low && victim->level <= high )
+             && victim->in_room && can_see( ch, victim, TRUE ) && victim->hating && victim->level >= low && victim->level <= high )
          {
             pager_printf_color( ch, "&w%-12.12s &C|%2d &wvs &C%2d| &w%-16.16s [%5d]  &c%-20.20s [%5d]\r\n",
                                 victim->name, victim->level, victim->hating->who->level, IS_NPC( victim->hating->who ) ?
@@ -2481,7 +2648,7 @@ void do_gfighting( CHAR_DATA* ch, const char* argument)
    {
       for( victim = first_char; victim; victim = victim->next )
          if( IS_NPC( victim )
-             && victim->in_room && can_see( ch, victim )
+             && victim->in_room && can_see( ch, victim, TRUE )
              && victim->hunting && victim->level >= low && victim->level <= high )
          {
             pager_printf_color( ch, "&w%-12.12s &C|%2d &wvs &C%2d| &w%-16.16s [%5d]  &c%-20.20s [%5d]\r\n",
@@ -2560,7 +2727,7 @@ void do_bodybag( CHAR_DATA* ch, const char* argument)
    {
       if( IS_NPC( owner ) )
          continue;
-      if( can_see( ch, owner ) && !str_cmp( arg1, owner->name ) )
+      if( can_see( ch, owner, TRUE ) && !str_cmp( arg1, owner->name ) )
          break;
    }
    if( owner == NULL )
@@ -2616,7 +2783,7 @@ void do_owhere( CHAR_DATA* ch, const char* argument)
       snprintf( buf, MAX_STRING_LENGTH, "[%5d] %-28s in ", obj->pIndexData->vnum, obj_short( obj ) );
       if( obj->carried_by )
          snprintf( buf + strlen( buf ), ( MAX_STRING_LENGTH - strlen( buf ) ), "invent [%5d] %s\r\n",
-                   ( IS_NPC( obj->carried_by ) ? obj->carried_by->pIndexData->vnum : 0 ), PERS( obj->carried_by, ch ) );
+                   ( IS_NPC( obj->carried_by ) ? obj->carried_by->pIndexData->vnum : 0 ), PERS( obj->carried_by, ch, TRUE ) );
       else if( obj->in_room )
          snprintf( buf + strlen( buf ), ( MAX_STRING_LENGTH - strlen( buf ) ), "room   [%5d] %s\r\n", obj->in_room->vnum,
                    obj->in_room->name );
@@ -2646,7 +2813,7 @@ void do_owhere( CHAR_DATA* ch, const char* argument)
       snprintf( buf, MAX_STRING_LENGTH, "(%3d) [%5d] %-28s in ", ++icnt, obj->pIndexData->vnum, obj_short( obj ) );
       if( obj->carried_by )
          snprintf( buf + strlen( buf ), ( MAX_STRING_LENGTH - strlen( buf ) ), "invent [%5d] %s\r\n",
-                   ( IS_NPC( obj->carried_by ) ? obj->carried_by->pIndexData->vnum : 0 ), PERS( obj->carried_by, ch ) );
+                   ( IS_NPC( obj->carried_by ) ? obj->carried_by->pIndexData->vnum : 0 ), PERS( obj->carried_by, ch, TRUE ) );
       else if( obj->in_room )
          snprintf( buf + strlen( buf ), ( MAX_STRING_LENGTH - strlen( buf ) ), "room   [%5d] %s\r\n", obj->in_room->vnum,
                    obj->in_room->name );
@@ -3171,6 +3338,9 @@ void do_minvoke( CHAR_DATA* ch, const char* argument)
 
    victim = create_mobile( pMobIndex );
    char_to_room( victim, ch->in_room );
+    /* If you load one on the map, make sure it gets placed properly - Samson 8-21-99 */
+    fix_maps( ch, victim );
+    victim->sector = get_terrain( ch->map, ch->x, ch->y );
    act( AT_IMMORT, "$n invokes $N!", ch, NULL, victim, TO_ROOM );
    /*
     * How about seeing what we're invoking for a change. -Blodkai
@@ -3309,7 +3479,7 @@ void do_oinvoke( CHAR_DATA* ch, const char* argument)
       obj = obj_to_char( obj, ch );
    else
    {
-      obj = obj_to_room( obj, ch->in_room );
+      obj = obj_to_room( obj, ch->in_room, ch );
       act( AT_IMMORT, "$n fashions $p from ether!", ch, obj, NULL, TO_ROOM );
    }
 
@@ -3325,7 +3495,7 @@ void do_oinvoke( CHAR_DATA* ch, const char* argument)
 void do_purge( CHAR_DATA* ch, const char* argument)
 {
    char arg[MAX_INPUT_LENGTH];
-   CHAR_DATA *victim;
+   CHAR_DATA *victim, *tch;
    OBJ_DATA *obj;
 
    set_char_color( AT_IMMORT, ch );
@@ -3339,19 +3509,40 @@ void do_purge( CHAR_DATA* ch, const char* argument)
       CHAR_DATA *vnext;
       OBJ_DATA *obj_next;
 
-      for( victim = ch->in_room->first_person; victim; victim = vnext )
-      {
-         vnext = victim->next_in_room;
-         if( IS_NPC( victim ) && victim != ch )
-            extract_char( victim, TRUE );
+	for ( victim = ch->in_room->first_person; victim; victim = vnext )
+	{
+	    vnext = victim->next_in_room;
+
+	    /* GACK! Why did this get removed?? */
+	    if( !IS_NPC( victim ) )
+		continue;
+
+          for ( tch = ch->in_room->first_person; tch; tch = tch->next_in_room )
+            if ( !IS_NPC(tch) && tch->dest_buf == victim )
+               break;
+
+          if ( tch && !IS_NPC(tch) && tch->dest_buf == victim )
+            continue;
+
+	    /* This will work in normal rooms too since they should always be -1,-1,-1 outside of the maps. */
+          if( is_same_map( ch, victim ) )
+		extract_char( victim, TRUE );
       }
 
-      for( obj = ch->in_room->first_content; obj; obj = obj_next )
-      {
-         obj_next = obj->next_content;
-         extract_obj( obj );
-      }
+	for ( obj = ch->in_room->first_content; obj; obj = obj_next )
+	{
+	    obj_next = obj->next_content;
 
+          for ( tch = ch->in_room->first_person; tch; tch = tch->next_in_room )
+              if ( !IS_NPC(tch) && tch->dest_buf == obj )
+                  break;
+          if ( tch && !IS_NPC(tch) && tch->dest_buf == obj )
+             continue;
+
+	    /* This will work in normal rooms too since they should always be -1,-1,-1 outside of the maps. */
+	    if( ch->map == obj->map && ch->x == obj->x && ch->y == obj->y )
+		extract_obj( obj );
+	}
       act( AT_IMMORT, "$n purges the room!", ch, NULL, NULL, TO_ROOM );
       act( AT_IMMORT, "You have purged the room!", ch, NULL, NULL, TO_CHAR );
 
@@ -4138,57 +4329,6 @@ void do_trust( CHAR_DATA* ch, const char* argument)
    return;
 }
 
-/* Summer 1997 --Blod */
-void do_scatter( CHAR_DATA* ch, const char* argument)
-{
-   CHAR_DATA *victim;
-   char arg[MAX_INPUT_LENGTH];
-   ROOM_INDEX_DATA *pRoomIndex;
-
-   set_char_color( AT_IMMORT, ch );
-
-   one_argument( argument, arg );
-   if( arg[0] == '\0' )
-   {
-      send_to_char( "Scatter whom?\r\n", ch );
-      return;
-   }
-   if( !( victim = get_char_room( ch, arg ) ) )
-   {
-      send_to_char( "They aren't here.\r\n", ch );
-      return;
-   }
-   if( victim == ch )
-   {
-      send_to_char( "It's called teleport.  Try it.\r\n", ch );
-      return;
-   }
-   if( !IS_NPC( victim ) && get_trust( victim ) >= get_trust( ch ) )
-   {
-      send_to_char( "You haven't the power to succeed against them.\r\n", ch );
-      return;
-   }
-   for( ;; )
-   {
-      pRoomIndex = get_room_index( number_range( 0, MAX_VNUM ) );
-      if( pRoomIndex )
-         if( !xIS_SET( pRoomIndex->room_flags, ROOM_PRIVATE )
-             && !xIS_SET( pRoomIndex->room_flags, ROOM_SOLITARY )
-             && !xIS_SET( pRoomIndex->room_flags, ROOM_NO_ASTRAL ) && !xIS_SET( pRoomIndex->room_flags, ROOM_PROTOTYPE ) )
-            break;
-   }
-   if( victim->fighting )
-      stop_fighting( victim, TRUE );
-   act( AT_MAGIC, "With the sweep of an arm, $n flings $N to the winds.", ch, NULL, victim, TO_NOTVICT );
-   act( AT_MAGIC, "With the sweep of an arm, $n flings you to the astral winds.", ch, NULL, victim, TO_VICT );
-   act( AT_MAGIC, "With the sweep of an arm, you fling $N to the astral winds.", ch, NULL, victim, TO_CHAR );
-   char_from_room( victim );
-   char_to_room( victim, pRoomIndex );
-   victim->position = POS_RESTING;
-   act( AT_MAGIC, "$n staggers forth from a sudden gust of wind, and collapses.", victim, NULL, NULL, TO_ROOM );
-   do_look( victim, "auto" );
-   return;
-}
 
 void do_strew( CHAR_DATA* ch, const char* argument)
 {
@@ -4254,7 +4394,7 @@ void do_strew( CHAR_DATA* ch, const char* argument)
       {
          obj_next = obj_lose->next_content;
          obj_from_char( obj_lose );
-         obj_to_room( obj_lose, pRoomIndex );
+         obj_to_room( obj_lose, pRoomIndex, NULL );
          pager_printf_color( ch, "\t&w%s sent to %d\r\n", capitalize( obj_lose->short_descr ), pRoomIndex->vnum );
       }
       return;
@@ -5251,7 +5391,7 @@ void do_users( CHAR_DATA* ch, const char* argument)
 
       if( !argument || argument[0] == '\0' )
       {
-         if( get_trust( ch ) >= LEVEL_ASCENDANT || ( d->character && can_see( ch, d->character ) ) )
+         if( get_trust( ch ) >= LEVEL_ASCENDANT || ( d->character && can_see( ch, d->character, TRUE ) ) )
          {
             count++;
             pager_printf( ch, " %3d| %-17s |%4d| %-12s | %s \r\n", d->descriptor, st, d->idle / 4,
@@ -5260,7 +5400,7 @@ void do_users( CHAR_DATA* ch, const char* argument)
       }
       else
       {
-         if( ( get_trust( ch ) >= LEVEL_SUPREME || ( d->character && can_see( ch, d->character ) ) )
+         if( ( get_trust( ch ) >= LEVEL_SUPREME || ( d->character && can_see( ch, d->character, TRUE ) ) )
              && ( !str_prefix( argument, d->host ) || ( d->character && !str_prefix( argument, d->character->name ) ) ) )
          {
             count++;
@@ -5637,7 +5777,7 @@ void do_loadup( CHAR_DATA* ch, const char* argument)
    {
       if( IS_NPC( temp ) )
          continue;
-      if( can_see( ch, temp ) && !str_cmp( name, temp->name ) )
+      if( can_see( ch, temp, TRUE ) && !str_cmp( name, temp->name ) )
          break;
    }
 
@@ -7434,7 +7574,7 @@ void do_vsearch( CHAR_DATA* ch, const char* argument)
 
       if( in_obj->carried_by != NULL )
          pager_printf( ch, "[%2d] Level %d %s carried by %s.\r\n",
-                       obj_counter, obj->level, obj_short( obj ), PERS( in_obj->carried_by, ch ) );
+                       obj_counter, obj->level, obj_short( obj ), PERS( in_obj->carried_by, ch, TRUE ) );
       else
          pager_printf( ch, "[%2d] [%-5d] %s in %s.\r\n", obj_counter,
                        ( ( in_obj->in_room ) ? in_obj->in_room->vnum : 0 ),
@@ -10442,7 +10582,7 @@ void do_ipcompare( CHAR_DATA* ch, const char* argument)
          IPCOMPARE_DATA *temp;
 
          if( ( d->connected != CON_PLAYING && d->connected != CON_EDITING )
-             || d->character == NULL || !CAN_PKILL( d->character ) || !can_see( ch, d->character ) )
+             || d->character == NULL || !CAN_PKILL( d->character ) || !can_see( ch, d->character, TRUE ) )
             continue;
          CREATE( temp, IPCOMPARE_DATA, 1 );
          temp->host = str_dup( d->host );
@@ -10461,7 +10601,7 @@ void do_ipcompare( CHAR_DATA* ch, const char* argument)
       {
          fMatch = FALSE;
          if( ( d->connected != CON_PLAYING && d->connected != CON_EDITING )
-             || d->character == NULL || !can_see( ch, d->character ) )
+             || d->character == NULL || !can_see( ch, d->character, TRUE ) )
             continue;
          for( hmm = first_ip; hmm; hmm = hmm->next )
          {
@@ -10572,7 +10712,7 @@ void do_ipcompare( CHAR_DATA* ch, const char* argument)
    send_to_pager( buf, ch );
    for( d = first_descriptor; d; d = d->next )
    {
-      if( !d->character || ( d->connected != CON_PLAYING && d->connected != CON_EDITING ) || !can_see( ch, d->character ) )
+      if( !d->character || ( d->connected != CON_PLAYING && d->connected != CON_EDITING ) || !can_see( ch, d->character, TRUE ) )
          continue;
       if( inroom && ch->in_room != d->character->in_room )
          continue;
@@ -11120,7 +11260,7 @@ void do_vassign( CHAR_DATA* ch, const char* argument)
       return;
    }
    obj = create_object( pObjIndex, 0 );
-   obj_to_room( obj, room );
+   obj_to_room( obj, room, NULL );
 
    /*
     * Initialize last obj in range 
@@ -11131,7 +11271,7 @@ void do_vassign( CHAR_DATA* ch, const char* argument)
       return;
    }
    obj = create_object( pObjIndex, 0 );
-   obj_to_room( obj, room );
+   obj_to_room( obj, room, NULL );
 
    /*
     * Save character and newly created zone 

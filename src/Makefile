@@ -17,12 +17,12 @@ EXPORT_SYMBOLS = -export-dynamic
 #SOLARIS_LINK = -lnsl -lsocket
 
 #IMC2 - Comment out to disable IMC2 support
-IMC = 1
+#IMC = 1
 
-W_FLAGS = -Wall -Werror -Wshadow -Wformat-security -Wpointer-arith -Wcast-align -Wredundant-decls
+W_FLAGS = -Wall -Werror -Wshadow -Wformat-security -Wpointer-arith -Wcast-align -Wredundant-decls -Wno-write-strings
 
 C_FLAGS = -g3 $(W_FLAGS) $(SOLARIS_FLAG) $(PROF) $(EXPORT_SYMBOLS)
-L_FLAGS = $(PROF) $(SOLARIS_LINK) -lz $(NEED_DL)
+L_FLAGS = $(PROF) $(SOLARIS_LINK) -lz $(NEED_DL) -lm
 #D_FLAGS : For the DNS Slave process. No need in linking all the extra libs for this.
 D_FLAGS = -g2 -O $(PROF) $(SOLARIS_LINK)
 
@@ -30,7 +30,7 @@ C_FILES = agemobcomm.c agecommand.c act_comm.c act_info.c act_move.c act_obj.c a
           bank.c bits.c build.c calendar.c clans.c color.c comm.c comments.c const.c db.c deity.c \
           dns.c fight.c handler.c hashstr.c hint.c hotboot.c house.c imm_host.c interp.c \
           liquids.c magic.c makeobjs.c mapout.c mapper.c mccp.c \
-          misc.c mpxset.c mssp.c mud_comm.c mud_prog.c news.c planes.c player.c polymorph.c \
+          misc.c mpxset.c mssp.c mud_comm.c mud_prog.c news.c overland.c planes.c player.c polymorph.c \
           renumber.c reset.c save.c services.c sha256.c shops.c skills.c special.c tables.c \
           track.c update.c variables.c weather.c
 

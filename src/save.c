@@ -595,6 +595,8 @@ void fwrite_char( CHAR_DATA * ch, FILE * fp )
          break;
       fprintf( fp, "Killed       %d %d\n", ch->pcdata->killed[sn].vnum, ch->pcdata->killed[sn].count );
    }
+    /* Overland Map - Samson 7-31-99 */
+    fprintf( fp, "Coordinates	%d %d %d\n", ch->x, ch->y, ch->map );
 
    /*
     * Save color values - Samson 9-29-98 
@@ -743,6 +745,7 @@ void fwrite_obj( CHAR_DATA * ch, OBJ_DATA * obj, FILE * fp, int iNest, short os_
    if( obj->cost != obj->pIndexData->cost )
 	obj->cost = obj->pIndexData->cost;
       fprintf( fp, "Cost         %d\n", obj->cost );
+    fprintf( fp, "Coords	%d %d %d\n", obj->x, obj->y, obj->map );
    if( obj->value[0] || obj->value[1] || obj->value[2] || obj->value[3] || obj->value[4] || obj->value[5] )
       fprintf( fp, "Values       %d %d %d %d %d %d\n",
                obj->value[0], obj->value[1], obj->value[2], obj->value[3], obj->value[4], obj->value[5] );
@@ -866,6 +869,8 @@ bool load_char_obj( DESCRIPTOR_DATA * d, char *name, bool preload, bool copyover
    ch->pcdata->tell_history = NULL; /* imm only lasttell cmnd */
    ch->pcdata->lt_index = 0;  /* last tell index */
    ch->morph = NULL;
+    ch->pcdata->secedit			= SECT_OCEAN; /* Initialize Map OLC sector - Samson 8-1-99 */
+
    ch->pcdata->hotboot = FALSE;  /* Never changed except when PC is saved during hotboot save */
 
 #ifdef IMC
@@ -1275,6 +1280,23 @@ void fread_char( CHAR_DATA * ch, FILE * fp, bool preload, bool copyover )
                fMatch = TRUE;
                break;
             }
+
+	    if ( !str_cmp( word, "Coordinates" ) )
+	    {
+		ch->x = fread_number( fp );
+		ch->y = fread_number( fp );
+		ch->map	 = fread_number( fp );
+
+		if( !IS_PLR_FLAG( ch, PLR_ONMAP ) )
+	      {
+		   ch->x = -1;
+		   ch->y = -1;
+		   ch->map	    = -1;
+		}
+
+		fMatch = TRUE;
+		break;
+	    }
 
             if( !strcmp( word, "Council" ) )
             {
@@ -1921,6 +1943,7 @@ void fread_char( CHAR_DATA * ch, FILE * fp, bool preload, bool copyover )
                   ch->weight =
                      number_range( ( int )( race_table[ch->race]->weight * .9 ),
                                    ( int )( race_table[ch->race]->weight * 1.1 ) );
+		REMOVE_PLR_FLAG( ch, PLR_MAPEDIT ); /* In case they saved while editing */
                if( ch->pcdata->clan )
                   update_roster( ch );
                return;
@@ -2055,6 +2078,9 @@ void fread_obj( CHAR_DATA * ch, FILE * fp, short os_type )
    obj->count = 1;
    obj->wear_loc = -1;
    obj->weight = 1;
+    obj->map = -1;
+    obj->x = -1;
+    obj->y = -1;
    obj->owner = STRALLOC( "" );
 
    fNest = TRUE;  // Requiring a Nest 0 is a waste
@@ -2119,6 +2145,14 @@ void fread_obj( CHAR_DATA * ch, FILE * fp, short os_type )
             break;
 
          case 'C':
+	    if( !strcmp( word, "Coords" ) )
+	    {
+		obj->x = fread_number( fp );
+	 	obj->y = fread_number( fp );
+		obj->map = fread_number( fp );
+	      fMatch = TRUE;
+		break;
+	    }
             KEY( "Cost", obj->cost, fread_number( fp ) );
             KEY( "Count", obj->count, fread_number( fp ) );
             break;
@@ -2604,6 +2638,7 @@ void fwrite_mobile( FILE * fp, CHAR_DATA * mob )
       fprintf( fp, "Room	%d\n",
                ( mob->in_room == get_room_index( ROOM_VNUM_LIMBO )
                  && mob->was_in_room ) ? mob->was_in_room->vnum : mob->in_room->vnum );
+  fprintf( fp, "Coordinates  %d %d %d\n", mob->x, mob->y, mob->map );
    if( mob->name && mob->pIndexData->player_name && str_cmp( mob->name, mob->pIndexData->player_name ) )
       fprintf( fp, "Name     %s~\n", mob->name );
    if( mob->short_descr && mob->pIndexData->short_descr && str_cmp( mob->short_descr, mob->pIndexData->short_descr ) )
@@ -2718,6 +2753,18 @@ CHAR_DATA *fread_mobile( FILE * fp )
                break;
             }
             break;
+
+	case 'C':
+	      if ( !str_cmp( word, "Coordinates" ) )
+	      {
+		  mob->x = fread_number( fp );
+		  mob->y = fread_number( fp );
+		  mob->map	 = fread_number( fp );
+
+		  fMatch = TRUE;
+		  break;
+	      }
+		break;
 
          case 'D':
             if( !str_cmp( word, "Description" ) )

@@ -37,7 +37,8 @@ void char_check( void );
 void drunk_randoms( CHAR_DATA * ch );
 void hallucinations( CHAR_DATA * ch );
 void subtract_times( struct timeval *etime, struct timeval *sttime );
-
+/* Overland Map movement - Samson 7-31-99 */
+bool map_wander( CHAR_DATA *ch, short map, short x, short y, short sector );
 /* From interp.c */
 bool check_social( CHAR_DATA * ch, const char *command, const char *argument );
 
@@ -669,6 +670,58 @@ void mobile_update( void )
             continue;
       }
 
+      	/* Map wanderers - Samson 7-28-00 */
+      	if( IS_ACT_FLAG( ch, ACT_ONMAP ) )
+		{
+	   	   short sector = ch->sector;
+	   	   short map = ch->map;
+	   	   short x = ch->x;
+	   	   short y = ch->y;
+         	   int dir = number_bits( 5 );
+
+	   	   if( dir < DIR_SOMEWHERE && dir != DIR_UP && dir != DIR_DOWN )
+	   	   {
+			switch( dir )
+			{
+		   	   case DIR_NORTH:
+				if( map_wander( ch, map, x, y-1, sector ) )
+			   	   move_char( ch, NULL, 0, DIR_NORTH );
+		   		break;
+		   	   case DIR_NORTHEAST:
+				if( map_wander( ch, map, x+1, y-1, sector ) )
+			   	   move_char( ch, NULL, 0, DIR_NORTHEAST );
+		   		break;
+		   	   case DIR_EAST:
+				if( map_wander( ch, map, x+1, y, sector ) )
+			   	   move_char( ch, NULL, 0, DIR_EAST );
+		   		break;
+		   	   case DIR_SOUTHEAST:
+				if( map_wander( ch, map, x+1, y+1, sector ) )
+			   	   move_char( ch, NULL, 0, DIR_SOUTHEAST );
+		   		break;
+		   	   case DIR_SOUTH:
+				if( map_wander( ch, map, x, y+1, sector ) )
+			   	   move_char( ch, NULL, 0, DIR_SOUTH );
+		   		break;
+		   	   case DIR_SOUTHWEST:
+				if( map_wander( ch, map, x-1, y+1, sector ) )
+			   	   move_char( ch, NULL, 0, DIR_SOUTHWEST );
+		   		break;
+		   	   case DIR_WEST:
+				if( map_wander( ch, map, x-1, y, sector ) )
+			   	   move_char( ch, NULL, 0, DIR_WEST );
+		   		break;
+		   	   case DIR_NORTHWEST:
+				if( map_wander( ch, map, x-1, y-1, sector ) )
+			   	   move_char( ch, NULL, 0, DIR_NORTHWEST );
+		   		break;
+			}
+	   	   }
+	   	   if( char_died(ch) )
+			continue;
+		}
+
+
       /*
        * Check for mudprogram script on mob 
        */
@@ -757,6 +810,57 @@ void mobile_update( void )
             act( AT_ACTION, "$n gets $p.", ch, obj_best, NULL, TO_ROOM );
          }
       }
+
+      /* Map wanderers - Samson 7-29-00 */
+      if( IS_ACT_FLAG( ch, ACT_ONMAP ) )
+	{
+	   short sector = get_terrain( ch->map, ch->x, ch->y );
+	   short map = ch->map;
+	   short x = ch->x;
+	   short y = ch->y;
+           short dir = number_bits( 5 );
+
+	   if( dir < DIR_SOMEWHERE && dir != DIR_UP && dir != DIR_DOWN )
+	   {
+		switch( dir )
+		{
+		   case DIR_NORTH:
+			if( map_wander( ch, map, x, y-1, sector ) )
+			   move_char( ch, NULL, 0, DIR_NORTH );
+		   break;
+		   case DIR_NORTHEAST:
+			if( map_wander( ch, map, x+1, y-1, sector ) )
+			   move_char( ch, NULL, 0, DIR_NORTHEAST );
+		   break;
+		   case DIR_EAST:
+			if( map_wander( ch, map, x+1, y, sector ) )
+			   move_char( ch, NULL, 0, DIR_EAST );
+		   break;
+		   case DIR_SOUTHEAST:
+			if( map_wander( ch, map, x+1, y+1, sector ) )
+			   move_char( ch, NULL, 0, DIR_SOUTHEAST );
+		   break;
+		   case DIR_SOUTH:
+			if( map_wander( ch, map, x, y+1, sector ) )
+			   move_char( ch, NULL, 0, DIR_SOUTH );
+		   break;
+		   case DIR_SOUTHWEST:
+			if( map_wander( ch, map, x-1, y+1, sector ) )
+			   move_char( ch, NULL, 0, DIR_SOUTHWEST );
+		   break;
+		   case DIR_WEST:
+			if( map_wander( ch, map, x-1, y, sector ) )
+			   move_char( ch, NULL, 0, DIR_WEST );
+		   break;
+		   case DIR_NORTHWEST:
+			if( map_wander( ch, map, x-1, y-1, sector ) )
+			   move_char( ch, NULL, 0, DIR_NORTHWEST );
+		   break;
+		}
+	   }
+	   if( char_died(ch) )
+		continue;
+	}
 
       /*
        * Wander 
@@ -853,29 +957,27 @@ void char_calendar_update( void )
          if( ch->in_room && ch->level > 3 )
             gain_condition( ch, COND_FULL, -1 + race_table[ch->race]->hunger_mod );
 
-         /*
-          * Newbies won't dehydrate now - Samson 10-2-98 
-          */
-         if( ch->in_room && ch->level > 3 )
-         {
-            int sector;
+	   if ( ch->in_room )
+	   {
+	      int sector;
 
-            sector = ch->in_room->sector_type;
+	      if( IS_PLR_FLAG( ch, PLR_ONMAP ) )
+		   sector = get_terrain( ch->map, ch->x, ch->y );
+	      else
+	         sector = ch->in_room->sector_type;
 
-            switch ( sector )
-            {
-               default:
-                  gain_condition( ch, COND_THIRST, -1 + race_table[ch->race]->thirst_mod );
-                  break;
-               case SECT_DESERT:
-                  gain_condition( ch, COND_THIRST, -3 + race_table[ch->race]->thirst_mod );
-                  break;
-               case SECT_UNDERWATER:
-               case SECT_OCEANFLOOR:
-                  if( number_bits( 1 ) == 0 )
-                     gain_condition( ch, COND_THIRST, -1 + race_table[ch->race]->thirst_mod );
-                  break;
-            }
+	      switch( sector )
+	      {
+	         default:
+	            gain_condition( ch, COND_THIRST, -1 + race_table[ch->race]->thirst_mod);  break;
+	         case SECT_DESERT:
+		    gain_condition( ch, COND_THIRST, -3 + race_table[ch->race]->thirst_mod);  break;
+	         case SECT_UNDERWATER:
+	         case SECT_OCEANFLOOR:
+	         if ( number_bits(1) == 0 )
+		    gain_condition( ch, COND_THIRST, -1 + race_table[ch->race]->thirst_mod);  break;
+	      }
+	   }
          }
       }
    }

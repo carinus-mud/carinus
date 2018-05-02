@@ -1210,7 +1210,7 @@ void do_supplicate( CHAR_DATA* ch, const char* argument)
             act( AT_MAGIC, "Your corpse appears suddenly, surrounded by a divine presence...", ch, NULL, NULL, TO_CHAR );
             act( AT_MAGIC, "$n's corpse appears suddenly, surrounded by a divine force...", ch, NULL, NULL, TO_ROOM );
             obj_from_room( obj );
-            obj = obj_to_room( obj, ch->in_room );
+            obj = obj_to_room( obj, ch->in_room, ch );
             xREMOVE_BIT( obj->extra_flags, ITEM_BURIED );
             retr = TRUE;
          }
@@ -1309,7 +1309,7 @@ void do_supplicate( CHAR_DATA* ch, const char* argument)
       if( CAN_WEAR( obj, ITEM_TAKE ) )
          obj = obj_to_char( obj, ch );
       else
-         obj = obj_to_room( obj, ch->in_room );
+         obj = obj_to_room( obj, ch->in_room, ch );
 
       snprintf( buf, MAX_STRING_LENGTH, "sigil %s", ch->pcdata->deity->name );
       STRFREE( obj->name );
@@ -1418,17 +1418,13 @@ void do_supplicate( CHAR_DATA* ch, const char* argument)
          return;
       }
 
-      act( AT_MAGIC, "$n disappears in a column of divine power.", ch, NULL, NULL, TO_ROOM );
-      char_from_room( ch );
-      char_to_room( ch, location );
-      if( ch->mount )
-      {
-         char_from_room( ch->mount );
-         char_to_room( ch->mount, location );
-      }
-      act( AT_MAGIC, "$n appears in the room from a column of divine mist.", ch, NULL, NULL, TO_ROOM );
-      do_look( ch, "auto" );
-      ch->pcdata->favor -= ch->pcdata->deity->srecall;
+    	act( AT_MAGIC, "$n disappears in a column of divine power.", ch, NULL, NULL, TO_ROOM );
+
+      leave_map( ch, NULL, location );
+
+    	act( AT_MAGIC, "$n appears in the room from a column of divine mist.", ch, NULL, NULL, TO_ROOM );
+    	do_look( ch, "auto" );
+    	ch->pcdata->favor -= ch->pcdata->deity->srecall; 
 
       if( ch->pcdata->favor < ch->pcdata->deity->susceptnum )
          SET_BIT( ch->susceptible, ch->pcdata->deity->suscept );

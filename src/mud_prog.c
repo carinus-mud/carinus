@@ -883,7 +883,7 @@ int mprog_do_ifcheck( const char *ifcheck, CHAR_DATA * mob, CHAR_DATA * actor, O
       }
       if( !str_cmp( chck, "cansee" ) )
       {
-         return can_see( mob, chkchar );
+         return can_see( mob, chkchar, FALSE );
       }
 
       // Imported from Smaug 1.8
@@ -1691,7 +1691,7 @@ void mprog_translate( char ch, char *t, CHAR_DATA * mob, CHAR_DATA * actor, OBJ_
       case 'n':
          if( actor && !char_died( actor ) )
          {
-            if( can_see( mob, actor ) )
+            if( can_see( mob, actor, FALSE ) )
                one_argument( actor->name, t );
             if( !IS_NPC( actor ) )
                *t = UPPER( *t );
@@ -1703,7 +1703,7 @@ void mprog_translate( char ch, char *t, CHAR_DATA * mob, CHAR_DATA * actor, OBJ_
       case 'N':
          if( actor && !char_died( actor ) )
          {
-            if( can_see( mob, actor ) )
+            if( can_see( mob, actor, FALSE ) )
                if( IS_NPC( actor ) )
                   strcpy( t, actor->short_descr );
                else
@@ -1721,7 +1721,7 @@ void mprog_translate( char ch, char *t, CHAR_DATA * mob, CHAR_DATA * actor, OBJ_
       case 't':
          if( vict && !char_died( vict ) )
          {
-            if( can_see( mob, vict ) )
+            if( can_see( mob, vict, FALSE ) )
                one_argument( vict->name, t );
             if( !IS_NPC( vict ) )
                *t = UPPER( *t );
@@ -1734,7 +1734,7 @@ void mprog_translate( char ch, char *t, CHAR_DATA * mob, CHAR_DATA * actor, OBJ_
       case 'T':
          if( vict && !char_died( vict ) )
          {
-            if( can_see( mob, vict ) )
+            if( can_see( mob, vict, FALSE ) )
                if( IS_NPC( vict ) )
                   strcpy( t, vict->short_descr );
                else
@@ -1752,7 +1752,7 @@ void mprog_translate( char ch, char *t, CHAR_DATA * mob, CHAR_DATA * actor, OBJ_
       case 'r':
          if( rndm && !char_died( rndm ) )
          {
-            if( can_see( mob, rndm ) )
+            if( can_see( mob, rndm, FALSE ) )
             {
                one_argument( rndm->name, t );
             }
@@ -1768,7 +1768,7 @@ void mprog_translate( char ch, char *t, CHAR_DATA * mob, CHAR_DATA * actor, OBJ_
       case 'R':
          if( rndm && !char_died( rndm ) )
          {
-            if( can_see( mob, rndm ) )
+            if( can_see( mob, rndm, FALSE ) )
                if( IS_NPC( rndm ) )
                   strcpy( t, rndm->short_descr );
                else
@@ -1786,7 +1786,7 @@ void mprog_translate( char ch, char *t, CHAR_DATA * mob, CHAR_DATA * actor, OBJ_
       case 'e':
          if( actor && !char_died( actor ) )
          {
-            can_see( mob, actor ) ? strcpy( t, he_she[actor->sex] ) : strcpy( t, "someone" );
+            can_see( mob, actor, FALSE ) ? strcpy( t, he_she[actor->sex] ) : strcpy( t, "someone" );
          }
          else
             strcpy( t, "it" );
@@ -1795,7 +1795,7 @@ void mprog_translate( char ch, char *t, CHAR_DATA * mob, CHAR_DATA * actor, OBJ_
       case 'm':
          if( actor && !char_died( actor ) )
          {
-            can_see( mob, actor ) ? strcpy( t, him_her[actor->sex] ) : strcpy( t, "someone" );
+            can_see( mob, actor, FALSE ) ? strcpy( t, him_her[actor->sex] ) : strcpy( t, "someone" );
          }
          else
             strcpy( t, "it" );
@@ -1804,7 +1804,7 @@ void mprog_translate( char ch, char *t, CHAR_DATA * mob, CHAR_DATA * actor, OBJ_
       case 's':
          if( actor && !char_died( actor ) )
          {
-            can_see( mob, actor ) ? strcpy( t, his_her[actor->sex] ) : strcpy( t, "someone's" );
+            can_see( mob, actor, FALSE ) ? strcpy( t, his_her[actor->sex] ) : strcpy( t, "someone's" );
          }
          else
             strcpy( t, "its'" );
@@ -1813,7 +1813,7 @@ void mprog_translate( char ch, char *t, CHAR_DATA * mob, CHAR_DATA * actor, OBJ_
       case 'E':
          if( vict && !char_died( vict ) )
          {
-            can_see( mob, vict ) ? strcpy( t, he_she[vict->sex] ) : strcpy( t, "someone" );
+            can_see( mob, vict, FALSE ) ? strcpy( t, he_she[vict->sex] ) : strcpy( t, "someone" );
          }
          else
             strcpy( t, "it" );
@@ -1822,7 +1822,7 @@ void mprog_translate( char ch, char *t, CHAR_DATA * mob, CHAR_DATA * actor, OBJ_
       case 'M':
          if( vict && !char_died( vict ) )
          {
-            can_see( mob, vict ) ? strcpy( t, him_her[vict->sex] ) : strcpy( t, "someone" );
+            can_see( mob, vict, FALSE ) ? strcpy( t, him_her[vict->sex] ) : strcpy( t, "someone" );
          }
          else
             strcpy( t, "it" );
@@ -1831,7 +1831,7 @@ void mprog_translate( char ch, char *t, CHAR_DATA * mob, CHAR_DATA * actor, OBJ_
       case 'S':
          if( vict && !char_died( vict ) )
          {
-            can_see( mob, vict ) ? strcpy( t, his_her[vict->sex] ) : strcpy( t, "someone's" );
+            can_see( mob, vict, FALSE) ? strcpy( t, his_her[vict->sex] ) : strcpy( t, "someone's" );
          }
          else
             strcpy( t, "its'" );
@@ -1873,7 +1873,7 @@ void mprog_translate( char ch, char *t, CHAR_DATA * mob, CHAR_DATA * actor, OBJ_
       case 'J':
          if( rndm && !char_died( rndm ) )
          {
-            can_see( mob, rndm ) ? strcpy( t, he_she[rndm->sex] ) : strcpy( t, "someone" );
+            can_see( mob, rndm, FALSE ) ? strcpy( t, he_she[rndm->sex] ) : strcpy( t, "someone" );
          }
          else
             strcpy( t, "it" );
@@ -1882,7 +1882,7 @@ void mprog_translate( char ch, char *t, CHAR_DATA * mob, CHAR_DATA * actor, OBJ_
       case 'K':
          if( rndm && !char_died( rndm ) )
          {
-            can_see( mob, rndm ) ? strcpy( t, him_her[rndm->sex] ) : strcpy( t, "someone's" );
+            can_see( mob, rndm, FALSE ) ? strcpy( t, him_her[rndm->sex] ) : strcpy( t, "someone's" );
          }
          else
             strcpy( t, "its'" );
@@ -1891,7 +1891,7 @@ void mprog_translate( char ch, char *t, CHAR_DATA * mob, CHAR_DATA * actor, OBJ_
       case 'L':
          if( rndm && !char_died( rndm ) )
          {
-            can_see( mob, rndm ) ? strcpy( t, his_her[rndm->sex] ) : strcpy( t, "someone" );
+            can_see( mob, rndm, FALSE ) ? strcpy( t, his_her[rndm->sex] ) : strcpy( t, "someone" );
          }
          else
             strcpy( t, "its" );
@@ -2061,7 +2061,7 @@ void mprog_driver( const char *com_list, CHAR_DATA * mob, CHAR_DATA * actor, OBJ
    count = 0;
    for( vch = mob->in_room->first_person; vch; vch = vch->next_in_room )
    {
-      if( !IS_NPC( vch ) && can_see( mob, vch ) )
+      if( !IS_NPC( vch ) && can_see( mob, vch, FALSE ) )
          ++count;
    }
    rand_pick = number_range( 1, count );
@@ -2071,7 +2071,7 @@ void mprog_driver( const char *com_list, CHAR_DATA * mob, CHAR_DATA * actor, OBJ
    {
       for( vch = mob->in_room->first_person; vch; vch = vch->next_in_room )
       {
-         if( !IS_NPC( vch ) && can_see( mob, vch ) )
+         if( !IS_NPC( vch ) && can_see( mob, vch, FALSE ) )
          {
             if( count == rand_pick )
             {
@@ -2875,7 +2875,7 @@ void mprog_bribe_trigger( CHAR_DATA * mob, CHAR_DATA * ch, int amount )
    MPROG_DATA *mprg, *tprg = NULL;
    OBJ_DATA *obj;
 
-   if( IS_NPC( mob ) && can_see( mob, ch ) && HAS_PROG( mob->pIndexData, BRIBE_PROG ) )
+   if( IS_NPC( mob ) && can_see( mob, ch, FALSE ) && HAS_PROG( mob->pIndexData, BRIBE_PROG ) )
    {
       /*
        * Don't let a mob trigger itself, nor one instance of a mob
@@ -2933,7 +2933,7 @@ void mprog_login_trigger( CHAR_DATA *ch )
    {
       vmob_next = vmob->next_in_room;
 
-      if( !IS_NPC( vmob ) || !can_see( vmob, ch ) || vmob->fighting || !IS_AWAKE( vmob ) )
+      if( !IS_NPC( vmob ) || !can_see( vmob, ch, FALSE ) || vmob->fighting || !IS_AWAKE( vmob ) )
          continue;
 
       if( IS_NPC( ch ) && ch->pIndexData == vmob->pIndexData )
@@ -2953,7 +2953,7 @@ void mprog_void_trigger( CHAR_DATA *ch )
    {
       vmob_next = vmob->next_in_room;
 
-      if( !IS_NPC( vmob ) || !can_see( vmob, ch ) || vmob->fighting || !IS_AWAKE( vmob ) )
+      if( !IS_NPC( vmob ) || !can_see( vmob, ch, FALSE ) || vmob->fighting || !IS_AWAKE( vmob ) )
          continue;
 
       if( IS_NPC( ch ) && ch->pIndexData == vmob->pIndexData )
@@ -2986,7 +2986,7 @@ void mprog_give_trigger( CHAR_DATA * mob, CHAR_DATA * ch, OBJ_DATA * obj )
    char buf[MAX_INPUT_LENGTH];
    MPROG_DATA *mprg;
 
-   if( IS_NPC( mob ) && can_see( mob, ch ) && HAS_PROG( mob->pIndexData, GIVE_PROG ) )
+   if( IS_NPC( mob ) && can_see( mob, ch, FALSE ) && HAS_PROG( mob->pIndexData, GIVE_PROG ) )
    {
       /*
        * Don't let a mob trigger itself, nor one instance of a mob
@@ -3015,7 +3015,7 @@ void mprog_sell_trigger( CHAR_DATA * mob, CHAR_DATA * ch, OBJ_DATA * obj )
    int s_vnum;
    MPROG_DATA *mprg;
 
-   if( IS_NPC( mob ) && can_see( mob, ch ) && HAS_PROG( mob->pIndexData, SELL_PROG ) )
+   if( IS_NPC( mob ) && can_see( mob, ch, FALSE ) && HAS_PROG( mob->pIndexData, SELL_PROG ) )
    {
       if( IS_NPC( ch ) && ch->pIndexData == mob->pIndexData )
          return;
@@ -3050,7 +3050,7 @@ void mprog_greet_trigger( CHAR_DATA * ch )
    loop_ctrl = trvch_create( ch, TR_CHAR_ROOM_FORW );
    for( vmob = ch->in_room->first_person; vmob; vmob = trvch_next( loop_ctrl ) )
    {
-      if( !IS_NPC( vmob ) || !can_see( vmob, ch )
+      if( !IS_NPC( vmob ) || !can_see( vmob, ch, FALSE )
          || ( vmob->fighting && !HAS_PROG( vmob->pIndexData, GREET_IN_FIGHT_PROG ) )
          || !IS_AWAKE( vmob ) )
          continue;
@@ -3271,6 +3271,13 @@ void set_supermob( OBJ_DATA * obj )
    {
       char_from_room( supermob );
       char_to_room( supermob, room );
+    if( IS_OBJ_STAT( obj, ITEM_ONMAP ) )
+    {
+	SET_ACT_FLAG( supermob, ACT_ONMAP );
+	supermob->map = obj->map;
+	supermob->x = obj->x;
+	supermob->y = obj->y;
+    }
    }
 }
 
@@ -3279,6 +3286,13 @@ void release_supermob(  )
    supermob_obj = NULL;
    char_from_room( supermob );
    char_to_room( supermob, get_room_index( ROOM_VNUM_POLY ) );
+  if( IS_ACT_FLAG( supermob, ACT_ONMAP ) )
+  {
+     REMOVE_ACT_FLAG( supermob, ACT_ONMAP );
+     supermob->map = -1;
+     supermob->x = -1;
+     supermob->y = -1;
+  }
 }
 
 bool oprog_percent_check( CHAR_DATA * mob, CHAR_DATA * actor, OBJ_DATA * obj, CHAR_DATA * victim, OBJ_DATA * target, int type )

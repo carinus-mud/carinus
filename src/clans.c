@@ -686,7 +686,7 @@ bool fread_storage( int rnum, const char *filename )
          tobj_next = tobj->next_content;
 
          obj_from_char( tobj );
-         obj_to_room( tobj, storeroom );
+         obj_to_room( tobj, storeroom, supermob );
       }
       release_supermob();
    }
@@ -1322,7 +1322,7 @@ void do_make( CHAR_DATA* ch, const char* argument)
    if( CAN_WEAR( obj, ITEM_TAKE ) )
       obj = obj_to_char( obj, ch );
    else
-      obj = obj_to_room( obj, ch->in_room );
+      obj = obj_to_room( obj, ch->in_room, ch );
    act( AT_MAGIC, "$n makes $p!", ch, obj, NULL, TO_ROOM );
    act( AT_MAGIC, "You make $p!", ch, obj, NULL, TO_CHAR );
    return;
@@ -3077,7 +3077,7 @@ void do_shove( CHAR_DATA* ch, const char* argument)
    victim->position = POS_SHOVE;
    act( AT_ACTION, "You shove $M.", ch, NULL, victim, TO_CHAR );
    act( AT_ACTION, "$n shoves you.", ch, NULL, victim, TO_VICT );
-   move_char( victim, get_exit( ch->in_room, exit_dir ), 0 );
+   move_char( victim, get_exit( ch->in_room, exit_dir ), 0, exit_dir );
    if( !char_died( victim ) )
       victim->position = temp;
    WAIT_STATE( ch, 12 );
@@ -3281,11 +3281,11 @@ below 15 */
       victim->position = POS_DRAG;
       act( AT_ACTION, "You drag $M into the next room.", ch, NULL, victim, TO_CHAR );
       act( AT_ACTION, "$n grabs your hair and drags you.", ch, NULL, victim, TO_VICT );
-      move_char( victim, get_exit( ch->in_room, exit_dir ), 0 );
+      move_char( victim, get_exit( ch->in_room, exit_dir ), 0, exit_dir );
       if( !char_died( victim ) )
          victim->position = temp;
 /* Move ch to the room too.. they are doing dragging - Scryn */
-      move_char( ch, get_exit( ch->in_room, exit_dir ), 0 );
+      move_char( ch, get_exit( ch->in_room, exit_dir ), 0, exit_dir );
       WAIT_STATE( ch, 12 );
       return;
    }

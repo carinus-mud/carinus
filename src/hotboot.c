@@ -485,7 +485,7 @@ void read_obj_file( char *dirname, char *filename )
 #endif
          obj_from_char( tobj );
 #ifndef OVERLANDCODE
-         obj_to_room( tobj, room );
+         obj_to_room( tobj, room, supermob );
 #else
          obj_to_room( tobj, room, supermob );
          REMOVE_ACT_FLAG( supermob, ACT_ONMAP );

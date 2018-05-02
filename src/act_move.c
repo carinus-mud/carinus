@@ -20,7 +20,6 @@
 #include <ctype.h>
 #include <unistd.h>
 #include "mud.h"
-
 ROOM_INDEX_DATA *vroom_hash[64];
 
 const short movement_loss[SECT_MAX] = {
@@ -507,7 +506,7 @@ bool will_fall( CHAR_DATA * ch, int fall )
       }
       set_char_color( AT_FALLING, ch );
       send_to_char( "You're falling down...\r\n", ch );
-      move_char( ch, get_exit( ch->in_room, DIR_DOWN ), ++fall );
+      move_char( ch, get_exit( ch->in_room, DIR_DOWN ), ++fall, DIR_DOWN );
       return TRUE;
    }
    return FALSE;
@@ -611,7 +610,7 @@ ROOM_INDEX_DATA *generate_exit( ROOM_INDEX_DATA * in_room, EXIT_DATA ** pexit )
    return room;
 }
 
-ch_ret move_char( CHAR_DATA * ch, EXIT_DATA * pexit, int fall )
+ch_ret move_char( CHAR_DATA * ch, EXIT_DATA * pexit, int fall, int direction )
 {
    ROOM_INDEX_DATA *in_room;
    ROOM_INDEX_DATA *to_room;
@@ -633,6 +632,39 @@ ch_ret move_char( CHAR_DATA * ch, EXIT_DATA * pexit, int fall )
  if( ch->pcdata->cpose )
       ch->pcdata->cpose = str_dup( " is here." );
 }
+    if( IS_PLR_FLAG( ch, PLR_ONMAP ) || IS_ACT_FLAG( ch, ACT_ONMAP ) )
+    {
+	int newx = ch->x;
+	int newy = ch->y;
+
+      switch( direction )
+	{
+	   default: 
+		break;
+	   case DIR_NORTH:
+		newy = ch->y - 1; break;
+	   case DIR_EAST:
+		newx = ch->x + 1; break;
+	   case DIR_SOUTH:
+		newy = ch->y + 1; break;
+	   case DIR_WEST:
+		newx = ch->x - 1; break;
+	   case DIR_NORTHEAST:
+		newx = ch->x + 1; newy = ch->y - 1; break;
+	   case DIR_NORTHWEST:
+		newx = ch->x - 1; newy = ch->y - 1; break;
+	   case DIR_SOUTHEAST:
+		newx = ch->x + 1; newy = ch->y + 1; break;
+	   case DIR_SOUTHWEST:
+		newx = ch->x - 1; newy = ch->y + 1; break;
+	}
+	if( newx == ch->x && newy == ch->y )
+	   return rNONE;
+
+	retcode = process_exit( ch, ch->map, newx, newy, direction );
+	return retcode;
+    }
+
    if( !IS_NPC( ch ) )
    {
       if( IS_DRUNK( ch, 2 ) && ( ch->position != POS_SHOVE ) && ( ch->position != POS_DRAG ) )
@@ -724,7 +756,75 @@ ch_ret move_char( CHAR_DATA * ch, EXIT_DATA * pexit, int fall )
       send_to_char( "Alas, you cannot go that way.\r\n", ch );
       return rNONE;
    }
+    /* Overland Map stuff - Samson 7-31-99 */
+    /* Upgraded 4-28-00 to allow mounts and charmies to follow PC - Samson */
+    if ( IS_SET( pexit->exit_info, EX_OVERLAND ) )
+    {
+      CHAR_DATA *fch;
+      CHAR_DATA *nextinroom;
+      int chars = 0, count = 0;
 
+      if( pexit->x < 0 || pexit->x >= MAX_X || pexit->y < 0 || pexit->y >= MAX_Y )
+	{
+	  send_to_char( "Oops. Something is wrong with this map exit - notify the immortals.\r\n", ch );
+	  return rNONE;
+	}
+
+      if( !IS_NPC( ch ) )
+	{
+	  enter_map( ch, pexit->x, pexit->y, -1 );
+
+        for ( fch = from_room->first_person; fch; fch = fch->next_in_room )
+          chars++;
+
+        for ( fch = from_room->first_person; fch && ( count < chars ); fch = nextinroom )
+        {
+	     nextinroom = fch->next_in_room;
+           count++;
+	     if ( fch != ch		/* loop room bug fix here by Thoric */
+	       && fch->master == ch
+	       && (fch->position == POS_STANDING || fch->position == POS_MOUNTED) )
+	     {
+		  if( !IS_NPC( fch ) )
+		  {
+	          act( AT_ACTION, "You follow $N.", fch, NULL, ch, TO_CHAR );
+		    move_char( fch, pexit, 0, direction );
+		  }
+		  else
+		    enter_map( fch, pexit->x, pexit->y, -1 );
+	     }
+        }
+	}
+	else
+	{
+	  if( !IS_EXIT_FLAG( pexit, EX_NOMOB ) )
+	  {
+	    enter_map( ch, pexit->x, pexit->y, -1 );
+
+          for ( fch = from_room->first_person; fch; fch = fch->next_in_room )
+            chars++;
+
+          for ( fch = from_room->first_person; fch && ( count < chars ); fch = nextinroom )
+          {
+	       nextinroom = fch->next_in_room;
+             count++;
+	       if ( fch != ch		/* loop room bug fix here by Thoric */
+	         && fch->master == ch
+	         && (fch->position == POS_STANDING || fch->position == POS_MOUNTED) )
+	       {
+		   if( !IS_NPC( fch ) )
+		   {
+	           act( AT_ACTION, "You follow $N.", fch, NULL, ch, TO_CHAR );
+		     move_char( fch, pexit, 0, direction );
+		   }
+		   else
+		     enter_map( fch, pexit->x, pexit->y, -1 );
+	       }
+          }
+	  }
+      }
+	return rNONE;
+    }
    if( IS_SET( pexit->exit_info, EX_PORTAL ) && IS_NPC( ch ) )
    {
       act( AT_PLAIN, "Mobs can't use portals.", ch, NULL, NULL, TO_CHAR );
@@ -902,7 +1002,7 @@ ch_ret move_char( CHAR_DATA * ch, EXIT_DATA * pexit, int fall )
                learn_from_failure( ch, gsn_climb );
                if( pexit->vdir == DIR_DOWN )
                {
-                  retcode = move_char( ch, pexit, 1 );
+                  retcode = move_char( ch, pexit, 1, 5 );
                   return retcode;
                }
                set_char_color( AT_HURT, ch );
@@ -963,10 +1063,10 @@ ch_ret move_char( CHAR_DATA * ch, EXIT_DATA * pexit, int fall )
                break;
          }
 
-         if( !IS_FLOATING( ch->mount ) )
-            move = movement_loss[UMIN( SECT_MAX - 1, in_room->sector_type )];
-         else
-            move = 1;
+	  if ( !IS_FLOATING(ch->mount) )
+	    move = sect_show[in_room->sector_type].move;
+	  else
+	    move = 1;
          if( ch->mount->move < move )
          {
             send_to_char( "Your mount is too exhausted.\r\n", ch );
@@ -975,11 +1075,11 @@ ch_ret move_char( CHAR_DATA * ch, EXIT_DATA * pexit, int fall )
       }
       else
       {
-         if( !IS_FLOATING( ch ) )
-            move = encumbrance( ch, movement_loss[UMIN( SECT_MAX - 1, in_room->sector_type )] );
-         else
-            move = 1;
-         if( ch->move < move )
+	  if ( !IS_FLOATING(ch) )
+	    move = encumbrance( ch, sect_show[in_room->sector_type].move );
+	  else
+	    move = 1;
+        if( ch->move < move )
          {
             send_to_char( "You are too exhausted.\r\n", ch );
             return rNONE;
@@ -1223,7 +1323,7 @@ ch_ret move_char( CHAR_DATA * ch, EXIT_DATA * pexit, int fall )
                continue;
             }
             act( AT_ACTION, "You follow $N.", fch, NULL, ch, TO_CHAR );
-            move_char( fch, pexit, 0 );
+            move_char( fch, pexit, 0, pexit->vdir );
          }
       }
    }
@@ -1282,16 +1382,16 @@ void do_north (CHAR_DATA * ch, const char *argument)
 
         if ( !IS_SET( ch->pcdata->flags, PCFLAG_BUILDWALK ) )
         {
-            move_char( ch, get_exit( ch->in_room, DIR_NORTH ), 0 );
+            move_char( ch, get_exit( ch->in_room, DIR_NORTH ), 0, DIR_NORTH );
             return;
         }
     }
     if ( IS_NPC( ch ) )
     {
-        move_char( ch, get_exit( ch->in_room, DIR_NORTH ), 0 );
+        move_char( ch, get_exit( ch->in_room, DIR_NORTH ), 0, DIR_NORTH );
         return;
     }
-  move_char (ch, get_exit (ch->in_room, DIR_NORTH), 0);
+  move_char (ch, get_exit (ch->in_room, DIR_NORTH), 0, DIR_NORTH );
   return;
 }
 
@@ -1307,16 +1407,16 @@ void do_east (CHAR_DATA * ch, const char *argument)
 
         if ( !IS_SET( ch->pcdata->flags, PCFLAG_BUILDWALK ) )
         {
-            move_char( ch, get_exit( ch->in_room, DIR_EAST ), 0 );
+            move_char( ch, get_exit( ch->in_room, DIR_EAST ), 0,  DIR_EAST );
             return;
         }
     }
     if ( IS_NPC( ch ) )
     {
-        move_char( ch, get_exit( ch->in_room, DIR_EAST ), 0 );
+        move_char( ch, get_exit( ch->in_room, DIR_EAST ), 0, DIR_EAST );
         return;
     }
-  move_char (ch, get_exit (ch->in_room, DIR_EAST), 0);
+  move_char (ch, get_exit (ch->in_room, DIR_EAST), 0, DIR_EAST);
   return;
 }
 void do_south (CHAR_DATA * ch, const char *argument)
@@ -1331,16 +1431,16 @@ void do_south (CHAR_DATA * ch, const char *argument)
 
         if ( !IS_SET( ch->pcdata->flags, PCFLAG_BUILDWALK ) )
         {
-            move_char( ch, get_exit( ch->in_room, DIR_SOUTH ), 0 );
+            move_char( ch, get_exit( ch->in_room, DIR_SOUTH ), 0, DIR_SOUTH );
             return;
         }
     }
     if ( IS_NPC( ch ) )
     {
-        move_char( ch, get_exit( ch->in_room, DIR_SOUTH ), 0 );
+        move_char( ch, get_exit( ch->in_room, DIR_SOUTH ), 0, DIR_SOUTH );
         return;
     }
-  move_char (ch, get_exit (ch->in_room, DIR_SOUTH), 0);
+  move_char (ch, get_exit (ch->in_room, DIR_SOUTH), 0, DIR_SOUTH);
   return;
 }
 void do_west (CHAR_DATA * ch, const char *argument)
@@ -1355,16 +1455,16 @@ void do_west (CHAR_DATA * ch, const char *argument)
 
         if ( !IS_SET( ch->pcdata->flags, PCFLAG_BUILDWALK ) )
         {
-            move_char( ch, get_exit( ch->in_room, DIR_WEST ), 0 );
+            move_char( ch, get_exit( ch->in_room, DIR_WEST ), 0, DIR_WEST );
             return;
         }
     }
     if ( IS_NPC( ch ) )
     {
-        move_char( ch, get_exit( ch->in_room, DIR_WEST ), 0 );
+        move_char( ch, get_exit( ch->in_room, DIR_WEST ), 0, DIR_WEST );
         return;
     }
-  move_char (ch, get_exit (ch->in_room, DIR_WEST), 0);
+  move_char (ch, get_exit (ch->in_room, DIR_WEST), 0, DIR_WEST);
   return;
 }
 
@@ -1380,16 +1480,16 @@ void do_up (CHAR_DATA * ch, const char *argument)
 
         if ( !IS_SET( ch->pcdata->flags, PCFLAG_BUILDWALK ) )
         {
-            move_char( ch, get_exit( ch->in_room, DIR_UP ), 0 );
+            move_char( ch, get_exit( ch->in_room, DIR_UP ), 0, DIR_UP );
             return;
         }
     }
     if ( IS_NPC( ch ) )
     {
-        move_char( ch, get_exit( ch->in_room, DIR_UP ), 0 );
+        move_char( ch, get_exit( ch->in_room, DIR_UP ), 0, DIR_UP );
         return;
     }
-  move_char (ch, get_exit (ch->in_room, DIR_UP), 0);
+  move_char (ch, get_exit (ch->in_room, DIR_UP), 0, DIR_UP);
   return;
 }
 void do_down (CHAR_DATA * ch, const char *argument)
@@ -1404,16 +1504,16 @@ void do_down (CHAR_DATA * ch, const char *argument)
 
         if ( !IS_SET( ch->pcdata->flags, PCFLAG_BUILDWALK ) )
         {
-            move_char( ch, get_exit( ch->in_room, DIR_DOWN ), 0 );
+            move_char( ch, get_exit( ch->in_room, DIR_DOWN ), 0, DIR_DOWN );
             return;
         }
     }
     if ( IS_NPC( ch ) )
     {
-        move_char( ch, get_exit( ch->in_room, DIR_DOWN ), 0 );
+        move_char( ch, get_exit( ch->in_room, DIR_DOWN ), 0, DIR_DOWN );
         return;
     }
-  move_char (ch, get_exit (ch->in_room, DIR_DOWN), 0);
+  move_char (ch, get_exit (ch->in_room, DIR_DOWN), 0, DIR_DOWN);
   return;
 }
 
@@ -1429,16 +1529,16 @@ void do_northeast (CHAR_DATA * ch, const char *argument)
 
         if ( !IS_SET( ch->pcdata->flags, PCFLAG_BUILDWALK ) )
         {
-            move_char( ch, get_exit( ch->in_room, DIR_NORTHEAST ), 0 );
+            move_char( ch, get_exit( ch->in_room, DIR_NORTHEAST ), 0, DIR_NORTHEAST );
             return;
         }
     }
     if ( IS_NPC( ch ) )
     {
-        move_char( ch, get_exit( ch->in_room, DIR_NORTHEAST ), 0 );
+        move_char( ch, get_exit( ch->in_room, DIR_NORTHEAST ), 0, DIR_NORTHEAST );
         return;
     }
-  move_char (ch, get_exit (ch->in_room, DIR_NORTHEAST), 0);
+  move_char (ch, get_exit (ch->in_room, DIR_NORTHEAST), 0, DIR_NORTHEAST);
   return;
 }
 
@@ -1454,16 +1554,16 @@ void do_northwest (CHAR_DATA * ch, const char *argument)
 
         if ( !IS_SET( ch->pcdata->flags, PCFLAG_BUILDWALK ) )
         {
-            move_char( ch, get_exit( ch->in_room, DIR_NORTHWEST ), 0 );
+            move_char( ch, get_exit( ch->in_room, DIR_NORTHWEST ), 0, DIR_NORTHWEST );
             return;
         }
     }
     if ( IS_NPC( ch ) )
     {
-        move_char( ch, get_exit( ch->in_room, DIR_NORTHWEST ), 0 );
+        move_char( ch, get_exit( ch->in_room, DIR_NORTHWEST ), 0, DIR_NORTHWEST );
         return;
     }
-  move_char (ch, get_exit (ch->in_room, DIR_NORTHWEST), 0);
+  move_char (ch, get_exit (ch->in_room, DIR_NORTHWEST), 0, DIR_NORTHWEST);
   return;
 }
 
@@ -1479,16 +1579,16 @@ void do_southeast (CHAR_DATA * ch, const char *argument)
 
         if ( !IS_SET( ch->pcdata->flags, PCFLAG_BUILDWALK ) )
         {
-            move_char( ch, get_exit( ch->in_room, DIR_SOUTHEAST ), 0 );
+            move_char( ch, get_exit( ch->in_room, DIR_SOUTHEAST ), 0, DIR_SOUTHEAST );
             return;
         }
     }
     if ( IS_NPC( ch ) )
     {
-        move_char( ch, get_exit( ch->in_room, DIR_SOUTHEAST ), 0 );
+        move_char( ch, get_exit( ch->in_room, DIR_SOUTHEAST ), 0, DIR_SOUTHEAST );
         return;
     }
-  move_char (ch, get_exit (ch->in_room, DIR_SOUTHEAST), 0);
+  move_char (ch, get_exit (ch->in_room, DIR_SOUTHEAST), 0, DIR_SOUTHEAST);
   return;
 }
 
@@ -1504,16 +1604,16 @@ void do_southwest (CHAR_DATA * ch, const char *argument)
 
         if ( !IS_SET( ch->pcdata->flags, PCFLAG_BUILDWALK ) )
         {
-            move_char( ch, get_exit( ch->in_room, DIR_SOUTHWEST ), 0 );
+            move_char( ch, get_exit( ch->in_room, DIR_SOUTHWEST ), 0, DIR_SOUTHWEST );
             return;
         }
     }
     if ( IS_NPC( ch ) )
     {
-        move_char( ch, get_exit( ch->in_room, DIR_SOUTHWEST ), 0 );
+        move_char( ch, get_exit( ch->in_room, DIR_SOUTHWEST ), 0, DIR_SOUTHWEST );
         return;
     }
-  move_char (ch, get_exit (ch->in_room, DIR_SOUTHWEST), 0);
+  move_char (ch, get_exit (ch->in_room, DIR_SOUTHWEST), 0, DIR_SOUTHWEST);
   return;
 }
 
@@ -1689,7 +1789,7 @@ void do_build_walk( CHAR_DATA *ch, const char *argument )
         return;
     }
 	edir = 0;
-    move_char( ch, get_exit( ch->in_room, edir ), 0 );
+    move_char( ch, get_exit( ch->in_room, edir ), 0, edir );
 }
 
 
@@ -2687,7 +2787,7 @@ void teleport( CHAR_DATA * ch, int room, int flags )
       {
          obj_next = obj->next_content;
          obj_from_room( obj );
-         obj_to_room( obj, dest );
+         obj_to_room( obj, dest, NULL );
       }
    }
 }
@@ -2704,7 +2804,7 @@ void do_climb( CHAR_DATA* ch, const char* argument)
       for( pexit = ch->in_room->first_exit; pexit; pexit = pexit->next )
          if( IS_SET( pexit->exit_info, EX_xCLIMB ) )
          {
-            move_char( ch, pexit, 0 );
+            move_char( ch, pexit, 0, pexit->vdir );
             return;
          }
       send_to_char( "You cannot climb here.\r\n", ch );
@@ -2713,7 +2813,7 @@ void do_climb( CHAR_DATA* ch, const char* argument)
 
    if( ( pexit = find_door( ch, argument, TRUE ) ) != NULL && IS_SET( pexit->exit_info, EX_xCLIMB ) )
    {
-      move_char( ch, pexit, 0 );
+      move_char( ch, pexit, 0, pexit->vdir );
       return;
    }
    send_to_char( "You cannot climb there.\r\n", ch );
@@ -2732,7 +2832,7 @@ void do_enter( CHAR_DATA* ch, const char* argument)
       for( pexit = ch->in_room->first_exit; pexit; pexit = pexit->next )
          if( IS_SET( pexit->exit_info, EX_xENTER ) )
          {
-            move_char( ch, pexit, 0 );
+            move_char( ch, pexit, 0, pexit->vdir );
             return;
          }
       if( ch->in_room->sector_type != SECT_INSIDE && IS_OUTSIDE( ch ) )
@@ -2740,7 +2840,7 @@ void do_enter( CHAR_DATA* ch, const char* argument)
             if( pexit->to_room && ( pexit->to_room->sector_type == SECT_INSIDE
                                     || xIS_SET( pexit->to_room->room_flags, ROOM_INDOORS ) ) )
             {
-               move_char( ch, pexit, 0 );
+               move_char( ch, pexit, 0, pexit->vdir );
                return;
             }
       send_to_char( "You cannot find an entrance here.\r\n", ch );
@@ -2749,7 +2849,7 @@ void do_enter( CHAR_DATA* ch, const char* argument)
 
    if( ( pexit = find_door( ch, argument, TRUE ) ) != NULL && IS_SET( pexit->exit_info, EX_xENTER ) )
    {
-      move_char( ch, pexit, 0 );
+      move_char( ch, pexit, 0, pexit->vdir );
       return;
    }
    send_to_char( "You cannot enter that.\r\n", ch );
@@ -2768,7 +2868,7 @@ void do_leave( CHAR_DATA* ch, const char* argument)
       for( pexit = ch->in_room->first_exit; pexit; pexit = pexit->next )
          if( IS_SET( pexit->exit_info, EX_xLEAVE ) )
          {
-            move_char( ch, pexit, 0 );
+            move_char( ch, pexit, 0, pexit->vdir );
             return;
          }
       if( ch->in_room->sector_type == SECT_INSIDE || !IS_OUTSIDE( ch ) )
@@ -2776,7 +2876,7 @@ void do_leave( CHAR_DATA* ch, const char* argument)
             if( pexit->to_room && pexit->to_room->sector_type != SECT_INSIDE
                 && !xIS_SET( pexit->to_room->room_flags, ROOM_INDOORS ) )
             {
-               move_char( ch, pexit, 0 );
+               move_char( ch, pexit, 0, pexit->vdir );
                return;
             }
       send_to_char( "You cannot find an exit here.\r\n", ch );
@@ -2785,7 +2885,7 @@ void do_leave( CHAR_DATA* ch, const char* argument)
 
    if( ( pexit = find_door( ch, argument, TRUE ) ) != NULL && IS_SET( pexit->exit_info, EX_xLEAVE ) )
    {
-      move_char( ch, pexit, 0 );
+      move_char( ch, pexit, 0, pexit->vdir );
       return;
    }
    send_to_char( "You cannot leave that way.\r\n", ch );
@@ -2975,7 +3075,7 @@ ch_ret pullcheck( CHAR_DATA * ch, int pulse )
           * as if player moved in that direction him/herself 
           */
       case PULL_UNDEFINED:
-         return move_char( ch, xit, 0 );
+         return move_char( ch, xit, 0, xit->vdir );
 
          /*
           * all other cases ALWAYS move 
@@ -3136,7 +3236,7 @@ ch_ret pullcheck( CHAR_DATA * ch, int pulse )
        * move the char 
        */
       if( xit->pulltype == PULL_SLIP )
-         return move_char( ch, xit, 1 );
+         return move_char( ch, xit, 1, xit->vdir );
       char_from_room( ch );
       char_to_room( ch, xit->to_room );
 
@@ -3213,7 +3313,7 @@ ch_ret pullcheck( CHAR_DATA * ch, int pulse )
                act( AT_PLAIN, destob, xit->to_room->first_person, obj, dtxt, TO_ROOM );
             }
             obj_from_room( obj );
-            obj_to_room( obj, xit->to_room );
+            obj_to_room( obj, xit->to_room, NULL );
          }
       }
    }

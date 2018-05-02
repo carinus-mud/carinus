@@ -20,7 +20,6 @@
 #include <string.h>
 #include <time.h>
 #include "mud.h"
-
 bool in_same_house( CHAR_DATA * ch, CHAR_DATA * vch );
 
 /*
@@ -628,7 +627,7 @@ void talk_channel( CHAR_DATA * ch, const char *argument, int channel, const char
             if( vch->race != ch->race )
                continue;
 
-         if( xIS_SET( ch->act, PLR_WIZINVIS ) && can_see( vch, ch ) && IS_IMMORTAL( vch ) )
+         if( xIS_SET( ch->act, PLR_WIZINVIS ) && can_see( vch, ch, FALSE ) && IS_IMMORTAL( vch ) )
          {
             snprintf( lbuf, MAX_INPUT_LENGTH + 4, "(%d) ", ( !IS_NPC( ch ) ) ? ch->pcdata->wizinvis : ch->mobinvis );
          }
@@ -1066,7 +1065,7 @@ void do_say_to( CHAR_DATA *ch, const char *argument )
       else
       {
          set_char_color( AT_IGNORE, victim );
-         ch_printf( victim, "You attempt to ignore %s, but are unable to do so.\r\n", !can_see( victim, ch ) ? "Someone" : ch->name );
+         ch_printf( victim, "You attempt to ignore %s, but are unable to do so.\r\n", !can_see( victim, ch, FALSE ) ? "Someone" : ch->name );
       }
    }
 
@@ -1096,7 +1095,7 @@ void do_say_to( CHAR_DATA *ch, const char *argument )
          else
          {
             set_char_color( AT_IGNORE, vch );
-            ch_printf( vch, "You attempt to ignore %s, but are unable to do so.\r\n", !can_see(vch, ch) ? "Someone" : ch->name );
+            ch_printf( vch, "You attempt to ignore %s, but are unable to do so.\r\n", !can_see(vch, ch, FALSE) ? "Someone" : ch->name );
          }
       }
 #ifndef SCRAMBLE
@@ -1203,7 +1202,10 @@ void do_say( CHAR_DATA* ch, const char* argument)
 
       if( vch == ch )
          continue;
-
+	/* Check to see if a player on a map is at the same coords as the recipient 
+	   don't need to verify the PLR_ONMAP flags here, it's a room occupants check */
+	if( !is_same_map( vch, ch ) )
+		continue;
       /*
        * Check to see if character is ignoring speaker 
        */
@@ -1217,7 +1219,7 @@ void do_say( CHAR_DATA* ch, const char* argument)
          else
          {
             set_char_color( AT_IGNORE, vch );
-            ch_printf( vch, "You attempt to ignore %s, but are unable to do so.\r\n", !can_see( vch, ch ) ? "Someone" : ch->name );
+            ch_printf( vch, "You attempt to ignore %s, but are unable to do so.\r\n", !can_see( vch, ch, FALSE ) ? "Someone" : ch->name );
          }
       }
 
@@ -1397,7 +1399,7 @@ void do_whisper( CHAR_DATA* ch, const char* argument)
       else
       {
          set_char_color( AT_IGNORE, victim );
-         ch_printf( victim, "You attempt to ignore %s, but are unable to do so.\r\n", !can_see( victim, ch ) ? "Someone" : ch->name );
+         ch_printf( victim, "You attempt to ignore %s, but are unable to do so.\r\n", !can_see( victim, ch, FALSE ) ? "Someone" : ch->name );
       }
    }
 
@@ -1500,8 +1502,8 @@ void do_beckon( CHAR_DATA *ch, const char *argument )
    if( !IS_IMMORTAL( ch ) )
       WAIT_STATE( ch, 1 * PULSE_VIOLENCE );
    set_char_color( AT_ACTION, victim );
-   ch_printf( ch, "You beckon to %s...\r\n", PERS( victim, ch ) );
-   ch_printf( victim, "%s beckons you...\r\n\a", capitalize( PERS( ch, victim ) ) );
+   ch_printf( ch, "You beckon to %s...\r\n", PERS( victim, ch, FALSE ) );
+   ch_printf( victim, "%s beckons you...\r\n\a", capitalize( PERS( ch, victim, FALSE ) ) );
    return;
 }
 
@@ -1655,7 +1657,7 @@ void do_tell( CHAR_DATA* ch, const char* argument)
       else
       {
          set_char_color( AT_IGNORE, victim );
-         ch_printf( victim, "You attempt to ignore %s, but are unable to do so.\r\n", !can_see( victim, ch ) ? "Someone" : ch->name );
+         ch_printf( victim, "You attempt to ignore %s, but are unable to do so.\r\n", !can_see( victim, ch, FALSE ) ? "Someone" : ch->name );
       }
    }
 
@@ -1758,7 +1760,7 @@ void do_reply( CHAR_DATA* ch, const char* argument)
       return;
    }
 
-   if( !IS_NPC( victim ) && ( victim->switched ) && can_see( ch, victim ) && ( get_trust( ch ) > LEVEL_AVATAR ) )
+   if( !IS_NPC( victim ) && ( victim->switched ) && can_see( ch, victim, FALSE ) && ( get_trust( ch ) > LEVEL_AVATAR ) )
    {
       send_to_char( "That player is switched.\r\n", ch );
       return;
@@ -1828,7 +1830,7 @@ void do_reply( CHAR_DATA* ch, const char* argument)
       else
       {
          set_char_color( AT_IGNORE, victim );
-         ch_printf( victim, "You attempt to ignore %s, but are unable to do so.\r\n", !can_see( victim, ch ) ? "Someone" : ch->name );
+         ch_printf( victim, "You attempt to ignore %s, but are unable to do so.\r\n", !can_see( victim, ch, FALSE ) ? "Someone" : ch->name );
       }
    }
 
@@ -2017,7 +2019,7 @@ void do_retell( CHAR_DATA* ch, const char* argument)
       else
       {
          set_char_color( AT_IGNORE, victim );
-         ch_printf( victim, "You attempy to ignore %s, but are unable to do so.\r\n", !can_see( victim, ch ) ? "Someone" : ch->name );
+         ch_printf( victim, "You attempy to ignore %s, but are unable to do so.\r\n", !can_see( victim, ch, FALSE ) ? "Someone" : ch->name );
       }
    }
 
@@ -2173,7 +2175,10 @@ void do_emote( CHAR_DATA* ch, const char* argument)
    for( vch = ch->in_room->first_person; vch; vch = vch->next_in_room )
    {
       char *sbuf = buf;
-
+		/* Check to see if a player on a map is at the same coords as the recipient 
+		   don't need to verify the PLR_ONMAP flags here, it's a room occupants check */
+		if( !is_same_map( vch, ch ) )
+			continue;
       /*
        * Check to see if character is ignoring emoter 
        */
@@ -2187,7 +2192,7 @@ void do_emote( CHAR_DATA* ch, const char* argument)
          else
          {
             set_char_color( AT_IGNORE, vch );
-            ch_printf( vch, "You attempt to ignore %s, but are unable to do so.\r\n", !can_see( vch, ch ) ? "Someone" : ch->name );
+            ch_printf( vch, "You attempt to ignore %s, but are unable to do so.\r\n", !can_see( vch, ch, FALSE ) ? "Someone" : ch->name );
          }
       }
 #ifndef SCRAMBLE
@@ -2790,7 +2795,7 @@ void add_follower( CHAR_DATA * ch, CHAR_DATA * master )
    if( IS_NPC( ch ) && xIS_SET( ch->act, ACT_PET ) && !IS_NPC( master ) )
       master->pcdata->pet = ch;
 
-   if( can_see( master, ch ) )
+   if( can_see( master, ch, FALSE ) )
       act( AT_ACTION, "$n now follows you.", ch, NULL, master, TO_VICT );
 
    act( AT_ACTION, "You now follow $N.", ch, NULL, master, TO_CHAR );
@@ -2817,7 +2822,7 @@ void stop_follower( CHAR_DATA * ch )
          ch->master->pcdata->charmies--;
    }
 
-   if( can_see( ch->master, ch ) )
+   if( can_see( ch->master, ch, FALSE ) )
       if( !( !IS_NPC( ch->master ) && IS_IMMORTAL( ch ) && !IS_IMMORTAL( ch->master ) ) )
          act( AT_ACTION, "$n stops following you.", ch, NULL, ch->master, TO_VICT );
    act( AT_ACTION, "You stop following $N.", ch, NULL, ch->master, TO_CHAR );
@@ -2951,7 +2956,7 @@ void do_group( CHAR_DATA* ch, const char* argument)
       leader = ch->leader ? ch->leader : ch;
       set_char_color( AT_DGREEN, ch );
       ch_printf( ch, "\r\nFollowing %-12.12s     [hitpnts]   [ magic ] [mst] [mvs] [race]%s\r\n",
-                 PERS( leader, ch ), ch->level < LEVEL_AVATAR ? " [to lvl]" : "" );
+                 PERS( leader, ch, TRUE ), ch->level < LEVEL_AVATAR ? " [to lvl]" : "" );
       for( gch = first_char; gch; gch = gch->next )
       {
          if( is_same_group( gch, ch ) )
@@ -2962,7 +2967,7 @@ void do_group( CHAR_DATA* ch, const char* argument)
                           "[%2d %s] %-16s %4s/%4s hp %4s/%4s %s %4s/%4s mv %5s xp\r\n",
                           gch->level,
                           IS_NPC( gch ) ? "Mob" : class_table[gch->Class]->who_name,
-                          capitalize( PERS( gch, ch ) ),
+                          capitalize( PERS( gch, ch, TRUE ) ),
                           "????", "????", "????", "????", IS_VAMPIRE( gch ) ? "bp" : "mana", "????", "????", "?????" );
             else if( gch->alignment > 750 )
                snprintf( buf, MAX_STRING_LENGTH, "%s", " A" );
@@ -2985,7 +2990,7 @@ void do_group( CHAR_DATA* ch, const char* argument)
             set_char_color( AT_DGREEN, ch );
             send_to_char( "]  ", ch );
             set_char_color( AT_GREEN, ch );
-            ch_printf( ch, "%-12.12s ", capitalize( PERS( gch, ch ) ) );
+            ch_printf( ch, "%-12.12s ", capitalize( PERS( gch, ch, TRUE ) ) );
             if( gch->hit < gch->max_hit / 4 )
                set_char_color( AT_DANGER, ch );
             else if( gch->hit < gch->max_hit / 2.5 )
@@ -3078,7 +3083,7 @@ void do_group( CHAR_DATA* ch, const char* argument)
       {
          if( ch != rch
              && !IS_NPC( rch )
-             && can_see( ch, rch )
+             && can_see( ch, rch, FALSE )
              && !is_same_group( rch, ch )
              && rch->master == ch
              && !ch->master

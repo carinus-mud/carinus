@@ -395,6 +395,14 @@ void do_get( CHAR_DATA* ch, const char* argument)
             obj_next = obj->prev_content;
             if( ( fAll || nifty_is_name( chk, obj->name ) ) && can_see_obj( ch, obj ) )
             {
+		    if( IS_OBJ_STAT( obj, ITEM_ONMAP ) )
+		    {
+			if( ch->map != obj->map	|| ch->x != obj->x || ch->y != obj->y )
+			{
+			   found = FALSE;
+			   continue;
+			}
+		    }
                found = TRUE;
                if( number && ( cnt + obj->count ) > number )
                   split_obj( obj, number - cnt );
@@ -1028,7 +1036,7 @@ void do_drop( CHAR_DATA* ch, const char* argument)
          }
 
          act( AT_ACTION, "$n drops some gold.", ch, NULL, NULL, TO_ROOM );
-         obj_to_room( create_money( number ), ch->in_room );
+         obj_to_room( create_money( number ), ch->in_room, ch );
          send_to_char( "You let the gold slip from your hand.\r\n", ch );
          if( IS_SET( sysdata.save_flags, SV_DROP ) )
             save_char_obj( ch );
@@ -1065,7 +1073,7 @@ void do_drop( CHAR_DATA* ch, const char* argument)
       act( AT_ACTION, "You drop $p.", ch, obj, NULL, TO_CHAR );
 
       obj_from_char( obj );
-      obj = obj_to_room( obj, ch->in_room );
+      obj = obj_to_room( obj, ch->in_room, ch );
       oprog_drop_trigger( ch, obj );   /* mudprogs */
 
       if( char_died( ch ) || obj_extracted( obj ) )
@@ -1134,7 +1142,7 @@ void do_drop( CHAR_DATA* ch, const char* argument)
             }
             act( AT_ACTION, "$n drops $p.", ch, obj, NULL, TO_ROOM );
             act( AT_ACTION, "You drop $p.", ch, obj, NULL, TO_CHAR );
-            obj = obj_to_room( obj, ch->in_room );
+            obj = obj_to_room( obj, ch->in_room, ch );
             oprog_drop_trigger( ch, obj );   /* mudprogs */
             if( char_died( ch ) )
                return;
@@ -1576,9 +1584,6 @@ if (!IS_NPC(ch))
    if( IS_OBJ_STAT( obj, ITEM_PERSONAL ) && str_cmp( ch->name, obj->owner ) )
    {
       send_to_char( "That item is personalized and belongs to someone else.\r\n", ch );
-      if( obj->carried_by )
-         obj_from_char( obj );
-      obj_to_room( obj, ch->in_room );
       return;
    }
 
@@ -3054,7 +3059,7 @@ void obj_fall( OBJ_DATA * obj, bool through )
       }
       obj_from_room( obj );
       is_falling = TRUE;
-      obj = obj_to_room( obj, to_room );
+      obj = obj_to_room( obj, to_room, NULL );
       is_falling = FALSE;
 
       if( obj->in_room->first_person )

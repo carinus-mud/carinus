@@ -1295,7 +1295,7 @@ void do_accessories( CHAR_DATA * ch, const char *argument )
          OBJ_DATA *obj;
 
          obj = create_object( objindex, objindex->level );
-         obj_to_room( obj, location );
+         obj_to_room( obj, location, ch );
       }
       else
       {
@@ -2009,7 +2009,7 @@ bool load_house_file( const char *name )
    while( ( obj = supermob->first_carrying ) != NULL )
    {
       obj_from_char( obj );
-      obj_to_room( obj, pRoom );
+      obj_to_room( obj, pRoom, supermob );
    }
 
    release_supermob(  );

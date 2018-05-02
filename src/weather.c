@@ -3218,7 +3218,14 @@ void do_weather( CHAR_DATA* ch, const char* argument)
       send_to_char( "Mob's can't check the weather.\r\n", ch );
       return;
    }
-
+      if( !IS_PLR_FLAG( ch, PLR_ONMAP ) )
+      {
+        if ( !IS_OUTSIDE(ch) || INDOOR_SECTOR(ch->in_room->sector_type) )
+        {
+	    send_to_char( "You can't see the sky from here.\r\n", ch );
+	    return;
+        }
+      }
    if( !ch->desc )
    {
       send_to_char( "Nice try, but You have no descriptor.\r\n", ch );

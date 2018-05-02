@@ -575,13 +575,13 @@ void pullorpush( CHAR_DATA * ch, OBJ_DATA * obj, bool pull )
          return;
       }
       if( room )
-         obj_to_room( tobj, room );
+         obj_to_room( tobj, room, ch );
       else
       {
          if( CAN_WEAR( obj, ITEM_TAKE ) )
             obj_to_char( tobj, ch );
          else
-            obj_to_room( tobj, ch->in_room );
+            obj_to_room( tobj, ch->in_room, ch );
       }
       return;
    }
