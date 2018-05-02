@@ -19,7 +19,9 @@ EXPORT_SYMBOLS = -export-dynamic
 #IMC2 - Comment out to disable IMC2 support
 #IMC = 1
 
-W_FLAGS = -Wall -Werror -Wshadow -Wformat-security -Wpointer-arith -Wcast-align -Wredundant-decls -Wno-write-strings
+# removed -Werror - tekmunkey
+#W_FLAGS = -Wall -Werror -Wshadow -Wformat-security -Wpointer-arith -Wcast-align -Wredundant-decls -Wno-write-strings
+W_FLAGS = -Wall -Wshadow -Wformat-security -Wpointer-arith -Wcast-align -Wredundant-decls -Wno-write-strings
 
 C_FLAGS = -g3 $(W_FLAGS) $(SOLARIS_FLAG) $(PROF) $(EXPORT_SYMBOLS)
 L_FLAGS = $(PROF) $(SOLARIS_LINK) -lz $(NEED_DL) -lm
@@ -103,3 +105,4 @@ indentclean:
 
 .c.o: mud.h
 	$(CC) -c $(C_FLAGS) $<
+
