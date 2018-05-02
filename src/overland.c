@@ -838,7 +838,7 @@ void delete_landmark( LANDMARK_DATA * landmark )
 }
 
 /* Landmark survey module - idea snarfed from Medievia and adapted to Smaug by Samson - 8-19-00 */
-void do_survey( CHAR_DATA * ch, char *argument )
+void do_survey( CHAR_DATA * ch, const char *argument )
 {
    LANDMARK_DATA *landmark;
    double dist, angle;
@@ -935,7 +935,7 @@ void do_survey( CHAR_DATA * ch, char *argument )
 }
 
 /* Support command to list all landmarks currently loaded */
-void do_landmarks( CHAR_DATA * ch, char *argument )
+void do_landmarks( CHAR_DATA * ch, const char *argument )
 {
    LANDMARK_DATA *landmark;
 
@@ -957,7 +957,7 @@ void do_landmarks( CHAR_DATA * ch, char *argument )
 }
 
 /* OLC command to add/delete/edit landmark information */
-void do_setmark( CHAR_DATA * ch, char *argument )
+void do_setmark( CHAR_DATA * ch, const char *argument )
 {
    LANDMARK_DATA *landmark = NULL;
    char arg[MAX_INPUT_LENGTH];
@@ -1331,7 +1331,7 @@ void delete_entrance( ENTRANCE_DATA * enter )
 }
 
 /* OLC command to add/delete/edit overland exit information */
-void do_setexit( CHAR_DATA * ch, char *argument )
+void do_setexit( CHAR_DATA * ch, const char *argument )
 {
    char arg[MAX_INPUT_LENGTH];
    ROOM_INDEX_DATA *location;
@@ -1757,7 +1757,7 @@ MAPRESET_DATA *check_mapreset( CHAR_DATA * ch )
 }
 
 /* Support command to list all overland resets currently loaded */
-void do_mapresets( CHAR_DATA * ch, char *argument )
+void do_mapresets( CHAR_DATA * ch, const char *argument )
 {
    MAPRESET_DATA *reset;
    MOB_INDEX_DATA *mobindex;
@@ -1788,7 +1788,7 @@ void do_mapresets( CHAR_DATA * ch, char *argument )
 }
 
 /* OLC command to add/delete/edit overland reset information */
-void do_mreset( CHAR_DATA * ch, char *argument )
+void do_mreset( CHAR_DATA * ch, const char *argument )
 {
    MAPRESET_DATA *reset;
    char arg[MAX_INPUT_LENGTH];
@@ -3131,7 +3131,7 @@ void leave_map( CHAR_DATA * ch, CHAR_DATA * victim, ROOM_INDEX_DATA * target )
 }
 
 /* Imm command to jump to a different set of coordinates on the same map */
-void do_coords( CHAR_DATA * ch, char *argument )
+void do_coords( CHAR_DATA * ch, const char *argument )
 {
    char arg[MAX_INPUT_LENGTH];
    int x, y;
@@ -3363,7 +3363,7 @@ void save_map( char *name, short map )
  * Caution is warranted if using the floodfill option - trying to floodfill a section that
  * is too large will overflow the memory in short order and cause a rather uncool crash.
  */
-void do_mapedit( CHAR_DATA * ch, char *argument )
+void do_mapedit( CHAR_DATA * ch, const char *argument )
 {
    char arg1[MAX_INPUT_LENGTH];
    int value;
