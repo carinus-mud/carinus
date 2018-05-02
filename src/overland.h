@@ -183,7 +183,7 @@ typedef enum
 
 /* Function protos for needed support functions */
 char *bamf_print( char *fmt, CHAR_DATA * ch );
-int get_sectypes( char *sector );
+int get_sectypes( const char *sector );
 void atmob( CHAR_DATA * ch, CHAR_DATA * wch, char *argument );
 void atobj( CHAR_DATA * ch, OBJ_DATA * obj, char *argument );
 int get_continent( char *continent );

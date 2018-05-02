@@ -39,7 +39,7 @@ void drunk_randoms( CHAR_DATA * ch );
 void hallucinations( CHAR_DATA * ch );
 void subtract_times( struct timeval *etime, struct timeval *sttime );
 /* Overland Map movement - Samson 7-31-99 */
-bool map_wander( CHAR_DATA *ch, short map, short x, short y, short sector );
+bool map_wander( CHAR_DATA *ch, int map, int x, int y, int sector );
 /* From interp.c */
 bool check_social( CHAR_DATA * ch, const char *command, const char *argument );
 
@@ -674,10 +674,10 @@ void mobile_update( void )
       	/* Map wanderers - Samson 7-28-00 */
       	if( IS_ACT_FLAG( ch, ACT_ONMAP ) )
 		{
-	   	   short sector = ch->sector;
-	   	   short map = ch->map;
-	   	   short x = ch->x;
-	   	   short y = ch->y;
+	   	   int sector = ch->sector;
+	   	   int map = ch->map;
+	   	   int x = ch->x;
+	   	   int y = ch->y;
          	   int dir = number_bits( 5 );
 
 	   	   if( dir < DIR_SOMEWHERE && dir != DIR_UP && dir != DIR_DOWN )

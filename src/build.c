@@ -1256,7 +1256,6 @@ void do_goto( CHAR_DATA* ch, const char* argument)
          ? ch->pcdata->bamfin : "appears in a swirling mist.", TO_ROOM);
                 }
 
-   do_look( ch, "auto" );
 
    if( ch->in_room == in_room )
       return;

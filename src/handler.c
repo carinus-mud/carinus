@@ -2999,7 +2999,7 @@ OBJ_DATA *get_obj_wear( CHAR_DATA * ch, const char *argument )
 /*
  * Find an obj in the room or in inventory.
  */
-OBJ_DATA *get_obj_here( CHAR_DATA *ch, char *argument )
+OBJ_DATA *get_obj_here( CHAR_DATA *ch, const char *argument )
 {
     OBJ_DATA *obj;
 

@@ -125,7 +125,7 @@ void do_nohelps(CHAR_DATA *ch, const char *argument)
 
 
 
-void do_decapitate( CHAR_DATA* ch, const char* argument)
+void do_decapitate( CHAR_DATA* ch, const char *argument)
 {
    OBJ_INDEX_DATA *korps;
    OBJ_DATA *corpse;

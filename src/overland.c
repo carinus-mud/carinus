@@ -45,7 +45,7 @@ unsigned char map_sector[MAP_MAX][MAX_X][MAX_Y];   /* Initializes the sector arr
 extern OBJ_INDEX_DATA *obj_index_hash[MAX_KEY_HASH];
 extern MOB_INDEX_DATA *mob_index_hash[MAX_KEY_HASH];
 
-void shutdown_mud( char *reason );
+void shutdown_mud( const char *reason );
 
 #ifdef DRAGONFLIGHT
 void load_landing_sites( void );
@@ -1266,7 +1266,7 @@ ENTRANCE_DATA *check_entrance( short map, short x, short y )
 }
 
 void modify_entrance( ENTRANCE_DATA * enter, short tomap, short onmap, short hereX, short hereY, short thereX, short thereY,
-                      int vnum, char *area )
+                      int vnum, const char *area )
 {
    if( !enter )
    {
@@ -2325,7 +2325,7 @@ void display_map( CHAR_DATA * ch )
  *    trails to act as patrols. And also compensates for when a map road or trail
  *    enters a zone and becomes forest 
  */
-bool map_wander( CHAR_DATA * ch, int map, int x, int y, int sector )
+bool map_wander( CHAR_DATA *ch, int map, int x, int y, int sector )
 {
    /*
     * Obviously sentinel mobs have no need to move :P 
@@ -3319,7 +3319,7 @@ void reload_map( CHAR_DATA * ch )
  * image if it had any at loadup. This code should only be called from the mapedit
  * command. Using it in any other way could break something.
  */
-void save_map( char *name, short map )
+void save_map( const char *name, short map )
 {
    FILE *gfp;
    char graphicname[256];
@@ -3563,14 +3563,14 @@ void do_mapedit( CHAR_DATA * ch, const char *argument )
    numerical value back. Called by do_redit when editing sector types.
    Also used by the Overland Map code.
  */
-int get_sectypes( char *sector )
+int get_sectypes( const char *sector )
 {
-   int x;
+  int x;
 
-   for( x = 0; x < SECT_MAX; x++ )
-      if( !str_cmp( sector, sect_types[x] ) )
-         return x;
-   return -1;
+  for( x = 0; x < SECT_MAX; x++ )
+     if( !str_cmp( sector, sect_types[x] ) )
+        return x;
+  return -1;
 }
 
 /* Added by Samson 8-8-98. Takes area continent and returns numerical value for do_aset command */
